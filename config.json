@@ -1,120 +1,85 @@
 {
     "fitness": {
-        "leading": {
-            "parameters": {
-                "z": 21
-            },
-            "name": "Leading",
-            "class_name": "LeadingFitnessEvaluator",
-            "order": 2
-        },
         "default": {
-            "parameters": {
-                "random_target": true
-            },
-            "name": "Fraction",
+            "order": 1,
             "class_name": "DefaultFitnessEvaluator",
-            "order": 1
-        },
-        "surprising": {
             "parameters": {
-                "locally": false
+                "random_target": false
             },
-            "name": "Surprising sequences",
-            "class_name": "SurprisingFitnessEvaluator",
-            "order": 3
-        }
-    },
-    "translator": {
-        "default": {
-            "parameters": {},
-            "name": "Bit to bit",
-            "class_name": "DefaultTranslator",
-            "order": 1
-        },
-        "symbol": {
-            "parameters": {
-                "s": 10
-            },
-            "name": "Bit to symbol set",
-            "class_name": "BinToSymbolTranslator",
-            "order": 3
-        },
-        "integer": {
-            "parameters": {
-                "k": 8
-            },
-            "name": "Bit to int",
-            "class_name": "BinToIntTranslator",
-            "order": 2
-        }
-    },
-    "adult_selection": {
-        "mixing": {
-            "name": "Generational mixing",
-            "class_name": "MixingAdultSelection",
-            "order": 3
-        },
-        "over": {
-            "name": "Over production",
-            "class_name": "OverProductionAdultSelection",
-            "order": 2
-        },
-        "full": {
-            "name": "Full replacement",
-            "class_name": "FullReplacementAdultSelection",
-            "order": 1
+            "name": "Fraction"
         }
     },
     "parent_selection": {
         "proportionate": {
-            "parameters": {},
-            "name": "Proportionate scaling",
+            "order": 1,
             "class_name": "ParentFitnessProportionateSelection",
-            "order": 1
-        },
-        "boltzmann": {
             "parameters": {},
-            "name": "Boltzmann scaling",
-            "class_name": "ParentBoltzmannSelection",
-            "order": 3
+            "name": "Proportionate scaling"
         },
         "tournament": {
+            "order": 4,
+            "class_name": "ParentTournamentSelection",
             "parameters": {
                 "k": 4,
                 "e": 0.005
             },
-            "name": "Local tournament",
-            "class_name": "ParentTournamentSelection",
-            "order": 4
+            "name": "Local tournament"
+        },
+        "boltzmann": {
+            "order": 3,
+            "class_name": "ParentBoltzmannSelection",
+            "parameters": {},
+            "name": "Boltzmann scaling"
         },
         "sigma": {
-            "parameters": {},
-            "name": "Sigma scaling",
+            "order": 2,
             "class_name": "ParentSigmaScalingSelection",
-            "order": 2
+            "parameters": {},
+            "name": "Sigma scaling"
+        }
+    },
+    "translator": {
+        "integer": {
+            "order": 2,
+            "class_name": "BinToIntTranslator",
+            "parameters": {
+                "k": 8
+            },
+            "name": "Bit to int"
+        },
+        "default": {
+            "order": 1,
+            "class_name": "DefaultTranslator",
+            "parameters": {},
+            "name": "Bit to bit"
+        }
+    },
+    "adult_selection": {
+        "full": {
+            "order": 1,
+            "name": "Full replacement",
+            "class_name": "FullReplacementAdultSelection"
+        },
+        "mixing": {
+            "order": 3,
+            "name": "Generational mixing",
+            "class_name": "MixingAdultSelection"
+        },
+        "over": {
+            "order": 2,
+            "name": "Over production",
+            "class_name": "OverProductionAdultSelection"
         }
     },
     "genotype": {
         "default": {
-            "parameters": {
-                "crossover_rate": 1,
-                "mutation_rate": 0.7
-            },
-            "name": "Bit Vector",
+            "order": 1,
             "class_name": "BitVectorGenotype",
-            "order": 1
-        },
-        "symbol": {
             "parameters": {
-                "crossover_rate": 0.895,
-                "mutation_rate": 0.0031,
-                "s": 32,
-                "locally": false
+                "crossover_rate": 0.65,
+                "mutation_rate": 0.001
             },
-            "name": "Symbol",
-            "class_name": "SymbolGenotype",
-            "order": 2
+            "name": "Bit Vector"
         }
     }
 }
