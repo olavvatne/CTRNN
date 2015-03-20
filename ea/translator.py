@@ -51,8 +51,9 @@ class DefaultTranslator(AbstractTranslator):
 
 class BinToIntTranslator(AbstractTranslator):
     '''
-    BinToIntTranslator takes a bit vector and create a list of integers. This list is
-    then returned as a phenotype
+    BinToIntTranslator takes a binary vector genotype and transform it to an integer phenotype by
+    using gray decoding. This translator is also very suitable for integers, since a bit flip of the
+    binary vector only increase or decrease the integer by 1.
     '''
 
     def __init__(self, k=8):
@@ -60,45 +61,18 @@ class BinToIntTranslator(AbstractTranslator):
 
     def develop(self, individual):
         '''
-        Develop method transforms a binary vector genotype to a integer phenotype. The
-        objects k variable decide how the the binary vector should be split into integers.
-        '''
-        p = individual.genotype_container.genotype
-        integer_list = [self._tobin(p[i:i + self.k]) for i in range(0, len(p), self.k)]
-        return IntegerPhenotype(np.array(integer_list))
-
-
-    def _tobin(self, x):
-        s = ""
-        for n in x:
-            s += str(n)
-        return int(s, 2)
-
-class BinToSymbolTranslator(AbstractTranslator):
-    '''
-    BinToSymbolTranslator takes a binary vector genotype and transform it to an integer phenotype by
-    using gray decoding. This translator is also very suitable for integers, since a bit flip of the
-    binary vector only increase or decrease the integer by 1.
-    '''
-
-    def __init__(self, s=4):
-        self.nr_of_symbols = s
-        self.b = math.ceil(math.log2(self.nr_of_symbols))#Gray bits to support nr of symbols
-
-    def develop(self, individual):
-        '''
         Develop split binary vector into sub vectors that are decoded using gray codes to a integer value.
-        The s variable decide how many numbers or symbols are supported. The s variable also decide how
-        long the sub vectors are.
+        The k variable decide the number granularity.
         '''
         p = individual.genotype_container.genotype
 
         #Use gray encoding so that a bit change will not
-        symbol_list = [(self._g2i(p[i:i + self.b]))%self.nr_of_symbols for i in range(0, len(p), self.b)]
-        return IntegerPhenotype(np.array(symbol_list))
+        phenotype = [(self._g2i(p[i:i + self.k])) for i in range(0, len(p), self.k)]
+        return IntegerPhenotype(np.array(phenotype))
+
 
     def _g2i(self, l):
-        return BinToSymbolTranslator._bin2int(BinToSymbolTranslator._gray2bin(l))
+        return BinToIntTranslator._bin2int(BinToIntTranslator._gray2bin(l))
 
     @staticmethod
     def _gray2bin(bits):
