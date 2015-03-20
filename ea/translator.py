@@ -1,6 +1,5 @@
 from abc import ABCMeta, abstractmethod
 import sys
-import math
 
 import numpy as np
 
