@@ -48,7 +48,7 @@ class DefaultTranslator(AbstractTranslator):
         return IntegerPhenotype(np.copy(individual.genotype_container.genotype))
 
 
-class BinToIntTranslator(AbstractTranslator):
+class BinToWeightTranslator(AbstractTranslator):
     '''
     BinToIntTranslator takes a binary vector genotype and transform it to an integer phenotype by
     using gray decoding. This translator is also very suitable for integers, since a bit flip of the
@@ -63,6 +63,7 @@ class BinToIntTranslator(AbstractTranslator):
         Develop split binary vector into sub vectors that are decoded using gray codes to a integer value.
         The k variable decide the number granularity.
         '''
+        #TODO: Integer for now, should probably be between 0-1 or -1 or 1.
         p = individual.genotype_container.genotype
 
         #Use gray encoding so that a bit change will not
@@ -71,7 +72,7 @@ class BinToIntTranslator(AbstractTranslator):
 
 
     def _g2i(self, l):
-        return BinToIntTranslator._bin2int(BinToIntTranslator._gray2bin(l))
+        return BinToWeightTranslator._bin2int(BinToWeightTranslator._gray2bin(l))
 
     @staticmethod
     def _gray2bin(bits):

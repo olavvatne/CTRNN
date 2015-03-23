@@ -18,3 +18,20 @@ class IntegerPhenotype(AbstractPhenotype):
 
     def __repr__(self):
         return str(self.phenotype)
+
+
+class FeedForwardWeightsPhenotype(AbstractPhenotype):
+    '''
+    FeedForwardWeightsPhenotype. Will have access to ANN that can be configured with
+    weights from the phenotype. Direct mapping, structure of ANN not evolvable, only
+    weights are adjusted using this phenotype.
+    '''
+    def __init__(self, phenotype):
+        self.phenotype = phenotype
+
+    def get_ANN(self):
+        #Retrieve ANN, and configure its weights with phenotype
+        pass
+
+    def __repr__(self):
+        return str(self.phenotype)

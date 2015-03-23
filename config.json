@@ -83,12 +83,12 @@
             "class_name": "DefaultTranslator",
             "order": 1
         },
-        "integer": {
+        "weights": {
             "name": "Bit to int",
             "parameters": {
                 "k": 8
             },
-            "class_name": "BinToIntTranslator",
+            "class_name": "BinToWeightTranslator",
             "order": 2
         }
     }
