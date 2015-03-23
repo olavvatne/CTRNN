@@ -36,6 +36,16 @@
             },
             "class_name": "DefaultFitnessEvaluator",
             "order": 1
+        },
+        "flatlands": {
+            "name": "Flatland agent",
+            "parameters": {
+                "dynamic": false,
+                "number_of_scenarios": 5,
+                "grid_dimension": 10
+            },
+            "class_name": "FlatlandsAgentFitnessEvaluator",
+            "order": 2
         }
     },
     "genotype": {

@@ -2,6 +2,7 @@ from abc import ABCMeta, abstractmethod
 import numpy as np
 import sys
 from config.configuration import Configuration
+from ann.Environment import Environment
 
 
 class FitnessEvaluatorFactory:
@@ -65,3 +66,37 @@ class DefaultFitnessEvaluator(AbstractFitnessEvaluator):
         p = individual.phenotype_container.phenotype
         d = np.sum(np.logical_not(np.logical_xor(p, self.target), dtype=np.bool))
         return (d / p.size)
+
+
+class FlatlandsAgentFitnessEvaluator(AbstractFitnessEvaluator):
+    '''
+    Flatlands agent evaluator. Heuristic that measure how well individuals
+    configure a ann that maximize food eaten while minimizing the poison.
+    '''
+
+    def __init__(self, genome_length, dynamic=False, number_of_scenarios=5, grid_dimension=10):
+        self.dynamic = dynamic
+        self.nr_of_scenarios = number_of_scenarios
+        self.dim = grid_dimension
+        self.scenarios = [Environment(self.dim) for i in range(number_of_scenarios)]
+
+    def evaluate_all(self, population):
+        '''
+        Overriden from super class. Environment has to be replaced if
+        the dynamic option is chosen.
+        '''
+        if self.dynamic:
+            #TODO: Maybe create method that replace board, avoid object initalizations
+            self.scenarios = [Environment(self.dim) for i in range(self.nr_of_scenarios)]
+
+        for individual in population:
+            individual.fitness = self.evaluate(individual)
+
+    def evaluate(self, individual):
+        '''
+        Returns a score that penalize poison and rewards food eating
+        '''
+        #TODO:Run individual through every scenarios. Collect scoring, and assign a score
+        p = individual.phenotype_container
+        scoring = [e.score_agent(p) for e in self.scenarios]
+        return 0
