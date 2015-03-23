@@ -63,5 +63,5 @@ class DefaultFitnessEvaluator(AbstractFitnessEvaluator):
         Use not xor --> ==
         '''
         p = individual.phenotype_container.phenotype
-        d = sum(p[i] == self.target[i] for i in range(p.size))
+        d = np.sum(np.logical_not(np.logical_xor(p, self.target), dtype=np.bool))
         return (d / p.size)

@@ -1,85 +1,85 @@
 {
-    "fitness": {
-        "default": {
-            "order": 1,
-            "class_name": "DefaultFitnessEvaluator",
-            "parameters": {
-                "random_target": false
-            },
-            "name": "Fraction"
-        }
-    },
     "parent_selection": {
-        "proportionate": {
-            "order": 1,
-            "class_name": "ParentFitnessProportionateSelection",
-            "parameters": {},
-            "name": "Proportionate scaling"
-        },
         "tournament": {
-            "order": 4,
-            "class_name": "ParentTournamentSelection",
+            "name": "Local tournament",
             "parameters": {
                 "k": 4,
                 "e": 0.005
             },
-            "name": "Local tournament"
+            "class_name": "ParentTournamentSelection",
+            "order": 4
         },
-        "boltzmann": {
-            "order": 3,
-            "class_name": "ParentBoltzmannSelection",
+        "proportionate": {
+            "name": "Proportionate scaling",
             "parameters": {},
-            "name": "Boltzmann scaling"
+            "class_name": "ParentFitnessProportionateSelection",
+            "order": 1
         },
         "sigma": {
-            "order": 2,
+            "name": "Sigma scaling",
+            "parameters": {},
             "class_name": "ParentSigmaScalingSelection",
+            "order": 2
+        },
+        "boltzmann": {
+            "name": "Boltzmann scaling",
             "parameters": {},
-            "name": "Sigma scaling"
+            "class_name": "ParentBoltzmannSelection",
+            "order": 3
         }
     },
-    "translator": {
-        "integer": {
-            "order": 2,
-            "class_name": "BinToIntTranslator",
-            "parameters": {
-                "k": 8
-            },
-            "name": "Bit to int"
-        },
+    "fitness": {
         "default": {
-            "order": 1,
-            "class_name": "DefaultTranslator",
-            "parameters": {},
-            "name": "Bit to bit"
-        }
-    },
-    "adult_selection": {
-        "full": {
-            "order": 1,
-            "name": "Full replacement",
-            "class_name": "FullReplacementAdultSelection"
-        },
-        "mixing": {
-            "order": 3,
-            "name": "Generational mixing",
-            "class_name": "MixingAdultSelection"
-        },
-        "over": {
-            "order": 2,
-            "name": "Over production",
-            "class_name": "OverProductionAdultSelection"
+            "name": "Fraction",
+            "parameters": {
+                "random_target": false
+            },
+            "class_name": "DefaultFitnessEvaluator",
+            "order": 1
         }
     },
     "genotype": {
         "default": {
-            "order": 1,
-            "class_name": "BitVectorGenotype",
+            "name": "Bit Vector",
             "parameters": {
                 "crossover_rate": 0.65,
-                "mutation_rate": 0.001
+                "mutation_rate": 0.1
             },
-            "name": "Bit Vector"
+            "class_name": "BitVectorGenotype",
+            "order": 1
+        }
+    },
+    "adult_selection": {
+        "mixing": {
+            "name": "Generational mixing",
+            "class_name": "MixingAdultSelection",
+            "order": 3
+        },
+        "over": {
+            "name": "Over production",
+            "class_name": "OverProductionAdultSelection",
+            "order": 2
+        },
+        "full": {
+            "name": "Full replacement",
+            "class_name": "FullReplacementAdultSelection",
+            "order": 1
+        }
+    },
+    "translator": {
+        "default": {
+            "name": "Bit to bit",
+            "parameters": {},
+            "class_name": "DefaultTranslator",
+            "order": 1
+        },
+        "integer": {
+            "name": "Bit to int",
+            "parameters": {
+                "k": 8
+            },
+            "class_name": "BinToIntTranslator",
+            "order": 2
         }
     }
 }

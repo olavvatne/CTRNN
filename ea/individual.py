@@ -30,7 +30,7 @@ class Individual(object):
         g2 = partner.genotype_container.crossover(self.genotype_container)
         g1.mutation()
         g2.mutation()
-        return Individual(g1, self.translator), Individual(g2, self.translator)
+        return (Individual(g1, self.translator), Individual(g2, self.translator))
 
     def copy(self):
         return Individual(self.genotype_container, self.translator)

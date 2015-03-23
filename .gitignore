@@ -55,6 +55,7 @@ target/
 
 #PyCharm
 .idea
+test.py
 
 #Dump file
 dump.csv

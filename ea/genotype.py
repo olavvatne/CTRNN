@@ -74,14 +74,16 @@ class BitVectorGenotype(AbstractGenotype):
         Copy operation for the genotype. Used when children are created with the parents genotype's.
         '''
         g = BitVectorGenotype(crossover_rate=self.crossover_rate, mutation_rate=self.mutation_rate)
-        g.genotype = self.genotype.copy()
+        g.genotype = np.empty_like (self.genotype)
+        np.copyto(g.genotype, self.genotype)
         return g
 
     def mutation(self):
         '''
-        Bit mutation. Every bit are considered and if a random number is below the mutation_rate the
-        bit is flipped.
+        Single bit mutation. Mutation is considered once. And if mutation is to happen, only one bit is
+        flipped.
         '''
-        for i in range(self.genotype.size):
-            if random.random() < self.mutation_rate:
-                self.genotype[i] = not self.genotype[i]
+        #TODO: consider let number of mutation be a random amount but not all. between 1 - 5 or something.
+        if random.random() < self.mutation_rate:
+            mutation_point = math.floor(random.uniform(0, self.genotype.size))
+            self.genotype[mutation_point] = not self.genotype[mutation_point]

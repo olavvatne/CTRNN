@@ -28,24 +28,15 @@ class AbstractParentSelection(metaclass=ABCMeta):
     def select_mating_pool(self, adults, m):
         pass
 
-    def _weighted_parent_choice(self, pop, prob):
-        '''
-        Method that select two individuals by weighted selection.
-        A population list and a corresponding probability list
-        must be supplied as arguments. Method returns a list of two individuals.
-        '''
-        return np.random.choice(pop, size=2, p=prob, replace=False)
-
     def _global_weighted_select(self, population, probs,  m):
         '''
         Roulette wheel selection. Returns a list of tuples of selected parents. The list contains
         m/2 tuples. All selections are weighted by the probability list, probs.
         '''
-        mate_pool = []
-        for i in range(int(m/2)):
-            mate_pool.append(self._weighted_parent_choice(population, probs))
+        return np.split(np.random.choice(population, size=m, p=probs, replace=True), m/2)
+        #return[np.random.choice(population, size=2, p=probs, replace=False) for i in range(int(m/2))]
+        #Old way. Will not let ind mate with itself, but very small chance and big increase in speed
 
-        return mate_pool
 
 
 class ParentFitnessProportionateSelection(AbstractParentSelection):
