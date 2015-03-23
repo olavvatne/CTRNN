@@ -10,8 +10,8 @@ class Environment:
         self.board = np.random.choice(3, replace=True, p=probabilites, size=(dim, dim))
 
     def score_agent(self, agent, timesteps=60):
-        b = None
-        np.copyto(b, self.board)
+        b = np.empty_like (self.board)
+        b[:] = self.board
         #TODO: Might consider using a structure to keep track of changes made
         #to board while sim
         food = 0
