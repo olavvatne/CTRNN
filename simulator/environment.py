@@ -44,21 +44,24 @@ class Environment:
             #Senor gathering
             food_sensors = self._get_sensor_data(y,x,dir, b, Environment.FOOD)
             poison_sensors = self._get_sensor_data(y,x,dir, b, Environment.POISON)
-
             #Motor output
             motor_output = agent.feedforward(np.array(food_sensors + poison_sensors, dtype=np.int32))
             i = np.argmax(motor_output)
             m = 0
             if i == Environment.MOVE_LEFT:
+                #print("MOVE LEFT")
                 m = -1
             elif i == Environment.MOVE_RIGHT:
+                #print("MOVE RIGHT")
                 m = 1
 
             #Update scoring and environment
-            y,x,dir = self._move_agent(y, x, (i+m)%4, b)
+            y,x,dir = self._move_agent(y, x, (dir+m)%4, b)
+        #print("Score: ", self.food, self.poison)
         return (self.food, self.poison)
 
     def _move_agent(self, y,x, dir, b):
+        #print("dir", dir)
         if dir == Environment.NORTH:
             y = (y-1)%self.dim
         elif dir == Environment.EAST:

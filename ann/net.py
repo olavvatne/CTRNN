@@ -27,6 +27,7 @@ class FeedForwardNet:
             a = self.activation(np.dot(w, a)+b)
         return a
 
+
 def sigmoid(z):
     return 1.0/(1.0+np.exp(-z))
 

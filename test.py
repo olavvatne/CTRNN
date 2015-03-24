@@ -5,10 +5,10 @@ class Listner:
     def update(self, c, p, cf, bf, std):
             pass
 
-genome_length = 216
-pop_size = 20
-gen = 30
-threshold = 1.1
+genome_length = 432
+pop_size = 10
+gen = 40
+threshold = 20
 ea_system = EA()
 listner = Listner()
 ea_system.add_listener(listner)

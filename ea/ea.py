@@ -14,7 +14,7 @@ class EA(object):
     #a setup type of method that configure the EA before running. Drop down with alternatives in gui, pop size etc d
     #decided by other gui elements
 
-    EVENT_RATE = 10
+    EVENT_RATE = 3
 
     def __init__(self):
         self.is_stopping = False
@@ -67,18 +67,18 @@ class EA(object):
             children = self.reproduce(mating_adults)
 
             #Check stopping condition, and gui update below
-            best_individual = max(self.adult_pool, key=lambda a: a.fitness)
-            if self.is_stopping or fitness_threshold <= best_individual.fitness:
+            self.best_individual = max(self.adult_pool, key=lambda a: a.fitness)
+            if self.is_stopping or fitness_threshold <=  self.best_individual.fitness:
                 break
 
             if self.listener and c%EA.EVENT_RATE == 0:
                 #Sends an update every 10th cycle. Fraction multiplied by 100 and 10 (10th cyle)
                 #send to indicate evolution loop progression.
-                self.send_update(c, cycles, best_individual)
+                self.send_update(c, cycles,  self.best_individual)
 
         #Final update
-        best_individual = max(self.adult_pool, key=lambda a: a.fitness)
-        self.send_update(c+1, cycles, best_individual)
+        self.best_individual = max(self.adult_pool, key=lambda a: a.fitness)
+        self.send_update(c+1, cycles, self.best_individual)
         print("-------------------------")
 
     def stop(self):

@@ -56,10 +56,12 @@ class BinToWeightTranslator(AbstractTranslator):
     binary vector only increase or decrease the integer by 1.
     '''
 
-    def __init__(self, k=8, layers=[6,3,3]):
+    def __init__(self, k=8, layers=[6,6 ,3]):
         self.k = k
+        self.nr_of_values = 2**k
+        self.half = 0.5
         self.layers = layers
-        self.ann = FeedForwardNet(layers)
+        self.ann = FeedForwardNet(layers, activation="tanh")
         self.weight_sizes  =  list(zip(layers[:-1], layers[1:]))
         print("Number of weights ", sum([x*y for x, y in self.weight_sizes]))
 
@@ -74,12 +76,11 @@ class BinToWeightTranslator(AbstractTranslator):
         p = individual.genotype_container.genotype
 
         #Use gray encoding so that a bit change will not
-        weight_numbers = [(self._g2i(p[i:i + self.k])) for i in range(0, len(p), self.k)]
+        weight_numbers = [(self._g2i(p[i:i + self.k])/self.nr_of_values)-self.half for i in range(0, len(p), self.k)]
         weight_structure = [np.empty([y, x]) for x, y in  self.weight_sizes]
-        weights = self._transfer(weight_numbers, weight_structure)
-        phenotype = self.ann
-        phenotype.set_weights(weights)
-        return FeedForwardWeightsPhenotype(phenotype)
+        phenotype = self._transfer(weight_numbers, weight_structure)
+
+        return FeedForwardWeightsPhenotype(phenotype, self.ann)
 
     def _transfer(self, phenotype, weight_structure):
         #TODO: Better way?

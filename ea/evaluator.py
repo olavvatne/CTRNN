@@ -84,8 +84,7 @@ class FlatlandsAgentFitnessEvaluator(AbstractFitnessEvaluator):
         self.dim = grid_dimension
         self.fd = 0.33333
         self.pd = 0.33333
-        self.max_food = self.dim*self.dim*self.fd
-        self.max_poison = self.dim*self.dim*self.fd*(1-self.pd)
+
 
         self.scenarios = [Environment(self.dim, f_prob=self.fd, p_prob=self.pd) for i in range(number_of_scenarios)]
 
@@ -105,11 +104,7 @@ class FlatlandsAgentFitnessEvaluator(AbstractFitnessEvaluator):
         '''
         Returns a score that penalize poison and rewards food eating
         '''
-        p = individual.phenotype_container
-        scoring = [e.score_agent(p.get_ANN()) for e in self.scenarios]
-        food_percent = sum([s[0] for s in scoring])/(len(self.scenarios)*self.max_food)
-
-        poison_percent = sum([s[1] for s in scoring])/(len(self.scenarios)*self.max_poison)
-
-        #print("SCORE: ",(1* food_percent) - (0.9*poison_percent))
-        return (1* food_percent) - (0.5*poison_percent)
+        p = individual.phenotype_container.get_ANN()
+        scoring = [e.score_agent(p) for e in self.scenarios]
+        score = sum(fs-(0.5*ps) for fs, ps in scoring)/len(self.scenarios)
+        return score
