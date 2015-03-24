@@ -1,8 +1,10 @@
 from abc import ABCMeta, abstractmethod
-import numpy as np
 import sys
+
+import numpy as np
+
 from config.configuration import Configuration
-from ann.environment import Environment
+from simulator.environment import Environment
 
 
 class FitnessEvaluatorFactory:
@@ -100,5 +102,5 @@ class FlatlandsAgentFitnessEvaluator(AbstractFitnessEvaluator):
         '''
         #TODO:Run individual through every scenarios. Collect scoring, and assign a score
         p = individual.phenotype_container
-        scoring = [e.score_agent(p) for e in self.scenarios]
-        return 0
+        scoring = [e.score_agent(p.get_ANN()) for e in self.scenarios]
+        return 0.01

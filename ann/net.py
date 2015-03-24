@@ -34,5 +34,3 @@ def sigmoid(z):
 def tanh(x):
     return np.tanh(x)
 
-n = FeedForwardNet([6,3,3,4])
-print(n.feedforward([1,1,1,1,1,1]))

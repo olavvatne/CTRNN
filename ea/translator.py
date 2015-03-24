@@ -58,9 +58,7 @@ class BinToWeightTranslator(AbstractTranslator):
     def __init__(self, k=8, layers=[6,3,3]):
         self.k = k
         self.layers = layers
-        print("INIT: ", self.layers)
         self.weight_sizes  =  list(zip(layers[:-1], layers[1:]))
-        print("INIT: ", list(self.weight_sizes))
         print("Number of weights ", sum([x*y for x, y in self.weight_sizes]))
 
 
@@ -75,7 +73,7 @@ class BinToWeightTranslator(AbstractTranslator):
 
         #Use gray encoding so that a bit change will not
         weight_numbers = [(self._g2i(p[i:i + self.k])) for i in range(0, len(p), self.k)]
-        weight_structure = [np.empty([x, y]) for x, y in  self.weight_sizes]
+        weight_structure = [np.empty([y, x]) for x, y in  self.weight_sizes]
         phenotype = self._transfer(weight_numbers, weight_structure)
         return FeedForwardWeightsPhenotype(phenotype, layers=self.layers)
 
