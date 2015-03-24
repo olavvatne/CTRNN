@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 import numpy as np
 import sys
 from config.configuration import Configuration
-from ann.Environment import Environment
+from ann.environment import Environment
 
 
 class FitnessEvaluatorFactory:
