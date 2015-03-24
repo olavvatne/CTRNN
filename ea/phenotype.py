@@ -26,16 +26,12 @@ class FeedForwardWeightsPhenotype(AbstractPhenotype):
     weights from the phenotype. Direct mapping, structure of ANN not evolvable, only
     weights are adjusted using this phenotype.
     '''
-    def __init__(self, phenotype, layers=[6,3,3]):
+    def __init__(self, phenotype):
         self.phenotype = phenotype
-        self.layers = layers
-        self.ann = None
+        #TODO: need for layers?
 
     def get_ANN(self):
-        #TODO: Consider not init nets all the time. Replace weights only?
-        self.ann = FeedForwardNet(self.layers)
-        self.ann.set_weights(self.phenotype)
-        return self.ann
+        return self.phenotype
 
     def __repr__(self):
-        return str(self.phenotype)
+        return str(self.phenotype.weights)

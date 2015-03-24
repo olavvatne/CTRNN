@@ -82,7 +82,12 @@ class FlatlandsAgentFitnessEvaluator(AbstractFitnessEvaluator):
         self.dynamic = dynamic
         self.nr_of_scenarios = number_of_scenarios
         self.dim = grid_dimension
-        self.scenarios = [Environment(self.dim) for i in range(number_of_scenarios)]
+        self.fd = 0.33333
+        self.pd = 0.33333
+        self.max_food = self.dim*self.dim*self.fd
+        self.max_poison = self.dim*self.dim*self.fd*(1-self.pd)
+
+        self.scenarios = [Environment(self.dim, f_prob=self.fd, p_prob=self.pd) for i in range(number_of_scenarios)]
 
     def evaluate_all(self, population):
         '''
@@ -91,7 +96,7 @@ class FlatlandsAgentFitnessEvaluator(AbstractFitnessEvaluator):
         '''
         if self.dynamic:
             #TODO: Maybe create method that replace board, avoid object initalizations
-            self.scenarios = [Environment(self.dim) for i in range(self.nr_of_scenarios)]
+            self.scenarios = [Environment(self.dim,f_prob=self.fd, p_prob=self.pd) for i in range(self.nr_of_scenarios)]
 
         for individual in population:
             individual.fitness = self.evaluate(individual)
@@ -100,7 +105,11 @@ class FlatlandsAgentFitnessEvaluator(AbstractFitnessEvaluator):
         '''
         Returns a score that penalize poison and rewards food eating
         '''
-        #TODO:Run individual through every scenarios. Collect scoring, and assign a score
         p = individual.phenotype_container
         scoring = [e.score_agent(p.get_ANN()) for e in self.scenarios]
-        return 0.01
+        food_percent = sum([s[0] for s in scoring])/(len(self.scenarios)*self.max_food)
+
+        poison_percent = sum([s[1] for s in scoring])/(len(self.scenarios)*self.max_poison)
+
+        #print("SCORE: ",(1* food_percent) - (0.9*poison_percent))
+        return (1* food_percent) - (0.5*poison_percent)

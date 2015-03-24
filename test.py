@@ -5,15 +5,15 @@ class Listner:
     def update(self, c, p, cf, bf, std):
             pass
 
-genome_length = 60
-pop_size = 200
-gen = 1000
+genome_length = 216
+pop_size = 20
+gen = 30
 threshold = 1.1
 ea_system = EA()
 listner = Listner()
 ea_system.add_listener(listner)
-translator = "default"
-fitness = "default"
+translator = "weights"
+fitness = "flatlands"
 genotype = "default"
 adult = "full"
 parent = "sigma"

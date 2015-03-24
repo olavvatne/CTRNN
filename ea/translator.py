@@ -2,6 +2,7 @@ from abc import ABCMeta, abstractmethod
 import sys
 
 import numpy as np
+from ann.net import FeedForwardNet
 
 from ea.phenotype import IntegerPhenotype, FeedForwardWeightsPhenotype
 from config.configuration import Configuration
@@ -58,6 +59,7 @@ class BinToWeightTranslator(AbstractTranslator):
     def __init__(self, k=8, layers=[6,3,3]):
         self.k = k
         self.layers = layers
+        self.ann = FeedForwardNet(layers)
         self.weight_sizes  =  list(zip(layers[:-1], layers[1:]))
         print("Number of weights ", sum([x*y for x, y in self.weight_sizes]))
 
@@ -74,8 +76,10 @@ class BinToWeightTranslator(AbstractTranslator):
         #Use gray encoding so that a bit change will not
         weight_numbers = [(self._g2i(p[i:i + self.k])) for i in range(0, len(p), self.k)]
         weight_structure = [np.empty([y, x]) for x, y in  self.weight_sizes]
-        phenotype = self._transfer(weight_numbers, weight_structure)
-        return FeedForwardWeightsPhenotype(phenotype, layers=self.layers)
+        weights = self._transfer(weight_numbers, weight_structure)
+        phenotype = self.ann
+        phenotype.set_weights(weights)
+        return FeedForwardWeightsPhenotype(phenotype)
 
     def _transfer(self, phenotype, weight_structure):
         #TODO: Better way?

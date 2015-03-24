@@ -23,6 +23,8 @@ class Environment:
         self.agent_x = agent_start_pos[1]
         self.agent_y = agent_start_pos[0]
         self.agent_dir = Environment.NORTH
+        self.poison = 0
+        self.food = 0
         self.dim = dim
         self.board[self.agent_y, self.agent_x] = Environment.EMPTY
         #Food and poision removed from agent's start position
@@ -37,12 +39,11 @@ class Environment:
         y = self.agent_y
         x = self.agent_x
         dir = self.agent_dir
-
         for i in range(timesteps):
 
             #Senor gathering
-            food_sensors = self._get_sensor_data(y,x,dir, Environment.FOOD)
-            poison_sensors = self._get_sensor_data(y,x,dir, Environment.POISON)
+            food_sensors = self._get_sensor_data(y,x,dir, b, Environment.FOOD)
+            poison_sensors = self._get_sensor_data(y,x,dir, b, Environment.POISON)
 
             #Motor output
             motor_output = agent.feedforward(np.array(food_sensors + poison_sensors, dtype=np.int32))
@@ -52,11 +53,12 @@ class Environment:
                 m = -1
             elif i == Environment.MOVE_RIGHT:
                 m = 1
-            y,x,dir = self._move_agent(y, x, (i+m)%4)
 
+            #Update scoring and environment
+            y,x,dir = self._move_agent(y, x, (i+m)%4, b)
         return (self.food, self.poison)
 
-    def _move_agent(self, y,x, dir):
+    def _move_agent(self, y,x, dir, b):
         if dir == Environment.NORTH:
             y = (y-1)%self.dim
         elif dir == Environment.EAST:
@@ -66,33 +68,33 @@ class Environment:
         else:
             x = (x-1)%self.dim
 
-        content = self.board[y][x]
+        content = b[y][x]
         if content == Environment.FOOD:
             self.food += 1
         elif content == Environment.POISON:
             self.poison += 1
-        self.board[y][x] = Environment.EMPTY
+        b[y][x] = Environment.EMPTY
         return (y, x, dir)
 
 
-    def _get_sensor_data(self, y,x, dir, type):
-        dim = len(self.board)
+    def _get_sensor_data(self, y,x, dir, b,type):
+        dim = len(b)
         if dir == Environment.NORTH:
-            data = [self.board[y][(x-1)%dim] == type,
-                    self.board[(y-1)%dim][x] == type,
-                    self.board[y][(x+1)%dim] == type]
+            data = [b[y][(x-1)%dim] == type,
+                    b[(y-1)%dim][x] == type,
+                    b[y][(x+1)%dim] == type]
         elif dir == Environment.EAST:
-            data = [self.board[(y-1)%dim][x] == type,
-                    self.board[y][(x+1)%dim] == type,
-                    self.board[(y+1)%dim][x]== type]
+            data = [b[(y-1)%dim][x] == type,
+                    b[y][(x+1)%dim] == type,
+                    b[(y+1)%dim][x]== type]
         elif dir == Environment.SOUTH:
-            data = [self.board[y][(x+1)%dim] == type,
-                    self.board[(y+1)%dim][x] == type,
-                    self.board[y][(x-1)%dim]== type]
+            data = [b[y][(x+1)%dim] == type,
+                    b[(y+1)%dim][x] == type,
+                    b[y][(x-1)%dim]== type]
         else:
-            data = [self.board[(y+1)%dim][x] == type,
-                    self.board[y][(x-1)%dim] == type,
-                    self.board[(y-1)%dim][x]== type]
+            data = [b[(y+1)%dim][x] == type,
+                    b[y][(x-1)%dim] == type,
+                    b[(y-1)%dim][x]== type]
         return data
 
 

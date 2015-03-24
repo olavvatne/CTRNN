@@ -1,6 +1,5 @@
 import numpy as np
 
-
 class FeedForwardNet:
 
     SIGMOID = "sigmoid"
@@ -11,10 +10,10 @@ class FeedForwardNet:
         self.sizes = sizes
 
         if activation == FeedForwardNet.SIGMOID:
-            print("SIGMOID")
+            #print("SIGMOID")
             self.activation = np.vectorize(sigmoid)
         else:
-            print("TANH")
+            #print("TANH")
             self.activation = np.vectorize(tanh)
         self.biases = [np.random.randn(y) for y in sizes[1:]]
         weight_matrix_sizes = zip(sizes[:-1], sizes[1:])
