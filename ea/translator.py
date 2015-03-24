@@ -3,7 +3,7 @@ import sys
 
 import numpy as np
 
-from ea.phenotype import IntegerPhenotype
+from ea.phenotype import IntegerPhenotype, FeedForwardWeightsPhenotype
 from config.configuration import Configuration
 
 
@@ -55,8 +55,14 @@ class BinToWeightTranslator(AbstractTranslator):
     binary vector only increase or decrease the integer by 1.
     '''
 
-    def __init__(self, k=8):
+    def __init__(self, k=8, layers=[6,3,3]):
         self.k = k
+        self.layers = layers
+        print("INIT: ", self.layers)
+        self.weight_sizes  =  list(zip(layers[:-1], layers[1:]))
+        print("INIT: ", list(self.weight_sizes))
+        print("Number of weights ", sum([x*y for x, y in self.weight_sizes]))
+
 
     def develop(self, individual):
         '''
@@ -64,11 +70,24 @@ class BinToWeightTranslator(AbstractTranslator):
         The k variable decide the number granularity.
         '''
         #TODO: Integer for now, should probably be between 0-1 or -1 or 1.
+
         p = individual.genotype_container.genotype
 
         #Use gray encoding so that a bit change will not
-        phenotype = [(self._g2i(p[i:i + self.k])) for i in range(0, len(p), self.k)]
-        return IntegerPhenotype(np.array(phenotype))
+        weight_numbers = [(self._g2i(p[i:i + self.k])) for i in range(0, len(p), self.k)]
+        weight_structure = [np.empty([x, y]) for x, y in  self.weight_sizes]
+        phenotype = self._transfer(weight_numbers, weight_structure)
+        return FeedForwardWeightsPhenotype(phenotype, layers=self.layers)
+
+    def _transfer(self, phenotype, weight_structure):
+        #TODO: Better way?
+        n = 0
+        for w in weight_structure:
+            for i in range(len(w)):
+                for j in range(len(w[i])):
+                    w[i][j] = phenotype[n]
+                    n += 1
+        return weight_structure
 
 
     def _g2i(self, l):
