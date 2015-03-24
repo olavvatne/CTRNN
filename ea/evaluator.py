@@ -106,5 +106,5 @@ class FlatlandsAgentFitnessEvaluator(AbstractFitnessEvaluator):
         '''
         p = individual.phenotype_container.get_ANN()
         scoring = [e.score_agent(p) for e in self.scenarios]
-        score = sum(fs-(0.5*ps) for fs, ps in scoring)/len(self.scenarios)
+        score = sum(fs-(0.3*ps) for fs, ps in scoring)/len(self.scenarios)
         return score

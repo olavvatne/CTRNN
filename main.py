@@ -5,7 +5,7 @@ import threading
 import matplotlib.animation as animation
 
 from config.configuration import Configuration
-from gui.elements import Graph, LabelledEntry, LabelledSelect, ConfigurationDialog
+from gui.elements import Graph, LabelledEntry, LabelledSelect, ConfigurationDialog, ResultDialog
 from ea.ea import EA
 import cProfile
 
@@ -138,15 +138,19 @@ def run_ea(*args):
         pop_size = int(app.elements["population_size"].get())
         gen = int(app.elements["generations"].get())
         threshold = app.elements["threshold"].get_special()
-        ea_system.run(pop_size, gen, threshold)
+        best = ea_system.run(pop_size, gen, threshold)
         app.progress.stop()
         app.graph.dump()
+        show_result(best)
+
 
     t = threading.Thread(target=callback)
     t.daemon = True
     t.start()
 
 
+def show_result(individual):
+    result_dialog = ResultDialog(app, individual)
 
 def on_exit(*args):
     '''

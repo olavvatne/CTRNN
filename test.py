@@ -7,8 +7,8 @@ class Listner:
 
 genome_length = 432
 pop_size = 10
-gen = 40
-threshold = 20
+gen = 1
+threshold = 30
 ea_system = EA()
 listner = Listner()
 ea_system.add_listener(listner)

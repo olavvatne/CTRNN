@@ -79,6 +79,7 @@ class EA(object):
         #Final update
         self.best_individual = max(self.adult_pool, key=lambda a: a.fitness)
         self.send_update(c+1, cycles, self.best_individual)
+        return self.best_individual
         print("-------------------------")
 
     def stop(self):
