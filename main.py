@@ -5,7 +5,8 @@ import threading
 import matplotlib.animation as animation
 
 from config.configuration import Configuration
-from gui.elements import Graph, LabelledEntry, LabelledSelect, ConfigurationDialog, ResultDialog
+from gui.elements import Graph, LabelledEntry, LabelledSelect, ConfigurationDialog
+from gui.visualization import ResultDialog
 from ea.ea import EA
 import cProfile
 
@@ -150,7 +151,8 @@ def run_ea(*args):
 
 
 def show_result(individual):
-    result_dialog = ResultDialog(app, individual)
+    config = Configuration.get()
+    result_dialog = ResultDialog(app, individual, config)
 
 def on_exit(*args):
     '''

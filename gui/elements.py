@@ -201,18 +201,3 @@ class LabelledEntry(Frame):
             return False
 
 
-class ResultDialog(object):
-    '''
-
-    '''
-    def __init__(self, parent, individual):
-
-        top = self.top = Toplevel(parent)
-        top.title("Flatlands - results")
-
-        b = Button(top, text="OK", command=self.ok)
-        b.pack(pady=5)
-
-    def ok(self):
-        self.update()
-        self.top.destroy()
