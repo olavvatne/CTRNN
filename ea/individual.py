@@ -36,4 +36,4 @@ class Individual(object):
         return Individual(self.genotype_container, self.translator)
 
     def __repr__(self):
-        return "F: " +str(self.fitness) +" G:" + str(self.genotype_container)
+        return "F: " +str(self.fitness) #+" G:" + str(self.genotype_container)

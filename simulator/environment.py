@@ -23,13 +23,14 @@ class Environment:
         self.agent_x = agent_start_pos[1]
         self.agent_y = agent_start_pos[0]
         self.agent_dir = Environment.NORTH
+        self.recording = []
         self.poison = 0
         self.food = 0
         self.dim = dim
         self.board[self.agent_y, self.agent_x] = Environment.EMPTY
         #Food and poision removed from agent's start position
 
-    def score_agent(self, agent, timesteps=60):
+    def init_scoring(self):
         b = np.empty_like (self.board)
         b[:] = self.board
         #TODO: Might consider using a structure to keep track of changes made
@@ -39,6 +40,14 @@ class Environment:
         y = self.agent_y
         x = self.agent_x
         dir = self.agent_dir
+        return b, y, x, dir
+
+    def score_agent(self, agent, timesteps=60):
+        b, y, x, dir = self.init_scoring()
+
+        #TODO: Create a record method? And not dilute score agent
+        self.recording = []
+        self.recording.append((x,y,dir))
         for i in range(timesteps):
 
             #Senor gathering
@@ -56,9 +65,21 @@ class Environment:
                 m = 1
 
             #Update scoring and environment
+            self.recording.append((x,y,(dir+m)%4))
             y,x,dir = self._move_agent(y, x, (dir+m)%4, b)
         #print("Score: ", self.food, self.poison)
         return (self.food, self.poison)
+
+    def get_recording(self):
+        b = np.empty_like (self.board)
+        b[:] = self.board
+        rec = []
+        for x,y, dir in self.recording:
+            a = np.empty_like (b)
+            a[:] = b
+            rec.append((x,y, dir, a))
+            self._move_agent(y,x, dir, b)
+        return rec
 
     def _move_agent(self, y,x, dir, b):
         #print("dir", dir)

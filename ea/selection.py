@@ -21,6 +21,15 @@ class AbstractAdultSelection(metaclass=ABCMeta):
     All adult selectors must inherit from AbstractAdultSelection, implement the select method and
     be registered in config.json to be acceptable as a adult selection class.
     '''
+    def __init__(self):
+        self.elitism = True
+        #TODO: parameterize elitism
+        self.best = None
+
+    def set_best(self, adults):
+        print(adults)
+        self.best = max(adults, key=lambda a: a.fitness)
+
     @abstractmethod
     def select(self, adults, children):
         pass
@@ -33,6 +42,7 @@ class FullReplacementAdultSelection(AbstractAdultSelection):
     '''
 
     def select(self, adults, children, m):
+        self.set_best(adults)
         return children[:m]
 
 
@@ -43,6 +53,7 @@ class OverProductionAdultSelection(AbstractAdultSelection):
     '''
 
     def select(self, adults, children, m):
+        self.set_best(adults)
         adult_pool = sorted(children, key=lambda child:child.fitness, reverse=True)
         return adult_pool[:m]
 
@@ -54,6 +65,7 @@ class MixingAdultSelection(AbstractAdultSelection):
     '''
 
     def select(self, adults, children, m):
+        self.set_best(adults)
         mix = adults + children
         adult_pool = sorted(mix, key=lambda individual:individual.fitness, reverse=True)
         return adult_pool[:m]

@@ -14,7 +14,7 @@ class EA(object):
     #a setup type of method that configure the EA before running. Drop down with alternatives in gui, pop size etc d
     #decided by other gui elements
 
-    EVENT_RATE = 3
+    EVENT_RATE = 10
 
     def __init__(self):
         self.is_stopping = False
@@ -56,7 +56,7 @@ class EA(object):
             raise RuntimeError("Cannot run EA. Lack necessary objects")
 
         children = self.create_population(population_size)  #Inital population
-        self.adult_pool = []
+        self.adult_pool = children
 
         for c in range(cycles):
 
@@ -65,6 +65,9 @@ class EA(object):
             self.adult_pool = self.adult_selector.select(self.adult_pool, children, population_size)
             mating_adults = self.parent_selector.select_mating_pool(self.adult_pool, population_size, t=1-(c/cycles))
             children = self.reproduce(mating_adults)
+            #TODO: CORRECT ELITISM IMPLEMENTATION. FITNESS REEVALUATED?
+            children.append(self.adult_selector.best)
+            self.adult_pool.append(self.adult_selector.best)
 
             #Check stopping condition, and gui update below
             self.best_individual = max(self.adult_pool, key=lambda a: a.fitness)

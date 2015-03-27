@@ -1,94 +1,94 @@
 {
+    "fitness": {
+        "default": {
+            "parameters": {
+                "random_target": false
+            },
+            "class_name": "DefaultFitnessEvaluator",
+            "name": "Fraction",
+            "order": 2
+        },
+        "flatlands": {
+            "parameters": {
+                "dynamic": true,
+                "grid_dimension": 10,
+                "number_of_scenarios": 5
+            },
+            "class_name": "FlatlandsAgentFitnessEvaluator",
+            "name": "Flatland agent",
+            "order": 1
+        }
+    },
     "parent_selection": {
+        "sigma": {
+            "parameters": {},
+            "class_name": "ParentSigmaScalingSelection",
+            "name": "Sigma scaling",
+            "order": 2
+        },
+        "proportionate": {
+            "parameters": {},
+            "class_name": "ParentFitnessProportionateSelection",
+            "name": "Proportionate scaling",
+            "order": 1
+        },
         "tournament": {
-            "name": "Local tournament",
             "parameters": {
                 "k": 4,
                 "e": 0.005
             },
             "class_name": "ParentTournamentSelection",
+            "name": "Local tournament",
             "order": 4
         },
-        "proportionate": {
-            "name": "Proportionate scaling",
-            "parameters": {},
-            "class_name": "ParentFitnessProportionateSelection",
-            "order": 1
-        },
-        "sigma": {
-            "name": "Sigma scaling",
-            "parameters": {},
-            "class_name": "ParentSigmaScalingSelection",
-            "order": 2
-        },
         "boltzmann": {
-            "name": "Boltzmann scaling",
             "parameters": {},
             "class_name": "ParentBoltzmannSelection",
+            "name": "Boltzmann scaling",
             "order": 3
-        }
-    },
-    "fitness": {
-        "default": {
-            "name": "Fraction",
-            "parameters": {
-                "random_target": false
-            },
-            "class_name": "DefaultFitnessEvaluator",
-            "order": 1
-        },
-        "flatlands": {
-            "name": "Flatland agent",
-            "parameters": {
-                "dynamic": false,
-                "number_of_scenarios": 5,
-                "grid_dimension": 10
-            },
-            "class_name": "FlatlandsAgentFitnessEvaluator",
-            "order": 2
         }
     },
     "genotype": {
         "default": {
-            "name": "Bit Vector",
             "parameters": {
-                "crossover_rate": 0.65,
-                "mutation_rate": 0.1
+                "mutation_rate": 0.1,
+                "crossover_rate": 0.65
             },
             "class_name": "BitVectorGenotype",
-            "order": 1
-        }
-    },
-    "adult_selection": {
-        "mixing": {
-            "name": "Generational mixing",
-            "class_name": "MixingAdultSelection",
-            "order": 3
-        },
-        "over": {
-            "name": "Over production",
-            "class_name": "OverProductionAdultSelection",
-            "order": 2
-        },
-        "full": {
-            "name": "Full replacement",
-            "class_name": "FullReplacementAdultSelection",
+            "name": "Bit Vector",
             "order": 1
         }
     },
     "translator": {
         "default": {
-            "name": "Bit to bit",
             "parameters": {},
             "class_name": "DefaultTranslator",
-            "order": 1
+            "name": "Bit to bit",
+            "order": 2
         },
         "weights": {
-            "name": "Bit to int",
             "parameters": {
                 "k": 8
             },
             "class_name": "BinToWeightTranslator",
+            "name": "Bit to int",
+            "order": 1
+        }
+    },
+    "adult_selection": {
+        "full": {
+            "class_name": "FullReplacementAdultSelection",
+            "name": "Full replacement",
+            "order": 1
+        },
+        "mixing": {
+            "class_name": "MixingAdultSelection",
+            "name": "Generational mixing",
+            "order": 3
+        },
+        "over": {
+            "class_name": "OverProductionAdultSelection",
+            "name": "Over production",
             "order": 2
         }
     }
