@@ -22,6 +22,7 @@ class PixelDisplay(Canvas):
         self.parent = parent
         self.offset = 1
         self.event_rate = 400
+        self._callback_id = None
         super().__init__(parent, bg='white', width=self.width, height=self.height, highlightthickness=0)
 
     def set_rate(self, n):
@@ -54,7 +55,7 @@ class PixelDisplay(Canvas):
 
 
         if not self.stopped or len(self.queue) > 0:
-            self.after(self.event_rate, self.draw)
+            self._callback_id =self.after(self.event_rate, self.draw)
 
     def colorize_item(self, item, color):
         self.itemconfig(item, fill=color)
@@ -81,6 +82,7 @@ class PixelDisplay(Canvas):
         self.draw()
 
     def stop(self):
+        self.after_cancel(self._callback_id)
         self.stopped = True
 
     #The actual x position of the graph element on screen
@@ -134,17 +136,9 @@ class PixelDisplay(Canvas):
         self.min_y = min_y
         self.min_x = min_x
 
-    #If window is resized all elements in canvas are scaled up/down
-    #along with the window. A new width and height and padding is set.
-    #Done so display stays consistent if new model is set.
-    def on_resize(self,event):
-        wscale = float(event.width)/self.width
-        hscale = float(event.height)/self.height
-        self.width = event.width
-        self.height = event.height
-        self.padding = int(self.width/64)
-        self.config(width=self.width, height=self.height)
-        self.scale("all",0,0,wscale,wscale)
+    def set_queue(self, data):
+        self.queue.clear()
+        self.queue.extend(data)
 
     def event(self, data):
         self.queue.append(data)
@@ -184,14 +178,8 @@ class FlatlandsDisplay(PixelDisplay):
         #self.draw_label( x,y, 1,1, str(piece_id), t=piece_id)
 
     def _get_color(self, type):
-        if type == 1:
-            return "green"
-        elif type == 2:
-            return "red"
-        elif type ==3:
-            return "blue"
-        return "black"
-
+        c = {1:"green", 2:"red", 3:"blue"}
+        return c.get(type)
 
 class ResultDialog(object):
     '''
@@ -209,24 +197,30 @@ class ResultDialog(object):
         self.canvas = FlatlandsDisplay(top, dim)
         self.canvas.set_model(self.scenario)
         self.canvas.pack(pady=5)
-        v = StringVar()
-        def callback(*args):
-            self.canvas.set_rate(int(v.get()))
-
-        w = Scale(top, from_=200, to=1000, command=callback,orient=HORIZONTAL, variable=v)
-        w.pack()
+        self.v = StringVar()
+        w = Scale(top, from_=200, to=1000, command=self.set_speed,orient=HORIZONTAL, variable=self.v)
+        w.pack(side=LEFT)
         w.set(400)
+        r = Button(top, text="Start again", command=self.reset)
+        r.pack()
         b = Button(top, text="OK", command=self.ok)
-        b.pack(pady=5)
+        b.pack(pady=5, side=RIGHT)
         self.record_agent()
+
+    def reset(self):
+        self.canvas.stop()
+        self.canvas.set_queue(self.recording)
+        self.canvas.start()
+        pass
+
+    def set_speed(self, *args):
+        self.canvas.set_rate(int(self.v.get()))
 
     def record_agent(self):
         p = self.individual.phenotype_container.get_ANN()
         self.scenario.score_agent(p, 60)
-        recording = self.scenario.get_recording()
-        print(recording)
-        for t in recording:
-            self.canvas.event(t)
+        self.recording = self.scenario.get_recording()
+        self.canvas.set_queue(self.recording)
         self.canvas.start()
 
     def ok(self):

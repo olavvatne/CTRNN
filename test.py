@@ -20,7 +20,7 @@ translator = "weights"
 fitness = "flatlands"
 genotype = "default"
 adult = "full"
-parent = "sigma"
+parent = "tournament"
 
 ea_system.setup(translator,fitness,genotype,adult,parent,genome_length)
 

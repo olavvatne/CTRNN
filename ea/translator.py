@@ -56,7 +56,7 @@ class BinToWeightTranslator(AbstractTranslator):
     binary vector only increase or decrease the integer by 1.
     '''
 
-    def __init__(self, k=8, layers=[6,6 ,3]):
+    def __init__(self, k=8, layers=[6,3,3]):
         self.k = k
         self.nr_of_values = 2**k
         self.half = 0.5

@@ -36,4 +36,4 @@ class FeedForwardWeightsPhenotype(AbstractPhenotype):
         return self.ann
 
     def __repr__(self):
-        return str(self.phenotype)
+        return str(len(self.phenotype))

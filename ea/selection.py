@@ -27,7 +27,6 @@ class AbstractAdultSelection(metaclass=ABCMeta):
         self.best = None
 
     def set_best(self, adults):
-        print(adults)
         self.best = max(adults, key=lambda a: a.fitness)
 
     @abstractmethod

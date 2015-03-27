@@ -52,7 +52,7 @@
         "default": {
             "parameters": {
                 "mutation_rate": 0.1,
-                "crossover_rate": 0.65
+                "crossover_rate": 0.75
             },
             "class_name": "BitVectorGenotype",
             "name": "Bit Vector",
@@ -68,7 +68,7 @@
         },
         "weights": {
             "parameters": {
-                "k": 8
+                "k": 16
             },
             "class_name": "BinToWeightTranslator",
             "name": "Bit to int",
