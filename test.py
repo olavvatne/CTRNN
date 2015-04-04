@@ -2,15 +2,33 @@ from ea.ea import EA
 from tkinter import *
 from config.configuration import  Configuration
 from gui.visualization import ResultDialog
+import numpy as np
+from simulator.environment import Environment
 import cProfile
 
 class Listner:
     def update(self, c, p, cf, bf, std):
             pass
 
+def debug_ann(ann):
+    while(True):
+        txt = input('Test ANN:')
+        if txt == 'q':
+            break
+        numbers = np.array([int(x) for x in txt.split(sep=" ")])
+        print(numbers)
+        a = ann.feedforward(numbers)
+        print(a)
+        action = np.argmax(a)
+        if(action == Environment.MOVE_LEFT):
+            print("LEFT")
+        elif(action==Environment.MOVE_FORWARD):
+            print("FORWARD")
+        elif(action==Environment.MOVE_RIGHT):
+            print("RIGHT")
 
-genome_length = 432
-pop_size = 20
+genome_length = 144
+pop_size = 40
 gen = 100
 threshold = 30
 ea_system = EA()
@@ -20,15 +38,22 @@ translator = "weights"
 fitness = "flatlands"
 genotype = "default"
 adult = "full"
-parent = "tournament"
+parent = "sigma"
 
 ea_system.setup(translator,fitness,genotype,adult,parent,genome_length)
 
 best = ea_system.run(pop_size, gen, threshold)
+s = ea_system.fitness_evaluator.scenarios
 root = Tk()
 f = Frame(master=root)
 config = Configuration.get()
-result_dialog = ResultDialog(f, best, config)
+ann = best.phenotype_container.get_ANN()
+print(ann.weights)
+print(ann.biases)
+debug_ann(ann)
+result_dialog = ResultDialog(f, best, s, config)
 root.mainloop()
+
+
 #cProfile.run('ea_system.run(pop_size, gen, threshold)', sort='cumtime')
 #ea_system.run(pop_size, gen, threshold)

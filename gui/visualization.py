@@ -185,12 +185,17 @@ class ResultDialog(object):
     '''
 
     '''
-    def __init__(self, parent, individual, config):
+    def __init__(self, parent, individual, scenarios, config):
         self.config = config
         self.individual = individual
+        self.s = scenarios
         #TODO: Generate a new scenario. But what to do for static?
         dim = self.config["fitness"]["flatlands"]["parameters"]["grid_dimension"]
-        self.scenario = Environment(dim)
+        dynamic = self.config["fitness"]["flatlands"]["parameters"]["dynamic"]
+        if dynamic:
+            self.scenario = Environment(dim)
+        else:
+            self.scenario = scenarios[0]
 
         top = self.top = Toplevel(parent)
         top.title("Flatlands - results")
@@ -220,6 +225,7 @@ class ResultDialog(object):
         p = self.individual.phenotype_container.get_ANN()
         self.scenario.score_agent(p, 60)
         self.recording = self.scenario.get_recording()
+        print(self.recording)
         self.canvas.set_queue(self.recording)
         self.canvas.start()
 

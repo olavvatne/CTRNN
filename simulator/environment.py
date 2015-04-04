@@ -44,10 +44,10 @@ class Environment:
 
     def score_agent(self, agent, timesteps=60):
         b, y, x, dir = self.init_scoring()
-
+        #print("SCORE ------------------------------------")
         #TODO: Create a record method? And not dilute score agent
         self.recording = []
-        self.recording.append((x,y,dir))
+
         for i in range(timesteps):
 
             #Senor gathering
@@ -55,18 +55,23 @@ class Environment:
             poison_sensors = self._get_sensor_data(y,x,dir, b, Environment.POISON)
             #Motor output
             motor_output = agent.feedforward(np.array(food_sensors + poison_sensors, dtype=np.int32))
-            i = np.argmax(motor_output)
-            m = 0
-            if i == Environment.MOVE_LEFT:
-                #print("MOVE LEFT")
-                m = -1
-            elif i == Environment.MOVE_RIGHT:
-                #print("MOVE RIGHT")
-                m = 1
+            #print("Motor", motor_output)
+            winning_output = np.argmax(motor_output)
+            #print("FOOD", food_sensors)
+            #print("POISON", poison_sensors)
+            #print(i ,motor_output)
+            if motor_output[winning_output] > 0.5:
+                m = 0
+                if winning_output == Environment.MOVE_LEFT:
+                    #print("MOVE LEFT")
+                    m = -1
+                elif winning_output == Environment.MOVE_RIGHT:
+                    #print("MOVE RIGHT")
+                    m = 1
 
-            #Update scoring and environment
-            self.recording.append((x,y,(dir+m)%4))
-            y,x,dir = self._move_agent(y, x, (dir+m)%4, b)
+                #Update scoring and environment
+                self.recording.append((x,y,(dir+m)%4))
+                y,x,dir = self._move_agent(y, x, (dir+m)%4, b)
         #print("Score: ", self.food, self.poison)
         return (self.food, self.poison)
 

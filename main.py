@@ -142,7 +142,9 @@ def run_ea(*args):
         best = ea_system.run(pop_size, gen, threshold)
         app.progress.stop()
         app.graph.dump()
-        show_result(best)
+        #TODO: Make general. EA, get method that ask each component for important shit
+        #TODO: that subclasses are in charge of
+        show_result(best, ea_system.fitness_evaluator.scenarios)
 
 
     t = threading.Thread(target=callback)
@@ -150,9 +152,9 @@ def run_ea(*args):
     t.start()
 
 
-def show_result(individual):
+def show_result(individual, scenarios):
     config = Configuration.get()
-    result_dialog = ResultDialog(app, individual, config)
+    result_dialog = ResultDialog(app, individual, scenarios, config)
 
 def on_exit(*args):
     '''

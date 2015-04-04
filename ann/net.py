@@ -15,7 +15,8 @@ class FeedForwardNet:
         else:
             #print("TANH")
             self.activation = np.vectorize(tanh)
-        self.biases = [np.random.randn(y) for y in sizes[1:]]
+        #self.biases = [np.random.randn(y) for y in sizes[1:]]
+        self.biases = [np.ones(y) for y in sizes[1:]]
         weight_matrix_sizes = zip(sizes[:-1], sizes[1:])
         self.weights = [np.random.randn(y, x) for x, y in weight_matrix_sizes]
 
