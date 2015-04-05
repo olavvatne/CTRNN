@@ -164,7 +164,7 @@ class FlatlandsDisplay(PixelDisplay):
 
     def draw_model(self, timeslice):
         if timeslice:
-            x,y,dir,b = timeslice
+            t, x,y,dir,b = timeslice
             self.delete("Piece")
             for i in range(self.dim):
                 for j in range(self.dim):
@@ -173,6 +173,7 @@ class FlatlandsDisplay(PixelDisplay):
                         self.draw_piece("Piece", j, i, tile)
             self.draw_piece("Piece", x,y, 3)
             self.draw_direction("Piece", x, y, dir)
+            self.create_text(20, 20, font=("Arial",20), text=str(t+1), fill="white", tags="Piece")
 
     def draw_direction(self,id,  tx, ty ,dir):
         x = self.translate_x(tx)
