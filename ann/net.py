@@ -10,10 +10,8 @@ class FeedForwardNet:
         self.sizes = sizes
 
         if activation == FeedForwardNet.SIGMOID:
-            #print("SIGMOID")
             self.activation = np.vectorize(sigmoid)
         else:
-            #print("TANH")
             self.activation = np.vectorize(tanh)
         #self.biases = [np.random.randn(y) for y in sizes[1:]]
         self.biases = [np.ones(y) for y in sizes[1:]]

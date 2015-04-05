@@ -15,21 +15,24 @@ def debug_ann(ann):
         txt = input('Test ANN:')
         if txt == 'q':
             break
-        numbers = np.array([int(x) for x in txt.split(sep=" ")])
-        print(numbers)
-        a = ann.feedforward(numbers)
-        print(a)
-        action = np.argmax(a)
-        if(action == Environment.MOVE_LEFT):
-            print("LEFT")
-        elif(action==Environment.MOVE_FORWARD):
-            print("FORWARD")
-        elif(action==Environment.MOVE_RIGHT):
-            print("RIGHT")
+        try:
+            numbers = np.array([int(x) for x in txt.split(sep=" ")])
+            print(numbers)
+            a = ann.feedforward(numbers)
+            print(a)
+            action = np.argmax(a)
+            if(action == Environment.MOVE_LEFT):
+                print("LEFT")
+            elif(action==Environment.MOVE_FORWARD):
+                print("FORWARD")
+            elif(action==Environment.MOVE_RIGHT):
+                print("RIGHT")
+        except:
+            print("Not valid!")
 
 genome_length = 144
 pop_size = 40
-gen = 100
+gen = 10
 threshold = 30
 ea_system = EA()
 listner = Listner()

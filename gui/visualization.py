@@ -4,6 +4,7 @@ from tkinter import *
 from tkinter import ttk
 from enum import Enum
 from math import fabs, floor
+from gui.elements import LabelledSelect
 from collections import deque
 
 #Subclass of the tkinters Canvas object. Contains methods
@@ -171,7 +172,22 @@ class FlatlandsDisplay(PixelDisplay):
                     if tile > 0:
                         self.draw_piece("Piece", j, i, tile)
             self.draw_piece("Piece", x,y, 3)
+            self.draw_direction("Piece", x, y, dir)
 
+    def draw_direction(self,id,  tx, ty ,dir):
+        x = self.translate_x(tx)
+        y = self.translate_y(ty)
+        x2 = self.translate_x(tx+1)
+        y2 = self.translate_y(ty+1)
+
+        if dir == Environment.WEST:
+            self.create_line(x, (y+y2)/2,(x+x2)/2 ,(y+y2)/2, tags=id, fill="#F5C60A", width=3)
+        elif dir == Environment.NORTH:
+            self.create_line((x+x2)/2, y,(x+x2)/2 ,(y+y2)/2, tags=id, fill="#F5C60A", width=3)
+        elif dir == Environment.SOUTH:
+            self.create_line((x+x2)/2, y2,(x+x2)/2 ,(y+y2)/2, tags=id, fill="#F5C60A", width=3)
+        else:
+            self.create_line((x+x2)/2, (y+y2)/2, x2 ,(y+y2)/2, tags=id, fill="#F5C60A", width=3)
 
     def draw_piece(self, piece_id, x, y, piece_type):
         self.draw_rounded(x,y, 1, 1,  self._get_color(piece_type), padding=8, line=self.bg, tags=piece_id)
@@ -203,13 +219,15 @@ class ResultDialog(object):
         self.canvas.set_model(self.scenario)
         self.canvas.pack(pady=5)
         self.v = StringVar()
-        w = Scale(top, from_=200, to=1000, command=self.set_speed,orient=HORIZONTAL, variable=self.v)
-        w.pack(side=LEFT)
-        w.set(400)
-        r = Button(top, text="Start again", command=self.reset)
-        r.pack()
-        b = Button(top, text="OK", command=self.ok)
-        b.pack(pady=5, side=RIGHT)
+        speed_adjuster = Scale(top, from_=200, to=1000, command=self.set_speed,orient=HORIZONTAL, variable=self.v)
+        speed_adjuster.pack(side=LEFT)
+        speed_adjuster.set(400)
+        scenario_select = LabelledSelect(top, [{"test": "ok"}], "Scenario")
+        scenario_select.pack()
+        restart_button = Button(top, text="Start again", command=self.reset)
+        restart_button.pack()
+        finish_button = Button(top, text="OK", command=self.ok)
+        finish_button.pack(pady=5, side=RIGHT)
         self.record_agent()
 
     def reset(self):
