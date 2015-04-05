@@ -206,43 +206,68 @@ class ResultDialog(object):
         self.individual = individual
         self.s = scenarios
         #TODO: Generate a new scenario. But what to do for static?
-        dim = self.config["fitness"]["flatlands"]["parameters"]["grid_dimension"]
+        self.dim = self.config["fitness"]["flatlands"]["parameters"]["grid_dimension"]
         dynamic = self.config["fitness"]["flatlands"]["parameters"]["dynamic"]
         if dynamic:
-            self.scenario = Environment(dim)
+            self.scenarios = [Environment(self.dim)]
+            self.current = self.scenarios[0]
         else:
-            self.scenario = scenarios[0]
+            self.scenarios = scenarios
+            self.current = self.scenarios[0]
 
         top = self.top = Toplevel(parent)
         top.title("Flatlands - results")
-        self.canvas = FlatlandsDisplay(top, dim)
-        self.canvas.set_model(self.scenario)
-        self.canvas.pack(pady=5)
+        top.grid()
+        self.canvas = FlatlandsDisplay(top, self.dim)
+        self.canvas.set_model(self.current)
+        self.canvas.grid(row=0, column=0, columnspan=5, sticky=N ,padx=4, pady=4)
+
         self.v = StringVar()
         speed_adjuster = Scale(top, from_=200, to=1000, command=self.set_speed,orient=HORIZONTAL, variable=self.v)
-        speed_adjuster.pack(side=LEFT)
         speed_adjuster.set(400)
-        scenario_select = LabelledSelect(top, [{"test": "ok"}], "Scenario")
-        scenario_select.pack()
-        restart_button = Button(top, text="Start again", command=self.reset)
-        restart_button.pack()
+        speed_adjuster.grid(row=1, column=0,padx=4, pady=4)
+
+        self.scenario_select = LabelledSelect(top, list(range(len(self.scenarios)+1)), "Scenario", command=self.change_scenario)
+        self.scenario_select.grid(row=1, column=1,padx=4, pady=4)
+
+        restart_button = Button(top, text="Restart", command=self.reset)
+        restart_button.grid(row=1, column=4,padx=4, pady=4)
+
+        new_button = Button(top, text="New scenario", command=self.new_scenario)
+        new_button.grid(row=1, column=2,padx=4, pady=4)
+
         finish_button = Button(top, text="OK", command=self.ok)
-        finish_button.pack(pady=5, side=RIGHT)
+        finish_button.grid(row=2, column=4,padx=4, pady=10)
+
         self.record_agent()
 
     def reset(self):
         self.canvas.stop()
         self.canvas.set_queue(self.recording)
         self.canvas.start()
-        pass
+
 
     def set_speed(self, *args):
         self.canvas.set_rate(int(self.v.get()))
 
+    def new_scenario(self):
+        self.scenarios.append(Environment(self.dim))
+        self.scenario_select.add_option(len(self.scenarios))
+        self.canvas.stop()
+        self.change_scenario(len(self.scenarios))
+
+    def change_scenario(self, picked):
+        print(picked)
+        self.current = self.scenarios[picked-1]
+        self.canvas.set_model(self.current)
+        self.canvas.stop()
+        self.record_agent()
+
+
     def record_agent(self):
         p = self.individual.phenotype_container.get_ANN()
-        self.scenario.score_agent(p, 60)
-        self.recording = self.scenario.get_recording()
+        self.current.score_agent(p, 60)
+        self.recording = self.current.get_recording()
         print(self.recording)
         self.canvas.set_queue(self.recording)
         self.canvas.start()

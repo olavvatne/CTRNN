@@ -131,18 +131,24 @@ class LabelledSelect(Frame):
     get method.
     '''
     def __init__(self, parent, options, label_text, *args, **kwargs):
+        command = {}
+        if "command" in kwargs:
+            command["command"] = kwargs["command"]
+            del kwargs["command"]
         Frame.__init__(self, parent, *args, **kwargs)
         self.label = Label(self, text=label_text)
         self.selected = StringVar(self)
         self.selected.set(options[0])
-        self.option_select = OptionMenu(self, self.selected, *options)
+        self.option_select = OptionMenu(self, self.selected, *options, **command)
         self.option_select.pack(side="right", anchor=E)
         self.label.pack(side="left", anchor=W, expand=True)
 
     def get(self):
         return self.selected.get()
 
-
+    def add_option(self, option):
+        menu = self.option_select["menu"]
+        menu.add_command(label=str(option), command=lambda value=option:self.selected.set(str(option)))
 class LabelledEntry(Frame):
     '''
     LabelledEntry created a gui component consisting of a label and an entry box. Numbers and text

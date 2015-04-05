@@ -32,7 +32,7 @@ def debug_ann(ann):
 
 genome_length = 144
 pop_size = 40
-gen = 10
+gen = 1
 threshold = 30
 ea_system = EA()
 listner = Listner()
