@@ -51,12 +51,17 @@ class DefaultTranslator(AbstractTranslator):
 
 class BinToWeightTranslator(AbstractTranslator):
     '''
-    BinToIntTranslator takes a binary vector genotype and transform it to an integer phenotype by
-    using gray decoding. This translator is also very suitable for integers, since a bit flip of the
-    binary vector only increase or decrease the integer by 1.
+    BinToWeightTranslator takes a binary vector genotype and transform it to an weight phenotype by
+    using gray decoding. This translator is also very suitable for weights, since a bit flip of the
+    binary vector only increase or decrease the weight by a small amount.
     '''
 
     def __init__(self, k=8, layers=[6,3]):
+        '''
+        The init use arguments from configuration that tells how many bits to use per weights. For example 8 bits will
+        give 256 values between 0 and 1. Layers is a list instructing the ANN of how many neurons per layer. There has to
+        be at least to layers. Input and output. A user determined number of hidden layers can be used.
+        '''
         self.k = k
         self.nr_of_values = 2**k
         self.half = 1
@@ -69,9 +74,9 @@ class BinToWeightTranslator(AbstractTranslator):
     def develop(self, individual):
         '''
         Develop split binary vector into sub vectors that are decoded using gray codes to a integer value.
-        The k variable decide the number granularity.
+        The k variable decide the number granularity. The integer is then divided by the total number of values
+        supported by the bit length.
         '''
-        #TODO: Integer for now, should probably be between 0-1 or -1 or 1.
 
         p = individual.genotype_container.genotype
 
@@ -83,7 +88,10 @@ class BinToWeightTranslator(AbstractTranslator):
         return FeedForwardWeightsPhenotype(phenotype, self.ann)
 
     def _transfer(self, phenotype, weight_structure):
-        #TODO: Better way?
+        '''
+        Transfer transform the weights from a linear list to match the layer structure of the ANN. The resulting
+        weight structure can then replace the existing weights in the ANN.
+        '''
         n = 0
         for w in weight_structure:
             for i in range(len(w)):

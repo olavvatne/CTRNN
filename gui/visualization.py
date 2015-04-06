@@ -200,7 +200,8 @@ class FlatlandsDisplay(PixelDisplay):
 
 class ResultDialog(object):
     '''
-
+    The flatlands agent can be visualized by the resultDialog. The dialog consists of a pixel display, speed adjuster,
+    restart button, scenario list box and a new scenario button.
     '''
     def __init__(self, parent, individual, scenarios, config):
         self.config = config

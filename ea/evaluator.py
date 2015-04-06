@@ -102,7 +102,9 @@ class FlatlandsAgentFitnessEvaluator(AbstractFitnessEvaluator):
 
     def evaluate(self, individual):
         '''
-        Returns a score that penalize poison and rewards food eating
+        Returns a score that penalize poison and rewards food eating. Eating poison is bad but is weighted slightly less
+        than eating food. The ANN is retrieved with the weights developed from the individuals genotype. The ANN is tested
+        on n scenarios. If the system is configured to dynamic new scenarios are made for each iteration.
         '''
         p = individual.phenotype_container.get_ANN()
         scoring = [e.score_agent(p) for e in self.scenarios]
