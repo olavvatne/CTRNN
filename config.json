@@ -1,70 +1,21 @@
 {
-    "genotype": {
+    "translator": {
+        "weights": {
+            "parameters": {
+                "k": 8
+            },
+            "order": 1,
+            "class_name": "BinToWeightTranslator",
+            "name": "Bit to int"
+        },
         "default": {
-            "order": 1,
-            "class_name": "BitVectorGenotype",
-            "parameters": {
-                "mutation_rate": 0.15,
-                "crossover_rate": 0.65
-            },
-            "name": "Bit Vector"
-        }
-    },
-    "parent_selection": {
-        "boltzmann": {
-            "order": 3,
-            "class_name": "ParentBoltzmannSelection",
             "parameters": {},
-            "name": "Boltzmann scaling"
-        },
-        "tournament": {
-            "order": 4,
-            "class_name": "ParentTournamentSelection",
-            "parameters": {
-                "e": 0.005,
-                "k": 4
-            },
-            "name": "Local tournament"
-        },
-        "proportionate": {
-            "order": 1,
-            "class_name": "ParentFitnessProportionateSelection",
-            "parameters": {},
-            "name": "Proportionate scaling"
-        },
-        "sigma": {
             "order": 2,
-            "class_name": "ParentSigmaScalingSelection",
-            "parameters": {},
-            "name": "Sigma scaling"
-        }
-    },
-    "fitness": {
-        "default": {
-            "order": 2,
-            "class_name": "DefaultFitnessEvaluator",
-            "parameters": {
-                "random_target": false
-            },
-            "name": "Fraction"
-        },
-        "flatlands": {
-            "order": 1,
-            "class_name": "FlatlandsAgentFitnessEvaluator",
-            "parameters": {
-                "grid_dimension": 10,
-                "dynamic": true,
-                "number_of_scenarios": 5
-            },
-            "name": "Flatland agent"
+            "class_name": "DefaultTranslator",
+            "name": "Bit to bit"
         }
     },
     "adult_selection": {
-        "full": {
-            "order": 1,
-            "class_name": "FullReplacementAdultSelection",
-            "name": "Full replacement"
-        },
         "over": {
             "order": 2,
             "class_name": "OverProductionAdultSelection",
@@ -74,22 +25,71 @@
             "order": 3,
             "class_name": "MixingAdultSelection",
             "name": "Generational mixing"
+        },
+        "full": {
+            "order": 1,
+            "class_name": "FullReplacementAdultSelection",
+            "name": "Full replacement"
         }
     },
-    "translator": {
-        "default": {
-            "order": 2,
-            "class_name": "DefaultTranslator",
+    "parent_selection": {
+        "boltzmann": {
             "parameters": {},
-            "name": "Bit to bit"
+            "order": 3,
+            "class_name": "ParentBoltzmannSelection",
+            "name": "Boltzmann scaling"
         },
-        "weights": {
+        "proportionate": {
+            "parameters": {},
             "order": 1,
-            "class_name": "BinToWeightTranslator",
+            "class_name": "ParentFitnessProportionateSelection",
+            "name": "Proportionate scaling"
+        },
+        "tournament": {
             "parameters": {
-                "k": 8
+                "k": 4,
+                "e": 0.005
             },
-            "name": "Bit to int"
+            "order": 4,
+            "class_name": "ParentTournamentSelection",
+            "name": "Local tournament"
+        },
+        "sigma": {
+            "parameters": {},
+            "order": 2,
+            "class_name": "ParentSigmaScalingSelection",
+            "name": "Sigma scaling"
+        }
+    },
+    "fitness": {
+        "default": {
+            "parameters": {
+                "random_target": false
+            },
+            "order": 2,
+            "class_name": "DefaultFitnessEvaluator",
+            "name": "Fraction"
+        },
+        "flatlands": {
+            "parameters": {
+                "number_of_scenarios": 5,
+                "dynamic": true,
+                "grid_dimension": 10
+            },
+            "order": 1,
+            "class_name": "FlatlandsAgentFitnessEvaluator",
+            "name": "Flatland agent"
+        }
+    },
+    "genotype": {
+        "default": {
+            "parameters": {
+                "mutation_rate": 0.15,
+                "crossover_rate": 0.65
+            },
+            "order": 1,
+            "class_name": "BitVectorGenotype",
+            "name": "Bit Vector"
         }
     }
 }

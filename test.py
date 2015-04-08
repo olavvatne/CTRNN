@@ -32,7 +32,7 @@ def debug_ann(ann):
 
 genome_length = 144
 pop_size = 40
-gen = 100
+gen = 2
 threshold = 30
 ea_system = EA()
 listner = Listner()
@@ -51,6 +51,7 @@ root = Tk()
 f = Frame(master=root)
 config = Configuration.get()
 ann = best.phenotype_container.get_ANN()
+print(ann.weights)
 debug_ann(ann)
 result_dialog = ResultDialog(f, best, s, config)
 root.mainloop()
