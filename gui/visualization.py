@@ -1,10 +1,6 @@
-from tkinter import Toplevel, Button
 from simulator.environment import Environment
 from tkinter import *
-from tkinter import ttk
-from enum import Enum
-from math import fabs, floor
-from gui.elements import LabelledSelect
+from math import fabs
 from collections import deque
 
 #Subclass of the tkinters Canvas object. Contains methods
