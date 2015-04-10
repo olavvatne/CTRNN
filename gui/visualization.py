@@ -154,7 +154,6 @@ class TrackerAgentDisplay(PixelDisplay):
 
     def draw_board(self):
         self.reset()
-        print("board_width", self.board_width)
         self.draw_pixel(0, 0, self.board_width, self.board_height, self.bg, tag="bg")
         for i in range(self.board_width):
             for j in range(self.board_height):
@@ -176,7 +175,6 @@ class TrackerAgentDisplay(PixelDisplay):
 
             #Draw object
             x,y,dim = object
-            print(object)
             for i in range(dim):
                 #TODO: remove magic number
                 self.draw_piece("Piece", x+i, y, 2)
@@ -215,7 +213,7 @@ class ResultDialog(object):
         self.canvas.grid(row=0, column=0, columnspan=5, sticky=(N,W,S,E) ,padx=4, pady=4)
 
         self.v = StringVar()
-        speed_adjuster = Scale(top, from_=200, to=1000, command=self.set_speed,orient=HORIZONTAL, variable=self.v)
+        speed_adjuster = Scale(top, from_=100, to=1000, command=self.set_speed,orient=HORIZONTAL, variable=self.v)
         speed_adjuster.set(400)
         speed_adjuster.grid(row=1, column=0,padx=4, pady=4)
 
@@ -242,7 +240,6 @@ class ResultDialog(object):
 
         self.scenario.score_agent(p, rec=True)
         self.recording = self.scenario.get_recording()
-        print(len(self.recording))
         self.canvas.set_queue(self.recording)
         self.canvas.start()
 
