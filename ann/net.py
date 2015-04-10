@@ -1,6 +1,6 @@
 import numpy as np
 
-class FeedForwardNet:
+class RecurrentNeuralNet:
     #TODO: Make recurrent network. links in loops, and integrate and fire, more advanced self.activation.
     '''
     Simple feed forward neural network. Does not support backpropagation, so weights have to be adjusted using
@@ -15,7 +15,7 @@ class FeedForwardNet:
         self.num_layers = len(sizes)
         self.sizes = sizes
 
-        if activation == FeedForwardNet.SIGMOID:
+        if activation == RecurrentNeuralNet.SIGMOID:
             self.activation = np.vectorize(sigmoid)
         else:
             self.activation = np.vectorize(tanh)
@@ -29,6 +29,10 @@ class FeedForwardNet:
         self.weights = weights
 
     def feedforward(self, a):
+        #TODO: how to incorporate activation levels etc.
+        #TODO: Need to rething, since activation levels must be kept between
+        #timsteps
+        #Probably store
         '''
          The feedforward method propagate the activation from input to output. and returns the activation of the
          output layer
@@ -46,3 +50,7 @@ def sigmoid(z):
 def tanh(x):
     return np.tanh(x)
 
+class CTRNNFactory:
+
+    def __init__(self):
+        pass

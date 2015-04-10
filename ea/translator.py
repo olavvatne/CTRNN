@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 import sys
 
 import numpy as np
-from ann.net import FeedForwardNet
+from ann.net import RecurrentNeuralNet
 
 from ea.phenotype import IntegerPhenotype, CTRNNParametersPhenotype
 from config.configuration import Configuration
@@ -56,7 +56,7 @@ class BinToParameterTranslator(AbstractTranslator):
     binary vector only increase or decrease the weight by a small amount.
     '''
 
-    def __init__(self, k=8, layers=[6,3]):
+    def __init__(self, k=8):
         '''
         The init use arguments from configuration that tells how many bits to use per parameter. For example 8 bits will
         give 256 values between 0 and 1. Layers is a list instructing the ANN of how many neurons per layer. There has to
@@ -65,11 +65,12 @@ class BinToParameterTranslator(AbstractTranslator):
         #TODO: Different parameters have different ranges. Fix by parameter and the
         self.k = k
         self.nr_of_values = 2**k
-        self.half = 1
-        self.layers = layers
+        self.layers = [5.2,2] #TODO: Depricated, but kept until later
         #TODO: Not feedforwardNet
-        self.ann = FeedForwardNet(layers, activation="sigmoid")
-        self.weight_sizes  =  list(zip(layers[:-1], layers[1:]))
+        #TODO: translator should only be responsible for developing weights
+        #TODO: make a structure generator, for recurrentNeuralNetworks
+        self.ann = RecurrentNeuralNet(self.layers, activation="sigmoid")
+        self.weight_sizes  =  list(zip(self.layers[:-1], self.layers[1:]))
         print("Number of weights ", sum([x*y for x, y in self.weight_sizes]))
 
 

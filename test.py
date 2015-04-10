@@ -30,9 +30,9 @@ def debug_ann(ann):
         except:
             print("Not valid!")
 
-genome_length = 144
+genome_length = 312
 pop_size = 40
-gen = 2
+gen = 1
 threshold = 30
 ea_system = EA()
 listner = Listner()
