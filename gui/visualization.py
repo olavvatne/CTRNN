@@ -163,7 +163,7 @@ class TrackerAgentDisplay(PixelDisplay):
 
     def draw_model(self, timeslice):
         if timeslice:
-            timestep, tracker, object = timeslice
+            timestep, capture, avoidance, failure, tracker, object = timeslice
             self.delete("Piece")
 
             #Draw tracker
@@ -182,6 +182,9 @@ class TrackerAgentDisplay(PixelDisplay):
                 self.draw_piece("Piece", x+i, y, 2)
 
             self.create_text(20, 20, font=("Arial",20), text=str(timestep+1), fill="white", tags="Piece")
+            self.create_text(80, 20, font=("Arial",20), text="C: " +str(capture), fill="white", tags="Piece")
+            self.create_text(140, 20, font=("Arial",20), text="A:" +str(avoidance), fill="white", tags="Piece")
+            self.create_text(200, 20, font=("Arial",20), text="F:" +str(failure), fill="white", tags="Piece")
 
 
     def draw_piece(self, piece_id, x, y, piece_type):
