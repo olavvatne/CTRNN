@@ -70,15 +70,13 @@
             "class_name": "DefaultFitnessEvaluator",
             "name": "Fraction"
         },
-        "flatlands": {
+        "tracker": {
             "parameters": {
-                "number_of_scenarios": 5,
-                "dynamic": true,
-                "grid_dimension": 10
+                "todo": 0
             },
             "order": 1,
-            "class_name": "FlatlandsAgentFitnessEvaluator",
-            "name": "Flatland agent"
+            "class_name": "TrackerAgentFitnessEvaluator",
+            "name": "Tracker agent evaluator"
         }
     },
     "genotype": {

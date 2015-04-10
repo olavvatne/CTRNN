@@ -72,41 +72,21 @@ class DefaultFitnessEvaluator(AbstractFitnessEvaluator):
         return (d / p.size)
 
 
-class FlatlandsAgentFitnessEvaluator(AbstractFitnessEvaluator):
-    '''
-    Flatlands agent evaluator. Heuristic that measure how well individuals
-    configure a ann that maximize food eaten while minimizing the poison.
+class TrackerAgentFitnessEvaluator(AbstractFitnessEvaluator):
     '''
 
-    def __init__(self, genome_length, dynamic=False, number_of_scenarios=5, grid_dimension=10):
-        self.dynamic = dynamic
-        self.nr_of_scenarios = number_of_scenarios
-        self.dim = grid_dimension
-        self.fd = 0.33333
-        self.pd = 0.33333
+    '''
 
-
-        self.scenarios = [Environment(self.dim, f_prob=self.fd, p_prob=self.pd) for i in range(number_of_scenarios)]
-
-    def evaluate_all(self, population):
-        '''
-        Overriden from super class. Environment has to be replaced if
-        the dynamic option is chosen.
-        '''
-        if self.dynamic:
-            #TODO: Maybe create method that replace board, avoid object initalizations
-            self.scenarios = [Environment(self.dim,f_prob=self.fd, p_prob=self.pd) for i in range(self.nr_of_scenarios)]
-
-        for individual in population:
-            individual.fitness = self.evaluate(individual)
+    def __init__(self):
+        #TODO: Fix parameters, and initialize environment the agent should be tested on
+        self.scenario = Environment()
 
     def evaluate(self, individual):
         '''
-        Returns a score that penalize poison and rewards food eating. Eating poison is bad but is weighted slightly less
-        than eating food. The ANN is retrieved with the weights developed from the individuals genotype. The ANN is tested
-        on n scenarios. If the system is configured to dynamic new scenarios are made for each iteration.
+
         '''
         p = individual.phenotype_container.get_ANN()
         scoring = [e.score_agent(p) for e in self.scenarios]
-        score = sum(fs/(1+(ps*.8)) for fs, ps in scoring)/len(self.scenarios)
+        #TODO: Make a scoring for tracker
+        score = 0
         return score
