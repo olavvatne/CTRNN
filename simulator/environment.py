@@ -1,132 +1,77 @@
 import numpy as np
-
+import random
 
 class Environment:
-    EMPTY = 0
-    FOOD = 1
-    POISON = 2
+    TRACKER = 5
 
-    NORTH = 0
-    EAST = 1
-    SOUTH = 2
-    WEST = 3
+    OBJECT_MAX_DIM = 6
+    OBJECT_MIN_DIM = 1
 
-    MOVE_FORWARD = 0
-    MOVE_LEFT = 1
-    MOVE_RIGHT = 2
+    MOVE_LEFT = 0
+    MOVE_RIGHT = 1
 
-    def __init__(self, dim, f_prob=0.333, p_prob=0.333, agent_start_pos=(5,5)):
-        #F_prob of a cell being filled with food, and p_prob that a remaining empty cell
-        #is filled with poisoon
-        probabilites = [1-f_prob-(f_prob*(1-p_prob)), f_prob, f_prob*(1-p_prob)]
-        self.board = np.random.choice(3, replace=True, p=probabilites, size=(dim, dim))
-        self.agent_x = agent_start_pos[1]
-        self.agent_y = agent_start_pos[0]
-        self.agent_dir = Environment.NORTH
+    def __init__(self, width, height):
+        #TODO: No need for matrix.
+        #TODO: Need to keep track of object and tracker position oynl
+        #Board dimensions. 30x15 for Beer's game
+        self.board_width = width
+        self.board_height = height
+
+        #Position of agent
+
         self.recording = []
-        self.poison = 0
-        self.food = 0
-        self.dim = dim
-        self.board[self.agent_y, self.agent_x] = Environment.EMPTY
-        #Food and poision removed from agent's start position
+
+        #TODO: consider how scoring should be done
+        self.score = 0
 
     def init_scoring(self):
-        b = np.empty_like (self.board)
-        b[:] = self.board
-        #TODO: Might consider using a structure to keep track of changes made
-        #to board while sim
-        self.food = 0
-        self.poison = 0
-        y = self.agent_y
-        x = self.agent_x
-        dir = self.agent_dir
-        return b, y, x, dir
-
-    def score_agent(self, agent, timesteps=60):
-        b, y, x, dir = self.init_scoring()
-        #print("SCORE ------------------------------------")
-        #TODO: Create a record method? And not dilute score agent
+        self.score = 0
         self.recording = []
+        agent_x = random.randint(0, self.board_width-1)
+        agent_y = self.board_height-1
+        return agent_x, agent_y
+
+    def score_agent(self, agent, timesteps=600):
+        x,y = self.init_scoring()
+
+        object_x = 0
+        object_y = 0
+        object_dim = random.randint(Environment.OBJECT_MIN_DIM, Environment.OBJECT_MAX_DIM)
 
         for i in range(timesteps):
 
-            #Senor gathering
-            food_sensors = self._get_sensor_data(y,x,dir, b, Environment.FOOD)
-            poison_sensors = self._get_sensor_data(y,x,dir, b, Environment.POISON)
+            #Shadow sensor gathering
+            shadow_sensors = self._get_sensor_data(x,y ,object_x, object_y, object_dim)
+
             #Motor output
-            motor_output = agent.feedforward(np.array(food_sensors + poison_sensors, dtype=np.int32))
-            #print("Motor", motor_output)
-            winning_output = np.argmax(motor_output)
-            #print("FOOD", food_sensors)
-            #print("POISON", poison_sensors)
-            #print(i ,motor_output)
-            if motor_output[winning_output] > 0.5:
-                m = 0
-                if winning_output == Environment.MOVE_LEFT:
-                    #print("MOVE LEFT")
-                    m = -1
-                elif winning_output == Environment.MOVE_RIGHT:
-                    #print("MOVE RIGHT")
-                    m = 1
+            motor_output = agent.feedforward(shadow_sensors)
+            self._move_agent(motor_output)
+            #TODO: Record what agent does
+            #TODO: Handle object - On platform, or not. Move down 1
+            #TODO: Move agent based on motor output
+            #Spawn new object if object at bottom
+        return self.score
 
-                #Update scoring and environment
-                self.recording.append((i, x,y,(dir+m)%4))
-                y,x,dir = self._move_agent(y, x, (dir+m)%4, b)
-        #print("Score: ", self.food, self.poison)
-        return (self.food, self.poison)
-
-    def get_recording(self):
-        b = np.empty_like (self.board)
-        b[:] = self.board
-        rec = []
-        for i,x,y, dir in self.recording:
-            a = np.empty_like (b)
-            a[:] = b
-            rec.append((i,x,y, dir, a))
-            self._move_agent(y,x, dir, b)
-        return rec
-
-    def _move_agent(self, y,x, dir, b):
-        #print("dir", dir)
-        if dir == Environment.NORTH:
-            y = (y-1)%self.dim
-        elif dir == Environment.EAST:
-             x = (x+1)%self.dim
-        elif dir == Environment.SOUTH:
-            y = (y+1)%self.dim
-        else:
-            x = (x-1)%self.dim
-
-        content = b[y][x]
-        if content == Environment.FOOD:
-            self.food += 1
-        elif content == Environment.POISON:
-            self.poison += 1
-        b[y][x] = Environment.EMPTY
-        return (y, x, dir)
+    def _move_agent(self, motor_output):
+        #TODO:Magnitude and direction of agent
+        nx = 0
+        ny = 0
+        return (nx, ny)
 
 
-    def _get_sensor_data(self, y,x, dir, b,type):
-        dim = len(b)
-        if dir == Environment.NORTH:
-            data = [b[y][(x-1)%dim] == type,
-                    b[(y-1)%dim][x] == type,
-                    b[y][(x+1)%dim] == type]
-        elif dir == Environment.EAST:
-            data = [b[(y-1)%dim][x] == type,
-                    b[y][(x+1)%dim] == type,
-                    b[(y+1)%dim][x]== type]
-        elif dir == Environment.SOUTH:
-            data = [b[y][(x+1)%dim] == type,
-                    b[(y+1)%dim][x] == type,
-                    b[y][(x-1)%dim]== type]
-        else:
-            data = [b[(y+1)%dim][x] == type,
-                    b[y][(x-1)%dim] == type,
-                    b[(y-1)%dim][x]== type]
-        return data
+    def _get_sensor_data(self, x,y, ox, oy, odim):
+        '''
+        Shadow sensor creation. If the x of tracker and object overlap
+        the shadow sensor for the tracker agent is set to 1, indicating
+        that an object is above the platform at that position
+        '''
+        sensor = np.zeros(Environment.TRACKER)
+        for i in range(Environment.TRACKER):
+            if(x+i>=ox and x+i<ox+odim):
+                sensor[i] = 1
+        return sensor
 
 
     def __repr__(self):
-        return str(self.board)
+        return "Environment of" + str(self.board_width) + "x" + str(self.board_height)
 
