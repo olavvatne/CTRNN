@@ -38,22 +38,23 @@ class Environment:
         for t in range(timesteps):
             #Shadow sensor gathering
             shadow_sensors = self._get_sensor_data(x, dim, object_x, object_dim)
-
             #Motor output
             motor_output = agent.feedforward(shadow_sensors)
 
+            if rec:
+                self.recording.append((t, (x,y, Environment.TRACKER, shadow_sensors), (object_x, object_y, object_dim)))
+
+            #Score if at bottom
             #Move agent
             x, y = self._move_agent(x ,y, motor_output)
 
-            #Move object closer to bottom
-            object_y -= 1
-
-            #Score if at bottom
-            if self._object_at_bottom(object_y):
+            at_bottom = self._object_at_bottom(object_y)
+            if at_bottom:
                 self._score_target(x, dim, object_x, object_dim)
                 object_x, object_y, object_dim = self._spawn_object()
-            if rec:
-                self.recording.append((t, (x,y, Environment.TRACKER), (object_x, object_y, object_dim)))
+            else:
+                #Move object closer to bottom
+                object_y += 1
 
         return self.avoidance, self.capture, self.failure
 

@@ -167,13 +167,16 @@ class TrackerAgentDisplay(PixelDisplay):
             self.delete("Piece")
 
             #Draw tracker
-            x, y, dim = tracker
+            x, y, dim, sensor = tracker
             for i in range(dim):
                 #TODO: remove magic number
                 self.draw_piece("Piece", x+i, y, 1)
+                if sensor[i]:
+                    self.draw_piece("Piece", x+i, y, 3)
 
             #Draw object
             x,y,dim = object
+            print(object)
             for i in range(dim):
                 #TODO: remove magic number
                 self.draw_piece("Piece", x+i, y, 2)
@@ -185,8 +188,9 @@ class TrackerAgentDisplay(PixelDisplay):
         self.draw_rounded(x,y, 1, 1,  self._get_color(piece_type), padding=1, line=self.bg, tags=piece_id)
         #self.draw_label( x,y, 1,1, str(piece_id), t=piece_id)
 
+
     def _get_color(self, type):
-        c = {1:"green", 2:"red", 3:"blue"}
+        c = {1:"#3FB8AF", 2:"red", 3:"#83AF9B"}
         return c.get(type)
 
 class ResultDialog(object):
