@@ -46,14 +46,14 @@ parent = "sigma"
 ea_system.setup(translator,fitness,genotype,adult,parent,genome_length)
 
 best = ea_system.run(pop_size, gen, threshold)
-s = ea_system.fitness_evaluator.scenarios
+
 root = Tk()
 f = Frame(master=root)
 config = Configuration.get()
 ann = best.phenotype_container.get_ANN()
 print(ann.weights)
 debug_ann(ann)
-result_dialog = ResultDialog(f, best, s, config)
+result_dialog = ResultDialog(f, best)
 root.mainloop()
 
 

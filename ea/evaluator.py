@@ -86,7 +86,7 @@ class TrackerAgentFitnessEvaluator(AbstractFitnessEvaluator):
 
         '''
         p = individual.phenotype_container.get_ANN()
-        scoring = [e.score_agent(p) for e in self.scenarios]
+        scoring = self.scenario.score_agent(p)
         #TODO: Make a scoring for tracker
         score = 0
         return score

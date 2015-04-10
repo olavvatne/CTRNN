@@ -29,7 +29,9 @@ class Environment:
     def score_agent(self, agent, timesteps=600, recording=False):
         if recording:
             recording = []
-        self.avoidance, self.capture, self.failure = 0
+        self.avoidance= 0
+        self.capture = 0
+        self.failure = 0
         x,y, dim= self._init_agent()
         object_x, object_y, object_dim = self._spawn_object()
 
