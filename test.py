@@ -38,7 +38,7 @@ ea_system = EA()
 listner = Listner()
 ea_system.add_listener(listner)
 translator = "weights"
-fitness = "flatlands"
+fitness = "tracker"
 genotype = "default"
 adult = "full"
 parent = "sigma"

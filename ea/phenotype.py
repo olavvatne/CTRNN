@@ -20,16 +20,16 @@ class IntegerPhenotype(AbstractPhenotype):
         return str(self.phenotype)
 
 
-class FeedForwardWeightsPhenotype(AbstractPhenotype):
+class CTRNNParametersPhenotype(AbstractPhenotype):
     '''
-    FeedForwardWeightsPhenotype. Will have access to ANN that can be configured with
+    CTRNNParametersPhenotype. Will have access to ANN that can be configured with
     weights from the phenotype. Direct mapping, structure of ANN not evolvable, only
     weights are adjusted using this phenotype.
     '''
     def __init__(self, phenotype, ann):
         self.ann = ann
         self.phenotype = phenotype
-        #TODO: need for layers?
+        #TODO: Configure to match CTRNN
 
     def get_ANN(self):
         self.ann.set_weights(self.phenotype)
