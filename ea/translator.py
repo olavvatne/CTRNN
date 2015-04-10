@@ -64,6 +64,10 @@ class BinToParameterTranslator(AbstractTranslator):
         '''
         #TODO: Different parameters have different ranges. Fix by parameter and the
         self.k = k
+        self.nr_of_weights = 21
+        self.nr_of_bias_weights = 8
+        self.nr_of_gains = 4
+        self.nr_of_timeconstants =4
         self.nr_of_values = 2**k
         self.layers = [5.2,2] #TODO: Depricated, but kept until later
         #TODO: Not feedforwardNet
@@ -71,7 +75,6 @@ class BinToParameterTranslator(AbstractTranslator):
         #TODO: make a structure generator, for recurrentNeuralNetworks
         self.ann = RecurrentNeuralNet(self.layers, activation="sigmoid")
         self.weight_sizes  =  list(zip(self.layers[:-1], self.layers[1:]))
-        print("Number of weights ", sum([x*y for x, y in self.weight_sizes]))
 
 
     def develop(self, individual):
