@@ -52,7 +52,7 @@ f = Frame(master=root)
 config = Configuration.get()
 ann = best.phenotype_container.get_ANN()
 print(ann.weights)
-debug_ann(ann)
+#debug_ann(ann)
 result_dialog = ResultDialog(f, best)
 root.mainloop()
 

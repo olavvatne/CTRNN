@@ -26,8 +26,8 @@ class Environment:
 
 
 
-    def score_agent(self, agent, timesteps=600, recording=False):
-        if recording:
+    def score_agent(self, agent, timesteps=600, rec=False):
+        if rec:
             recording = []
         self.avoidance= 0
         self.capture = 0
@@ -36,7 +36,6 @@ class Environment:
         object_x, object_y, object_dim = self._spawn_object()
 
         for t in range(timesteps):
-
             #Shadow sensor gathering
             shadow_sensors = self._get_sensor_data(x, dim, object_x, object_dim)
 
@@ -51,10 +50,9 @@ class Environment:
 
             #Score if at bottom
             if self._object_at_bottom(object_y):
-                self._score_agent(x, dim, object_x, object_dim)
+                self._score_target(x, dim, object_x, object_dim)
                 object_x, object_y, object_dim = self._spawn_object()
-
-            if recording:
+            if rec:
                 self.recording.append((t, (x,y, Environment.TRACKER), (object_x, object_y, object_dim)))
 
         return self.avoidance, self.capture, self.failure
@@ -72,7 +70,7 @@ class Environment:
     def _object_at_bottom(self, oy):
         return oy == self.board_height-1
 
-    def _score_agent(self, x, dim, ox, odim):
+    def _score_target(self, x, dim, ox, odim):
         '''
         Full overlap  1,2,3,4 --> capture
         Full overlap 5 --> failure

@@ -86,7 +86,8 @@ class PixelDisplay(Canvas):
     def translate_x(self, x):
         self.padding = 0
         x_norm = fabs(self.min_x) + x
-        available_width = min(self.width, self.height)
+        #available_width = min(self.width, self.height)
+        available_width= self.width
         x_screen = (self.padding/2) + x_norm*(float((available_width-self.padding)/self.w))
         return x_screen
 
@@ -144,19 +145,20 @@ class TrackerAgentDisplay(PixelDisplay):
 
     def __init__(self, parent, width, height):
         super().__init__(parent)
-        self.bw = width
-        self.bh = height
+        self.board_width = width
+        self.board_height = height
         self.bg = "#bbada0"
         self.empty_cell = "#ccc0b3"
-        self.set_dimension(self.bw, self.bh, 0, 0 )
+        self.set_dimension(self.board_width, self.board_height, 0, 0 )
         self.draw_board()
 
     def draw_board(self):
         self.reset()
-        self.draw_pixel(0, 0, self.bw, self.bg, self.bg, tag="bg")
-        for i in range(self.bw):
-            for j in range(self.bh):
-                self.draw_rounded(i,j, 1, 1,  self.empty_cell, padding=2, line=self.bg, tags="bg")
+        print("board_width", self.board_width)
+        self.draw_pixel(0, 0, self.board_width, self.board_height, self.bg, tag="bg")
+        for i in range(self.board_width):
+            for j in range(self.board_height):
+                self.draw_rounded(i,j, 1, 1,  self.empty_cell, padding=1, line=self.bg, tags="bg")
 
 
     def draw_model(self, timeslice):
@@ -180,7 +182,7 @@ class TrackerAgentDisplay(PixelDisplay):
 
 
     def draw_piece(self, piece_id, x, y, piece_type):
-        self.draw_rounded(x,y, 1, 1,  self._get_color(piece_type), padding=8, line=self.bg, tags=piece_id)
+        self.draw_rounded(x,y, 1, 1,  self._get_color(piece_type), padding=1, line=self.bg, tags=piece_id)
         #self.draw_label( x,y, 1,1, str(piece_id), t=piece_id)
 
     def _get_color(self, type):
@@ -194,15 +196,16 @@ class ResultDialog(object):
     '''
     def __init__(self, parent, individual):
         self.individual = individual
-
-        self.scenario = Environment(30,15)
+        w = 30
+        h = 15
+        self.scenario = Environment(w,h)
 
         top = self.top = Toplevel(parent)
         top.title("Tracker game - results")
         top.grid()
-        self.canvas = TrackerAgentDisplay(top, self.dim)
-        self.canvas.set_model(self.current)
-        self.canvas.grid(row=0, column=0, columnspan=5, sticky=N ,padx=4, pady=4)
+        self.canvas = TrackerAgentDisplay(top, w, h)
+        self.canvas.set_model(self.scenario)
+        self.canvas.grid(row=0, column=0, columnspan=5, sticky=(N,W,S,E) ,padx=4, pady=4)
 
         self.v = StringVar()
         speed_adjuster = Scale(top, from_=200, to=1000, command=self.set_speed,orient=HORIZONTAL, variable=self.v)
@@ -229,8 +232,10 @@ class ResultDialog(object):
 
     def record_agent(self):
         p = self.individual.phenotype_container.get_ANN()
-        self.current.score_agent(p, recording=True)
-        self.recording = self.current.get_recording()
+
+        self.scenario.score_agent(p, rec=True)
+        self.recording = self.scenario.get_recording()
+        print(len(self.recording))
         self.canvas.set_queue(self.recording)
         self.canvas.start()
 
