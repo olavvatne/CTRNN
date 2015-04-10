@@ -170,9 +170,9 @@ class TrackerAgentDisplay(PixelDisplay):
             x, y, dim, sensor = tracker
             for i in range(dim):
                 #TODO: remove magic number
-                self.draw_piece("Piece", x+i, y, 1)
+                self.draw_piece("Piece", (x+i)%self.board_width, y, 1)
                 if sensor[i]:
-                    self.draw_piece("Piece", x+i, y, 3)
+                    self.draw_piece("Piece", (x+i)%self.board_width, y, 3)
 
             #Draw object
             x,y,dim = object
