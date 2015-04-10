@@ -1,12 +1,12 @@
 {
     "translator": {
-        "weights": {
+        "parameter": {
             "parameters": {
                 "k": 8
             },
             "order": 1,
-            "class_name": "BinToWeightTranslator",
-            "name": "Bit to int"
+            "class_name": "BinToParameterTranslator",
+            "name": "Bit to paramter"
         },
         "default": {
             "parameters": {},

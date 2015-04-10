@@ -4,7 +4,7 @@ import sys
 import numpy as np
 from ann.net import FeedForwardNet
 
-from ea.phenotype import IntegerPhenotype, FeedForwardWeightsPhenotype
+from ea.phenotype import IntegerPhenotype, CTRNNParametersPhenotype
 from config.configuration import Configuration
 
 
@@ -49,23 +49,25 @@ class DefaultTranslator(AbstractTranslator):
         return IntegerPhenotype(np.copy(individual.genotype_container.genotype))
 
 
-class BinToWeightTranslator(AbstractTranslator):
+class BinToParameterTranslator(AbstractTranslator):
     '''
-    BinToWeightTranslator takes a binary vector genotype and transform it to an weight phenotype by
-    using gray decoding. This translator is also very suitable for weights, since a bit flip of the
+    BinToParametersTranslator takes a binary vector genotype and transform it to an weight phenotype by
+    using gray decoding. This translator is also very suitable for number parameters, since a bit flip of the
     binary vector only increase or decrease the weight by a small amount.
     '''
 
     def __init__(self, k=8, layers=[6,3]):
         '''
-        The init use arguments from configuration that tells how many bits to use per weights. For example 8 bits will
+        The init use arguments from configuration that tells how many bits to use per parameter. For example 8 bits will
         give 256 values between 0 and 1. Layers is a list instructing the ANN of how many neurons per layer. There has to
         be at least to layers. Input and output. A user determined number of hidden layers can be used.
         '''
+        #TODO: Different parameters have different ranges. Fix by parameter and the
         self.k = k
         self.nr_of_values = 2**k
         self.half = 1
         self.layers = layers
+        #TODO: Not feedforwardNet
         self.ann = FeedForwardNet(layers, activation="sigmoid")
         self.weight_sizes  =  list(zip(layers[:-1], layers[1:]))
         print("Number of weights ", sum([x*y for x, y in self.weight_sizes]))
@@ -79,13 +81,13 @@ class BinToWeightTranslator(AbstractTranslator):
         '''
 
         p = individual.genotype_container.genotype
-
+        #TODO: when developing phenotype, different parameter have different ranges
         #Use gray encoding so that a bit change will not
         weight_numbers = [self._g2i(p[i:i + self.k])/self.nr_of_values for i in range(0, len(p), self.k)]
         weight_structure = [np.empty([y, x]) for x, y in  self.weight_sizes]
         phenotype = self._transfer(weight_numbers, weight_structure)
 
-        return FeedForwardWeightsPhenotype(phenotype, self.ann)
+        return CTRNNParametersPhenotype(phenotype, self.ann)
 
     def _transfer(self, phenotype, weight_structure):
         '''
@@ -102,7 +104,7 @@ class BinToWeightTranslator(AbstractTranslator):
 
 
     def _g2i(self, l):
-        return BinToWeightTranslator._bin2int(BinToWeightTranslator._gray2bin(l))
+        return BinToParameterTranslator._bin2int(BinToParameterTranslator._gray2bin(l))
 
     @staticmethod
     def _gray2bin(bits):
