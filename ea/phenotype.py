@@ -1,4 +1,3 @@
-from ann.net import FeedForwardNet
 
 class AbstractPhenotype(object):
     '''
