@@ -31,22 +31,24 @@ class Environment:
         agent_y = self.board_height-1
         return agent_x, agent_y
 
-    def score_agent(self, agent, timesteps=600):
+    def score_agent(self, agent, timesteps=600, recording=False):
         x,y = self.init_scoring()
 
         object_x = 0
         object_y = 0
         object_dim = random.randint(Environment.OBJECT_MIN_DIM, Environment.OBJECT_MAX_DIM)
 
-        for i in range(timesteps):
+        for t in range(timesteps):
 
             #Shadow sensor gathering
             shadow_sensors = self._get_sensor_data(x,y ,object_x, object_y, object_dim)
 
             #Motor output
             motor_output = agent.feedforward(shadow_sensors)
-            self._move_agent(motor_output)
-            #TODO: Record what agent does
+            x, y = self._move_agent(motor_output)
+            if recording:
+                self.recording.append((t, (x,y, Environment.TRACKER), (object_x, object_y, object_dim)))
+
             #TODO: Handle object - On platform, or not. Move down 1
             #TODO: Move agent based on motor output
             #Spawn new object if object at bottom
@@ -58,6 +60,8 @@ class Environment:
         ny = 0
         return (nx, ny)
 
+    def get_recording(self):
+        return self.recording
 
     def _get_sensor_data(self, x,y, ox, oy, odim):
         '''

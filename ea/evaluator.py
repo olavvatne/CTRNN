@@ -79,7 +79,7 @@ class TrackerAgentFitnessEvaluator(AbstractFitnessEvaluator):
 
     def __init__(self):
         #TODO: Fix parameters, and initialize environment the agent should be tested on
-        self.scenario = Environment()
+        self.scenario = Environment(30,15)
 
     def evaluate(self, individual):
         '''

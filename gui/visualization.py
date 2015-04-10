@@ -11,8 +11,8 @@ from collections import deque
 #for setting a graph model and drawing a graph, and changing
 #the vertices' colors.
 class PixelDisplay(Canvas):
-    cWi = 500
-    cHi = 500
+    cWi = 600
+    cHi = 300
 
     def __init__(self, parent):
         self.queue = deque([])
@@ -144,51 +144,44 @@ class PixelDisplay(Canvas):
     def event(self, data):
         self.queue.append(data)
 
-class FlatlandsDisplay(PixelDisplay):
+class TrackerAgentDisplay(PixelDisplay):
 
-    def __init__(self, parent, dim):
+    def __init__(self, parent, width, height):
         super().__init__(parent)
-        self.dim = dim
+        self.bw = width
+        self.bh = height
         self.bg = "#bbada0"
         self.empty_cell = "#ccc0b3"
-        self.set_dimension(self.dim, self.dim, 0, 0 )
+        self.set_dimension(self.bw, self.bh, 0, 0 )
         self.draw_board()
 
     def draw_board(self):
         self.reset()
-        self.draw_pixel(0, 0, self.dim, self.dim, self.bg, tag="bg")
-        for i in range(self.dim):
-            for j in range(self.dim):
+        self.draw_pixel(0, 0, self.bw, self.bg, self.bg, tag="bg")
+        for i in range(self.bw):
+            for j in range(self.bh):
                 self.draw_rounded(i,j, 1, 1,  self.empty_cell, padding=2, line=self.bg, tags="bg")
 
 
     def draw_model(self, timeslice):
         if timeslice:
-            t, x,y,dir,b = timeslice
+            timestep, tracker, object = timeslice
             self.delete("Piece")
-            for i in range(self.dim):
-                for j in range(self.dim):
-                    tile = b[i][j]
-                    if tile > 0:
-                        self.draw_piece("Piece", j, i, tile)
-            self.draw_piece("Piece", x,y, 3)
-            self.draw_direction("Piece", x, y, dir)
-            self.create_text(20, 20, font=("Arial",20), text=str(t+1), fill="white", tags="Piece")
 
-    def draw_direction(self,id,  tx, ty ,dir):
-        x = self.translate_x(tx)
-        y = self.translate_y(ty)
-        x2 = self.translate_x(tx+1)
-        y2 = self.translate_y(ty+1)
+            #Draw tracker
+            x, y, dim = tracker
+            for i in range(dim):
+                #TODO: remove magic number
+                self.draw_piece("Piece", x+i, y, 1)
 
-        if dir == Environment.WEST:
-            self.create_line(x, (y+y2)/2,(x+x2)/2 ,(y+y2)/2, tags=id, fill="#F5C60A", width=3)
-        elif dir == Environment.NORTH:
-            self.create_line((x+x2)/2, y,(x+x2)/2 ,(y+y2)/2, tags=id, fill="#F5C60A", width=3)
-        elif dir == Environment.SOUTH:
-            self.create_line((x+x2)/2, y2,(x+x2)/2 ,(y+y2)/2, tags=id, fill="#F5C60A", width=3)
-        else:
-            self.create_line((x+x2)/2, (y+y2)/2, x2 ,(y+y2)/2, tags=id, fill="#F5C60A", width=3)
+            #Draw object
+            x,y,dim = object
+            for i in range(dim):
+                #TODO: remove magic number
+                self.draw_piece("Piece", x+i, y, 2)
+
+            self.create_text(20, 20, font=("Arial",20), text=str(timestep+1), fill="white", tags="Piece")
+
 
     def draw_piece(self, piece_id, x, y, piece_type):
         self.draw_rounded(x,y, 1, 1,  self._get_color(piece_type), padding=8, line=self.bg, tags=piece_id)
@@ -200,27 +193,18 @@ class FlatlandsDisplay(PixelDisplay):
 
 class ResultDialog(object):
     '''
-    The flatlands agent can be visualized by the resultDialog. The dialog consists of a pixel display, speed adjuster,
+    The tracker agent can be visualized by the resultDialog. The dialog consists of a pixel display, speed adjuster,
     restart button, scenario list box and a new scenario button.
     '''
-    def __init__(self, parent, individual, scenarios, config):
-        self.config = config
+    def __init__(self, parent, individual):
         self.individual = individual
-        self.s = scenarios
-        #TODO: Generate a new scenario. But what to do for static?
-        self.dim = self.config["fitness"]["flatlands"]["parameters"]["grid_dimension"]
-        dynamic = self.config["fitness"]["flatlands"]["parameters"]["dynamic"]
-        if dynamic:
-            self.scenarios = [Environment(self.dim)]
-            self.current = self.scenarios[0]
-        else:
-            self.scenarios = scenarios
-            self.current = self.scenarios[0]
+
+        self.scenario = Environment(30,15)
 
         top = self.top = Toplevel(parent)
-        top.title("Flatlands - results")
+        top.title("Tracker game - results")
         top.grid()
-        self.canvas = FlatlandsDisplay(top, self.dim)
+        self.canvas = TrackerAgentDisplay(top, self.dim)
         self.canvas.set_model(self.current)
         self.canvas.grid(row=0, column=0, columnspan=5, sticky=N ,padx=4, pady=4)
 
@@ -229,14 +213,9 @@ class ResultDialog(object):
         speed_adjuster.set(400)
         speed_adjuster.grid(row=1, column=0,padx=4, pady=4)
 
-        self.scenario_select = LabelledSelect(top, list(range(len(self.scenarios)+1)), "Scenario", command=self.change_scenario)
-        self.scenario_select.grid(row=1, column=1,padx=4, pady=4)
-
         restart_button = Button(top, text="Restart", command=self.reset)
         restart_button.grid(row=1, column=4,padx=4, pady=4)
 
-        new_button = Button(top, text="New scenario", command=self.new_scenario)
-        new_button.grid(row=1, column=2,padx=4, pady=4)
 
         finish_button = Button(top, text="OK", command=self.ok)
         finish_button.grid(row=2, column=4,padx=4, pady=10)
@@ -252,25 +231,10 @@ class ResultDialog(object):
     def set_speed(self, *args):
         self.canvas.set_rate(int(self.v.get()))
 
-    def new_scenario(self):
-        self.scenarios.append(Environment(self.dim))
-        self.scenario_select.add_option(len(self.scenarios))
-        self.canvas.stop()
-        self.change_scenario(len(self.scenarios))
-
-    def change_scenario(self, picked):
-        print(picked)
-        self.current = self.scenarios[picked-1]
-        self.canvas.set_model(self.current)
-        self.canvas.stop()
-        self.record_agent()
-
-
     def record_agent(self):
         p = self.individual.phenotype_container.get_ANN()
-        self.current.score_agent(p, 60)
+        self.current.score_agent(p, recording=True)
         self.recording = self.current.get_recording()
-        print(self.recording)
         self.canvas.set_queue(self.recording)
         self.canvas.start()
 
