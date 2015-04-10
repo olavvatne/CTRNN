@@ -37,7 +37,7 @@ threshold = 30
 ea_system = EA()
 listner = Listner()
 ea_system.add_listener(listner)
-translator = "weights"
+translator = "parameter"
 fitness = "tracker"
 genotype = "default"
 adult = "full"

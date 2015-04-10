@@ -72,7 +72,7 @@
         },
         "tracker": {
             "parameters": {
-                "todo": 0
+                "test": 0
             },
             "order": 1,
             "class_name": "TrackerAgentFitnessEvaluator",
