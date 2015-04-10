@@ -1,6 +1,7 @@
 import numpy as np
 
 class FeedForwardNet:
+    #TODO: Make recurrent network. links in loops, and integrate and fire, more advanced self.activation.
     '''
     Simple feed forward neural network. Does not support backpropagation, so weights have to be adjusted using
     evolution. The init select what type of activation function. tanh and sigmoid supported. threshold and weights matrices
