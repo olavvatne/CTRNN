@@ -10,7 +10,15 @@ class Listner:
     def update(self, c, p, cf, bf, std):
             pass
 
-def debug_ann(ann):
+def show_result(best):
+    root = Tk()
+    f = Frame(master=root)
+    config = Configuration.get()
+    result_dialog = ResultDialog(f, best)
+    root.mainloop()
+
+def debug_ann(best):
+    ann = best.phenotype_container.get_ANN()
     while(True):
         txt = input('Test ANN:')
         if txt == 'q':
@@ -32,7 +40,7 @@ def debug_ann(ann):
 
 genome_length = 352
 pop_size = 20
-gen = 20
+gen = 10
 threshold = 1
 ea_system = EA()
 listner = Listner()
@@ -45,17 +53,11 @@ parent = "sigma"
 
 ea_system.setup(translator,fitness,genotype,adult,parent,genome_length)
 
-best = ea_system.run(pop_size, gen, threshold)
-
-root = Tk()
-f = Frame(master=root)
-config = Configuration.get()
-ann = best.phenotype_container.get_ANN()
-print(ann.weights)
-#debug_ann(ann)
-result_dialog = ResultDialog(f, best)
-root.mainloop()
+#best = ea_system.run(pop_size, gen, threshold)
+#debug_ann(best)
+#show_result(best)
 
 
-#cProfile.run('ea_system.run(pop_size, gen, threshold)', sort='cumtime')
+
+cProfile.run('ea_system.run(pop_size, gen, threshold)', sort='cumtime')
 #ea_system.run(pop_size, gen, threshold)

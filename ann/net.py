@@ -28,13 +28,12 @@ class RecurrentNeuralNet:
         self._create_internal(sizes)
 
         self.mapper = self.create_mapper(sizes)
-        self.activation = np.vectorize(RecurrentNeuralNet.sigmoid)
 
         #TODO:hard coded appending of sizes
         self.weight_matrix_sizes = [(2,8), (2,5)]
 
     def _create_internal(self, sizes):
-        self.y = [np.zeros(s) for s in sizes[1:]]
+        self.y = [np.zeros(s) for s in sizes]
         self.prev_output = [np.zeros(s) for s in sizes[1:]]
 
 
@@ -58,12 +57,19 @@ class RecurrentNeuralNet:
             weights.append(np.reshape(w, shape))
             i = n
         structured["w"] = weights
-        n = i + 4
-        structured["g"] = np.reshape(scaler(parameters[i:n], *self.gain_range), (2,2))
-        i= n
-        n = i+ 4
-        structured["t"] = np.reshape(scaler(parameters[i:n], *self.timeconstant_range), (2,2))
-        i = n
+        gains = []
+        for shape in self.sizes:
+            n = i + shape
+            gains.append(scaler(parameters[i:n], *self.gain_range))
+            i= n
+        structured["g"] = gains
+
+        timeconstants = []
+        for shape in self.sizes:
+            n = i+shape
+            timeconstants.append(scaler(parameters[i:n], *self.timeconstant_range))
+            i = n
+        structured["t"] = timeconstants
 
         return structured
 
@@ -75,15 +81,17 @@ class RecurrentNeuralNet:
         return mapper
 
     def input(self, i):
-        o = i
-        #timsteps
-        #Probably store
         '''
-         The feedforward method propagate the activation from input to output. and returns the activation of the
+         The input method propagate the activation from input to output. and returns the activation of the
          output layer
         The dot product of the weights at layer i and the activation from i-1 will result in the activations out from
         neurons at layer i.
         '''
+        s = i
+        dy = self.derivative(self.y[0], s, self.timeconstants[0])
+        self.y[0] = self.y[0] + dy
+        o = self.sigmoid(self.y[0], self.gain[0])
+
         #TODO: input layer should follow same equations
         for j, w in enumerate(self.weights):
             #Equation 1
@@ -91,13 +99,12 @@ class RecurrentNeuralNet:
             s = np.dot(w, o)
 
             #Equation 2
+            dy = self.derivative(self.y[j+1], s, self.timeconstants[j+1])
 
-            y_derivative = np.multiply(1/self.timeconstants[j],((-self.y[j])+s))
-
-            self.y[j] = self.y[j] + y_derivative
+            self.y[j+1] = self.y[j+1] + dy
 
             #Equation 3
-            o = self.activation(self.y[j], self.gain[j])
+            o = self.sigmoid(self.y[j+1], self.gain[j+1])
 
             self.prev_output[j] = o #Prev output kept
         self.a = o
@@ -107,22 +114,24 @@ class RecurrentNeuralNet:
     def output(self):
         return self.a
 
+    def sigmoid(self, y,g):
+        return 1.0/(1.0+np.exp(-y*g))
+
+    def derivative(self, y, s, t):
+        return np.multiply(1/t,((-y)+s))
+
     def reset(self):
         self._create_internal(self.sizes)
 
     def _add_recurrent_and_bias(self, a, i):
-        n1 = self.prev_output[i][0]
-        n2 = self.prev_output[i][1]
-        return np.append(a, [n1,n2,RecurrentNeuralNet.BIAS_VALUE]) #Bias
+        return np.append(a, [self.prev_output[i][0], self.prev_output[i][1], RecurrentNeuralNet.BIAS_VALUE]) #Bias
 
 
     @staticmethod
     def scale_number(n, min, max):
         return np.interp(n,[0,1],[min,max])
 
-    @staticmethod
-    def sigmoid(y,g):
-        return 1.0/(1.0+np.exp(-y*g))
+
 
 
 
