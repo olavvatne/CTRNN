@@ -23,22 +23,21 @@ class RecurrentNeuralNet:
 
         self.num_layers = len(sizes)
         self.sizes = sizes
-        self.prev_output = [np.zeros(s) for s in sizes] #Contain all layers
+        self.prev_output = [np.zeros(s) for s in sizes[1:]] #Contain all layers
         self.timeconstants = []
         self.gain = []
         self.mapper = self.create_mapper(sizes)
         self.activation = np.vectorize(RecurrentNeuralNet.sigmoid)
 
-
-        #Threshold is set to output a constant 1. Threshold for every neuron in all layers except input layer.
-        #self.weight_matrix_sizes = list(zip(sizes[:-1], sizes[1:]))
         #TODO:hard coded appending of sizes
         self.weight_matrix_sizes = [(2,8), (2,5)]
-        print(self.weight_matrix_sizes)
+
 
     def set_weights(self, parameters):
         #TODO:Reshape etc, structure generator
-        self.weights = parameters
+        self.weights = parameters["w"]
+        self.gain = parameters["g"]
+        self.timeconstants = parameters["t"]
 
     def restructure_parameters(self, parameters):
         nr_w = 29
@@ -60,7 +59,7 @@ class RecurrentNeuralNet:
         n = i+ 4
         structured["t"] = np.reshape(scaler(parameters[i:n], *self.timeconstant_range), (2,2))
         i = n
-        
+
         return structured
 
     def create_mapper(self, sizes):
@@ -81,18 +80,22 @@ class RecurrentNeuralNet:
         The dot product of the weights at layer i and the activation from i-1 will result in the activations out from
         neurons at layer i.
         '''
-        g = 0
-        for w in self.weights:
 
-            np.append(a, RecurrentNeuralNet.BIAS) #Bias
-            a = self.activation(np.dot(w, a), g)
+        for i, w in enumerate(self.weights):
+            a = self._add_recurrent_and_bias(a, i)
+            a = self.activation(np.dot(w, a), self.gain[i])
+            self.prev_output[i] = a #Prev output kept
         self.a = a
+        #sys.exit()
 
     def output(self):
         return self.a
 
-    def add_recurrent_and_bias(self, a, i):
-        pass
+    def _add_recurrent_and_bias(self, a, i):
+        n1 = self.prev_output[i][0]
+        n2 = self.prev_output[i][1]
+        return np.append(a, [n1,n2,RecurrentNeuralNet.BIAS_VALUE]) #Bias
+
 
     @staticmethod
     def scale_number(n, min, max):

@@ -31,7 +31,7 @@ def debug_ann(ann):
             print("Not valid!")
 
 genome_length = 312
-pop_size = 1
+pop_size = 10
 gen = 1
 threshold = 30
 ea_system = EA()
