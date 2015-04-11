@@ -74,8 +74,8 @@ class RecurrentNeuralNet:
         #Could extend to connections between layers
         return mapper
 
-    def input(self, a):
-
+    def input(self, i):
+        o = i
         #timsteps
         #Probably store
         '''
@@ -85,22 +85,22 @@ class RecurrentNeuralNet:
         neurons at layer i.
         '''
         #TODO: input layer should follow same equations
-        for i, w in enumerate(self.weights):
+        for j, w in enumerate(self.weights):
             #Equation 1
-            a = self._add_recurrent_and_bias(a, i)
-            s = np.dot(w, a)
+            o = self._add_recurrent_and_bias(o, j)
+            s = np.dot(w, o)
 
             #Equation 2
 
-            y_derivative = np.multiply(1/self.timeconstants[i],((-self.y[i])+s))
+            y_derivative = np.multiply(1/self.timeconstants[j],((-self.y[j])+s))
 
-            self.y[i] = self.y[i] + y_derivative
+            self.y[j] = self.y[j] + y_derivative
 
             #Equation 3
-            a = self.activation(self.y[i], self.gain[i])
+            o = self.activation(self.y[j], self.gain[j])
 
-            self.prev_output[i] = a #Prev output kept
-        self.a = a
+            self.prev_output[j] = o #Prev output kept
+        self.a = o
 
         #sys.exit()
 
