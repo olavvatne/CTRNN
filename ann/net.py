@@ -1,5 +1,5 @@
 import numpy as np
-
+import sys
 class RecurrentNeuralNet:
     #TODO: Make recurrent network. links in loops, and integrate and fire, more advanced self.activation.
     '''
@@ -14,7 +14,7 @@ class RecurrentNeuralNet:
     WEIGHT_RANGE = [-5.0, 5.0]
 
     SIGMOID = "sigmoid"
-    BIAS = 1
+    BIAS_VALUE = 1
     def __init__(self, sizes, weight=WEIGHT_RANGE, bias=BIAS_RANGE, gain=GAIN_RANGE, time=TIME_RANGE):
         self.bias_range = bias
         self.weight_range = weight
@@ -31,30 +31,37 @@ class RecurrentNeuralNet:
 
 
         #Threshold is set to output a constant 1. Threshold for every neuron in all layers except input layer.
-        self.weight_matrix_sizes = zip(sizes[:-1], sizes[1:])
-        self.weights = [np.random.randn(y, x) for x, y in self.weight_matrix_sizes]
+        #self.weight_matrix_sizes = list(zip(sizes[:-1], sizes[1:]))
+        #TODO:hard coded appending of sizes
+        self.weight_matrix_sizes = [(2,8), (2,5)]
+        print(self.weight_matrix_sizes)
 
     def set_weights(self, parameters):
         #TODO:Reshape etc, structure generator
         self.weights = parameters
 
     def restructure_parameters(self, parameters):
-        #weight_structure = [np.empty([y, x]) for x, y in  self.weight_sizes]
-        #phenotype = self._transfer(weight_numbers, weight_structure)
-        pass
-
-    def _transfer(self, phenotype, weight_structure):
-        '''
-        Transfer transform the weights from a linear list to match the layer structure of the ANN. The resulting
-        weight structure can then replace the existing weights in the ANN.
-        '''
+        nr_w = 29
+        scaler = np.vectorize(RecurrentNeuralNet.scale_number)
+        structured = {}
+        weights = []
+        i = 0
         n = 0
-        for w in weight_structure:
-            for i in range(len(w)):
-                for j in range(len(w[i])):
-                    w[i][j] = phenotype[n]
-                    n += 1
-        return weight_structure
+        for shape in self.weight_matrix_sizes:
+            n = i + (shape[0] * shape[1])
+            w = scaler(parameters[i:n],*self.weight_range)
+            w[-1] = RecurrentNeuralNet.scale_number(parameters[n-1], *self.bias_range)
+            weights.append(np.reshape(w, shape))
+            i = n
+        structured["w"] = weights
+        n = i + 4
+        structured["g"] = np.reshape(scaler(parameters[i:n], *self.gain_range), (2,2))
+        i= n
+        n = i+ 4
+        structured["t"] = np.reshape(scaler(parameters[i:n], *self.timeconstant_range), (2,2))
+        i = n
+        
+        return structured
 
     def create_mapper(self, sizes):
         #TODO: Hardcoded mapper
@@ -87,6 +94,11 @@ class RecurrentNeuralNet:
     def add_recurrent_and_bias(self, a, i):
         pass
 
+    @staticmethod
+    def scale_number(n, min, max):
+        return np.interp(n,[0,1],[min,max])
+
+    @staticmethod
     def sigmoid(y,g):
         return 1.0/(1.0+np.exp(-y*g))
 
