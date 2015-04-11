@@ -85,6 +85,6 @@ class TrackerAgentFitnessEvaluator(AbstractFitnessEvaluator):
         '''
         #TODO: increase timesteps?
         p = individual.phenotype_container.get_ANN()
-        avoidance, capture, failure = self.scenario.score_agent(p)
+        avoidance, capture, failure, speed = self.scenario.score_agent(p)
         #TODO: Make a scoring for tracker
         return (capture)/(avoidance+capture+failure)

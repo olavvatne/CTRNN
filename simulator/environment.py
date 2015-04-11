@@ -27,6 +27,7 @@ class Environment:
         self.avoidance= 0
         self.capture = 0
         self.failure = 0
+        self.speed = 0
         agent.reset()
         x,y, dim= self._init_agent()
         object_x, object_y, object_dim = self._spawn_object()
@@ -53,7 +54,7 @@ class Environment:
                 #Move object closer to bottom
                 object_y += 1
 
-        return self.avoidance, self.capture, self.failure
+        return self.avoidance, self.capture, self.failure, self.speed
 
     def _spawn_object(self):
         #Assume objects cant wrap around. Will make no-wrap scenario easier
@@ -96,9 +97,28 @@ class Environment:
 
     def _move_agent(self, x, y, motor_output):
         #TODO: Is this effient and capitalize motor_output?
-        diff = int((motor_output[0] - motor_output[1])*4)
-        diff = min(max(diff, -4), 4)
-        nx = (x + diff)%self.board_width #Wrap around
+        diff = (motor_output[0] - motor_output[1])
+        dir = 1
+        #TODO: moving faster should be rewarded maybe
+        magnitude = 0
+        if diff< 0:
+            dir = -1
+        diff = abs(diff)
+        if diff <0.1111:
+            magnitude = 0
+        elif diff <0.3333:
+            magnitude = dir *1
+        elif diff < 0.555:
+            magnitude = dir *2
+            self.speed += 0.001
+        elif diff < 0.777:
+            magnitude = dir *3
+            self.speed += 0.003
+        else:
+            magnitude = dir*4
+            self.speed += 0.009
+
+        nx = (x + magnitude)%self.board_width #Wrap around
         ny = y
         return (nx, ny)
 
