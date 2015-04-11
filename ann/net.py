@@ -63,15 +63,13 @@ class RecurrentNeuralNet:
         return structured
 
     def create_mapper(self, sizes):
-        #TODO: Hardcoded mapper
+        #TODO: Hardcoded mapper, not even used currently
         mapper = [ [{1: [1,2], 2: [2,1]}], [{1: [1,2], 2: [2,1]}] ]
         #Node one has connection from itself, and 2 in same layer.
         #Could extend to connections between layers
         return mapper
 
     def input(self, a):
-        #TODO: how to incorporate activation levels etc.
-        #TODO: Need to rething, since activation levels must be kept between
         #timsteps
         #Probably store
         '''
