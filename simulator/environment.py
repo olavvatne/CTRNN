@@ -26,7 +26,8 @@ class Environment:
             self.recording = []
         self.avoidance= 0
         self.capture = 0
-        self.failure = 0
+        self.failure_avoidance = 0
+        self.failure_capture = 0
         self.speed = 0
         agent.reset()
         x,y, dim= self._init_agent()
@@ -40,7 +41,7 @@ class Environment:
             motor_output = agent.output()
 
             if rec:
-                self.recording.append((t, self.capture, self.avoidance,self.failure, (x,y, Environment.TRACKER, shadow_sensors), (object_x, object_y, object_dim)))
+                self.recording.append((t, self.capture, self.avoidance,self.failure_avoidance+self.failure_capture, (x,y, Environment.TRACKER, shadow_sensors), (object_x, object_y, object_dim)))
 
             #Score if at bottom
             #Move agent
@@ -54,7 +55,7 @@ class Environment:
                 #Move object closer to bottom
                 object_y += 1
 
-        return self.avoidance, self.capture, self.failure, self.speed
+        return self.avoidance, self.capture, self.failure_avoidance, self.failure_capture
 
     def _spawn_object(self):
         #Assume objects cant wrap around. Will make no-wrap scenario easier
@@ -84,14 +85,17 @@ class Environment:
             if odim < 5:
                 self.capture += 1
             else:
-                self.failure += 1
+                self.failure_avoidance += 1
         elif not object & target:
             if odim > 4:
                 self.avoidance += 1
             else:
-                self.failure += 1
+                self.failure_capture += 1
         else:
-            self.failure += 1
+            if odim> 4:
+                self.failure_avoidance += 1
+            else:
+                self.failure_capture += 1
 
 
 
@@ -104,14 +108,14 @@ class Environment:
         if diff< 0:
             dir = -1
         diff = abs(diff)
-        if diff <0.1111:
+        if diff <0.1:
             magnitude = 0
-        elif diff <0.3333:
+        elif diff <0.25:
             magnitude = dir *1
-        elif diff < 0.555:
+        elif diff < 0.5:
             magnitude = dir *2
             self.speed += 0.001
-        elif diff < 0.777:
+        elif diff < 0.65:
             magnitude = dir *3
             self.speed += 0.003
         else:

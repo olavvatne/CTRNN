@@ -39,9 +39,9 @@ def debug_ann(best):
             print("Not valid!")
 
 genome_length = 352
-pop_size = 20
+pop_size = 40
 gen = 20
-threshold = 20
+threshold = 1
 ea_system = EA()
 listner = Listner()
 ea_system.add_listener(listner)
