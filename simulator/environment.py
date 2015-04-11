@@ -32,6 +32,7 @@ class Environment:
         self.avoidance= 0
         self.capture = 0
         self.failure = 0
+        agent.reset()
         x,y, dim= self._init_agent()
         object_x, object_y, object_dim = self._spawn_object()
 
@@ -88,7 +89,8 @@ class Environment:
                 self.capture += 1
             else:
                 self.failure += 1
-        elif object not in target:
+        elif not object & target:
+            #TODO: error. Either target and object not correct or "not in"
             if odim > 4:
                 self.avoidance += 1
             else:

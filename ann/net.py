@@ -23,14 +23,19 @@ class RecurrentNeuralNet:
 
         self.num_layers = len(sizes)
         self.sizes = sizes
-        self.prev_output = [np.zeros(s) for s in sizes[1:]] #Contain all layers
         self.timeconstants = []
         self.gain = []
+        self._create_internal(sizes)
+
         self.mapper = self.create_mapper(sizes)
         self.activation = np.vectorize(RecurrentNeuralNet.sigmoid)
 
         #TODO:hard coded appending of sizes
         self.weight_matrix_sizes = [(2,8), (2,5)]
+
+    def _create_internal(self, sizes):
+        self.y = [np.zeros(s) for s in sizes[1:]]
+        self.prev_output = [np.zeros(s) for s in sizes[1:]]
 
 
     def set_weights(self, parameters):
@@ -70,6 +75,7 @@ class RecurrentNeuralNet:
         return mapper
 
     def input(self, a):
+
         #timsteps
         #Probably store
         '''
@@ -78,16 +84,31 @@ class RecurrentNeuralNet:
         The dot product of the weights at layer i and the activation from i-1 will result in the activations out from
         neurons at layer i.
         '''
-
+        #TODO: input layer should follow same equations
         for i, w in enumerate(self.weights):
+            #Equation 1
             a = self._add_recurrent_and_bias(a, i)
-            a = self.activation(np.dot(w, a), self.gain[i])
+            s = np.dot(w, a)
+
+            #Equation 2
+
+            y_derivative = np.multiply(1/self.timeconstants[i],((-self.y[i])+s))
+
+            self.y[i] = self.y[i] + y_derivative
+
+            #Equation 3
+            a = self.activation(self.y[i], self.gain[i])
+
             self.prev_output[i] = a #Prev output kept
         self.a = a
+
         #sys.exit()
 
     def output(self):
         return self.a
+
+    def reset(self):
+        self._create_internal(self.sizes)
 
     def _add_recurrent_and_bias(self, a, i):
         n1 = self.prev_output[i][0]

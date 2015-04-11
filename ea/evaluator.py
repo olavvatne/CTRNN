@@ -88,4 +88,4 @@ class TrackerAgentFitnessEvaluator(AbstractFitnessEvaluator):
         p = individual.phenotype_container.get_ANN()
         avoidance, capture, failure = self.scenario.score_agent(p)
         #TODO: Make a scoring for tracker
-        return capture/40 #The maximum amount of captures
+        return (capture)/(avoidance+capture+failure)

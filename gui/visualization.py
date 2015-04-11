@@ -213,7 +213,7 @@ class ResultDialog(object):
         self.canvas.grid(row=0, column=0, columnspan=5, sticky=(N,W,S,E) ,padx=4, pady=4)
 
         self.v = StringVar()
-        speed_adjuster = Scale(top, from_=100, to=1000, command=self.set_speed,orient=HORIZONTAL, variable=self.v)
+        speed_adjuster = Scale(top, from_=10, to=1000, command=self.set_speed,orient=HORIZONTAL, variable=self.v)
         speed_adjuster.set(400)
         speed_adjuster.grid(row=1, column=0,padx=4, pady=4)
 

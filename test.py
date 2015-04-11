@@ -30,17 +30,17 @@ def debug_ann(ann):
         except:
             print("Not valid!")
 
-genome_length = 312
-pop_size = 10
+genome_length = 352
+pop_size = 20
 gen = 20
-threshold = 30
+threshold = 1
 ea_system = EA()
 listner = Listner()
 ea_system.add_listener(listner)
 translator = "parameter"
 fitness = "tracker"
 genotype = "default"
-adult = "full"
+adult = "mixing"
 parent = "sigma"
 
 ea_system.setup(translator,fitness,genotype,adult,parent,genome_length)
