@@ -39,7 +39,8 @@ class Environment:
             #Shadow sensor gathering
             shadow_sensors = self._get_sensor_data(x, dim, object_x, object_dim)
             #Motor output
-            motor_output = agent.feedforward(shadow_sensors)
+            agent.input(shadow_sensors)
+            motor_output = agent.output()
 
             if rec:
                 self.recording.append((t, self.capture, self.avoidance,self.failure, (x,y, Environment.TRACKER, shadow_sensors), (object_x, object_y, object_dim)))
@@ -82,12 +83,8 @@ class Environment:
         #TODO: decrement avoidance instead of failure?
         target = set([i%self.board_width for i in range(x, x+dim)])
         object = set([i for i in range(ox, ox+odim)])
-        print("----------")
-        print(target)
-        print(object)
         if object.issubset(target):
             if odim < 5:
-                print("capture")
                 self.capture += 1
             else:
                 self.failure += 1

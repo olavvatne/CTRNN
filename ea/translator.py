@@ -64,17 +64,9 @@ class BinToParameterTranslator(AbstractTranslator):
         '''
         #TODO: Different parameters have different ranges. Fix by parameter and the
         self.k = k
-        self.nr_of_weights = 21
-        self.nr_of_bias_weights = 8
-        self.nr_of_gains = 4
-        self.nr_of_timeconstants =4
         self.nr_of_values = 2**k
-        self.layers = [5.2,2] #TODO: Depricated, but kept until later
-        #TODO: Not feedforwardNet
-        #TODO: translator should only be responsible for developing weights
-        #TODO: make a structure generator, for recurrentNeuralNetworks
-        self.ann = RecurrentNeuralNet(self.layers, activation="sigmoid")
-        self.weight_sizes  =  list(zip(self.layers[:-1], self.layers[1:]))
+        self.layers = [5,2,2]
+        self.ann = RecurrentNeuralNet(self.layers)
 
 
     def develop(self, individual):
@@ -84,27 +76,14 @@ class BinToParameterTranslator(AbstractTranslator):
         supported by the bit length.
         '''
 
-        p = individual.genotype_container.genotype
-        #TODO: when developing phenotype, different parameter have different ranges
         #Use gray encoding so that a bit change will not
-        weight_numbers = [self._g2i(p[i:i + self.k])/self.nr_of_values for i in range(0, len(p), self.k)]
-        weight_structure = [np.empty([y, x]) for x, y in  self.weight_sizes]
-        phenotype = self._transfer(weight_numbers, weight_structure)
+        p = individual.genotype_container.genotype
+        parameters = [self._g2i(p[i:i + self.k])/self.nr_of_values for i in range(0, len(p), self.k)]
+        phenotype = self.ann.restructure_parameters(parameters)
 
         return CTRNNParametersPhenotype(phenotype, self.ann)
 
-    def _transfer(self, phenotype, weight_structure):
-        '''
-        Transfer transform the weights from a linear list to match the layer structure of the ANN. The resulting
-        weight structure can then replace the existing weights in the ANN.
-        '''
-        n = 0
-        for w in weight_structure:
-            for i in range(len(w)):
-                for j in range(len(w[i])):
-                    w[i][j] = phenotype[n]
-                    n += 1
-        return weight_structure
+
 
 
     def _g2i(self, l):
