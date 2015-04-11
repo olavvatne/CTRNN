@@ -11,8 +11,6 @@ class Environment:
     MOVE_RIGHT = 1
 
     def __init__(self, width, height):
-        #TODO: No need for matrix.
-        #TODO: Need to keep track of object and tracker position oynl
         #Board dimensions. 30x15 for Beer's game
         self.board_width = width
         self.board_height = height
@@ -21,14 +19,11 @@ class Environment:
 
         self.recording = []
 
-        #TODO: consider how scoring should be done
-        self.score = 0
-
 
 
     def score_agent(self, agent, timesteps=600, rec=False):
         if rec:
-            recording = []
+            self.recording = []
         self.avoidance= 0
         self.capture = 0
         self.failure = 0
@@ -90,7 +85,6 @@ class Environment:
             else:
                 self.failure += 1
         elif not object & target:
-            #TODO: error. Either target and object not correct or "not in"
             if odim > 4:
                 self.avoidance += 1
             else:
@@ -101,9 +95,7 @@ class Environment:
 
 
     def _move_agent(self, x, y, motor_output):
-        #TODO: Move agent based on actual motor output
-        #TODO:Magnitude and direction of agent
-        #TODO: Assume random movement now until RNN up and running
+        #TODO: Is this effient and capitalize motor_output?
         diff = int((motor_output[0] - motor_output[1])*4)
         diff = min(max(diff, -4), 4)
         nx = (x + diff)%self.board_width #Wrap around

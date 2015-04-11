@@ -14,7 +14,7 @@ class EA(object):
     #a setup type of method that configure the EA before running. Drop down with alternatives in gui, pop size etc d
     #decided by other gui elements
 
-    EVENT_RATE = 5
+    EVENT_RATE = 1
 
     def __init__(self):
         self.is_stopping = False

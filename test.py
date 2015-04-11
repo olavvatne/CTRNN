@@ -39,8 +39,8 @@ def debug_ann(best):
             print("Not valid!")
 
 genome_length = 352
-pop_size = 20
-gen = 10
+pop_size = 40
+gen = 40
 threshold = 1
 ea_system = EA()
 listner = Listner()
@@ -53,11 +53,10 @@ parent = "sigma"
 
 ea_system.setup(translator,fitness,genotype,adult,parent,genome_length)
 
-#best = ea_system.run(pop_size, gen, threshold)
+best = ea_system.run(pop_size, gen, threshold)
 #debug_ann(best)
-#show_result(best)
+show_result(best)
 
 
 
-cProfile.run('ea_system.run(pop_size, gen, threshold)', sort='cumtime')
-#ea_system.run(pop_size, gen, threshold)
+#cProfile.run('ea_system.run(pop_size, gen, threshold)', sort='cumtime')

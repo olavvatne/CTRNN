@@ -1,12 +1,7 @@
 import numpy as np
 import sys
 class RecurrentNeuralNet:
-    #TODO: Make recurrent network. links in loops, and integrate and fire, more advanced self.activation.
     '''
-    Simple feed forward neural network. Does not support backpropagation, so weights have to be adjusted using
-    evolution. The init select what type of activation function. tanh and sigmoid supported. threshold and weights matrices
-    are also created.
-
     '''
     BIAS_RANGE = [-10.0, 0.0]
     GAIN_RANGE = [1.0, 5.0]
@@ -38,7 +33,6 @@ class RecurrentNeuralNet:
 
 
     def set_weights(self, parameters):
-        #TODO:Reshape etc, structure generator
         self.weights = parameters["w"]
         self.gain = parameters["g"]
         self.timeconstants = parameters["t"]
@@ -87,12 +81,12 @@ class RecurrentNeuralNet:
         The dot product of the weights at layer i and the activation from i-1 will result in the activations out from
         neurons at layer i.
         '''
+        #TODO: In loop?
         s = i
         dy = self.derivative(self.y[0], s, self.timeconstants[0])
         self.y[0] = self.y[0] + dy
         o = self.sigmoid(self.y[0], self.gain[0])
 
-        #TODO: input layer should follow same equations
         for j, w in enumerate(self.weights):
             #Equation 1
             o = self._add_recurrent_and_bias(o, j)
@@ -115,7 +109,7 @@ class RecurrentNeuralNet:
         return self.a
 
     def sigmoid(self, y,g):
-        return 1.0/(1.0+np.exp(-y*g))
+        return 1.0/(1.0+np.exp(np.multiply(-y,g)))
 
     def derivative(self, y, s, t):
         return np.multiply(1/t,((-y)+s))

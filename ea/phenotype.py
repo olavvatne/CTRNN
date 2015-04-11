@@ -28,7 +28,6 @@ class CTRNNParametersPhenotype(AbstractPhenotype):
     def __init__(self, phenotype, ann):
         self.ann = ann
         self.phenotype = phenotype
-        #TODO: Configure to match CTRNN
 
     def get_ANN(self):
         self.ann.set_weights(self.phenotype)

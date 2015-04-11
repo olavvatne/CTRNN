@@ -84,7 +84,6 @@ class BitVectorGenotype(AbstractGenotype):
         flipped.
         '''
         nr_of_chances = 5
-        #TODO: consider let number of mutation be a random amount but not all. between 1 - 5 or something.
         for i in range(nr_of_chances):
             if random.random() < self.mutation_rate:
                 mutation_point = math.floor(random.uniform(0, self.genotype.size))
