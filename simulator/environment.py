@@ -102,8 +102,8 @@ class Environment:
         #TODO: Move agent based on actual motor output
         #TODO:Magnitude and direction of agent
         #TODO: Assume random movement now until RNN up and running
-        diff = int(motor_output[0] - motor_output[1])
-        diff = min(max(diff, 4), -4)
+        diff = int((motor_output[0] - motor_output[1])*4)
+        diff = min(max(diff, -4), 4)
         nx = (x + diff)%self.board_width #Wrap around
         ny = y
         return (nx, ny)
