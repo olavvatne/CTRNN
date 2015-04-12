@@ -55,8 +55,8 @@ class Environment:
             else:
                 #Move object closer to bottom
                 object_y += 1
-
-        return self.avoidance, self.capture, self.failure_avoidance, self.failure_capture
+        bi_directional = int(self.move_right and self.move_left)
+        return self.avoidance, self.capture, self.failure_avoidance, self.failure_capture,bi_directional
 
     def _spawn_object(self):
         #Assume objects cant wrap around. Will make no-wrap scenario easier
@@ -67,6 +67,8 @@ class Environment:
         agent.reset()
         agent_x = random.randint(0, self.board_width-1)
         agent_y = self.board_height-1
+        self.move_right = False
+        self.move_left = False
         return agent_x, agent_y, Environment.TRACKER
 
     def _object_at_bottom(self, oy):
@@ -107,21 +109,16 @@ class Environment:
         dir = 1
         #TODO: moving faster should be rewarded maybe
         magnitude = 0
+        value = abs(diff)
+        magnitude = int(value>=0.1) + int(value>=0.25) + int(value>=0.5)+ int(value>=0.65)
         if diff< 0:
             dir = -1
-        value = abs(diff)
-        if value <0.1:
-            magnitude = 0
-        elif value <0.25:
-            magnitude = dir *1
-        elif value < 0.5:
-            magnitude = dir *2
-        elif value < 0.65:
-            magnitude = dir *3
+            if(magnitude>0):
+                self.move_left = True
         else:
-            magnitude = dir*4
-
-        nx = (x + magnitude)%self.board_width #Wrap around
+            if(magnitude>0):
+                self.move_right = True
+        nx = (x + (magnitude*dir))%self.board_width #Wrap around
         ny = y
         return (nx, ny)
 

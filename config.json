@@ -82,7 +82,7 @@
     "genotype": {
         "default": {
             "parameters": {
-                "mutation_rate": 0.15,
+                "mutation_rate": 0.12,
                 "crossover_rate": 0.65
             },
             "order": 1,

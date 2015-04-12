@@ -67,7 +67,7 @@ class EA(object):
             children = self.reproduce(mating_adults)
             #TODO: CORRECT ELITISM IMPLEMENTATION. FITNESS REEVALUATED?
             children.append(self.adult_selector.best)
-            self.adult_pool.append(self.adult_selector.best)
+            #self.adult_pool.append(self.adult_selector.best)
 
             #Check stopping condition, and gui update below
             self.best_individual = max(self.adult_pool, key=lambda a: a.fitness)

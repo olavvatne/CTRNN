@@ -15,7 +15,7 @@ class RecurrentNeuralNet:
         self.weight_range = weight
         self.gain_range = gain
         self.timeconstant_range = time
-
+        self.input_neurons = False
         self.sizes = sizes
         self.timeconstants = []
         self.gain = []
@@ -44,7 +44,7 @@ class RecurrentNeuralNet:
         self.timeconstants = parameters["t"]
 
     def restructure_parameters(self, parameters):
-        nr_w = 29
+
         scaler = np.vectorize(RecurrentNeuralNet.scale_number)
         structured = {}
         weights = []
@@ -57,15 +57,18 @@ class RecurrentNeuralNet:
             weights.append(np.reshape(w, shape))
             i = n
         structured["w"] = weights
-        gains = []
-        for shape in self.sizes:
+
+        #TODO: Add empty list for now.
+        gains = [[]]
+        for shape in self.sizes[1:]:
             n = i + shape
             gains.append(scaler(parameters[i:n], *self.gain_range))
             i= n
         structured["g"] = gains
 
-        timeconstants = []
-        for shape in self.sizes:
+        #TODO: Add empty list for now.
+        timeconstants = [[]]
+        for shape in self.sizes[1:]:
             n = i+shape
             timeconstants.append(scaler(parameters[i:n], *self.timeconstant_range))
             i = n
@@ -87,15 +90,18 @@ class RecurrentNeuralNet:
         The dot product of the weights at layer i and the activation from i-1 will result in the activations out from
         neurons at layer i.
         '''
-        s = external_input #Only external input, no weights and such. Does still have internal y
+
+        #If input layer should be treated as same type of nodes.
+        #TODO: remove if all scenarios work propertly without input neurons
+        #s = external_input #Only external input, no weights and such. Does still have internal y
         #dy = self.derivative(self.y[0], s, self.timeconstants[0])
         #self.y[0] = self.y[0] + dy
         #o = self.sigmoid(self.y[0], self.gain[0])
-        o = s
+
+        o = external_input
         if debug:
             print("----EXTERNAL----")
-            print(s)
-            #print(dy)
+            print(0)
 
         for j, w in enumerate(self.weights):
             #Equation 1
@@ -114,9 +120,6 @@ class RecurrentNeuralNet:
 
             #Equation 3
             o = self.sigmoid(self.y[j+1], self.gain[j+1])
-            if debug:
-                print("stored in prev",o)
-                print("------------")
             self.prev_output[j+1] = o #Prev output kept
         self.a = o
 
