@@ -135,7 +135,7 @@ class Environment:
         for i in range(dim):
             #TODO: handle wrap around. Think spawn assumption handles it
             if(x+i>=ox and x+i<ox+odim):
-                sensor[i] = 1 #/(1(self.board_height - oy))
+                sensor[i] =1 #/max(self.board_height - oy-5, 1.0)
         return sensor
 
 

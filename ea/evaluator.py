@@ -88,5 +88,5 @@ class TrackerAgentFitnessEvaluator(AbstractFitnessEvaluator):
         avoidance, capture, failure_avoidance, failure_capture, bi_dir = self.scenario.score_agent(p, timesteps=600)
         #TODO: Make a scoring for tracker
 
-        return (1 * capture/(capture+failure_capture)) + bi_dir #+ (0.3333 * avoidance/(avoidance+failure_avoidance))
+        return (capture/(capture+failure_capture)) + (0.5* avoidance/(avoidance+failure_avoidance)) + bi_dir
         #return (capture)/(avoidance+capture+failure)
