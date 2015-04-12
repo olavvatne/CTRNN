@@ -24,12 +24,19 @@ class RecurrentNeuralNet:
 
         self.mapper = self.create_mapper(sizes)
 
-        #TODO:hard coded appending of sizes
-        self.weight_matrix_sizes = [(2,8), (2,5)]
+        #Assume same number  of recurrent and bias connection for all hidden and output
+        nr_bias = 1
+        nr_recurrent = 2
+        sizes = np.array(sizes)
+        incoming_connections = sizes[:-1] + nr_recurrent + nr_bias
+        neurons = sizes[1:]
+        #For each neuron or array, the last nr_bias+nr_recurrent cells are recurrent and bias
+        self.weight_matrix_sizes = list(zip(neurons, incoming_connections))
+
 
     def _create_internal(self, sizes):
         self.y = [np.zeros(s) for s in sizes]
-        self.prev_output = [np.zeros(s) for s in sizes[1:]]
+        self.prev_output = [np.zeros(s) for s in sizes]
 
 
     def set_weights(self, parameters):
@@ -74,7 +81,7 @@ class RecurrentNeuralNet:
         #Could extend to connections between layers
         return mapper
 
-    def input(self, i):
+    def input(self, external_input):
         '''
          The input method propagate the activation from input to output. and returns the activation of the
          output layer
@@ -82,14 +89,13 @@ class RecurrentNeuralNet:
         neurons at layer i.
         '''
         #TODO: In loop?
-        s = i
+        s = external_input #Only external input, no weights and such. Does still have internal y
         dy = self.derivative(self.y[0], s, self.timeconstants[0])
         self.y[0] = self.y[0] + dy
         o = self.sigmoid(self.y[0], self.gain[0])
-
         for j, w in enumerate(self.weights):
             #Equation 1
-            o = self._add_recurrent_and_bias(o, j)
+            o = self._add_recurrent_and_bias(o, j+1)
             s = np.dot(w, o)
 
             #Equation 2
@@ -100,7 +106,7 @@ class RecurrentNeuralNet:
             #Equation 3
             o = self.sigmoid(self.y[j+1], self.gain[j+1])
 
-            self.prev_output[j] = o #Prev output kept
+            self.prev_output[j+1] = o #Prev output kept
         self.a = o
 
         #sys.exit()

@@ -29,8 +29,8 @@ class Environment:
         self.failure_avoidance = 0
         self.failure_capture = 0
         self.speed = 0
-        agent.reset()
-        x,y, dim= self._init_agent()
+
+        x,y, dim= self._init_agent(agent)
         object_x, object_y, object_dim = self._spawn_object()
 
         for t in range(timesteps):
@@ -62,7 +62,8 @@ class Environment:
         dim = random.randint(Environment.OBJECT_MIN_DIM, Environment.OBJECT_MAX_DIM)
         return (random.randint(0, self.board_width-1-dim), 0, dim)
 
-    def _init_agent(self):
+    def _init_agent(self, agent):
+        agent.reset()
         agent_x = random.randint(0, self.board_width-1)
         agent_y = self.board_height-1
         return agent_x, agent_y, Environment.TRACKER
@@ -114,13 +115,10 @@ class Environment:
             magnitude = dir *1
         elif diff < 0.5:
             magnitude = dir *2
-            self.speed += 0.001
         elif diff < 0.65:
             magnitude = dir *3
-            self.speed += 0.003
         else:
             magnitude = dir*4
-            self.speed += 0.009
 
         nx = (x + magnitude)%self.board_width #Wrap around
         ny = y
