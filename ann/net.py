@@ -20,7 +20,7 @@ class RecurrentNeuralNet:
         self.timeconstants = []
         self.gain = []
         self._create_internal(sizes)
-
+        self.max_y = 0
         self.mapper = self.create_mapper(sizes)
 
         #Assume same number  of recurrent and bias connection for all hidden and output
@@ -34,6 +34,7 @@ class RecurrentNeuralNet:
 
 
     def _create_internal(self, sizes):
+
         self.y = [np.zeros(s) for s in sizes]
         self.prev_output = [np.zeros(s) for s in sizes]
 
@@ -98,9 +99,6 @@ class RecurrentNeuralNet:
         o = self.sigmoid(self.y[0], self.gain[0])
 
         #o = external_input
-        if debug:
-            print("----EXTERNAL----")
-            print(0)
 
         for j, w in enumerate(self.weights):
             #Equation 1
@@ -120,6 +118,7 @@ class RecurrentNeuralNet:
             #Equation 3
             o = self.sigmoid(self.y[j+1], self.gain[j+1])
             self.prev_output[j+1] = o #Prev output kept
+
         self.a = o
 
         #sys.exit()

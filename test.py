@@ -59,10 +59,10 @@ def debug_ann(best):
              print(dir,"4")
 
 
-genome_length = 440
-pop_size = 20
+genome_length = 352
+pop_size = 30
 gen = 100
-threshold = 2.5
+threshold = 1
 ea_system = EA()
 listner = Listner()
 ea_system.add_listener(listner)

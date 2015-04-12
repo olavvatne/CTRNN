@@ -2,7 +2,7 @@
     "translator": {
         "parameter": {
             "parameters": {
-                "k": 10
+                "k": 8
             },
             "order": 1,
             "class_name": "BinToParameterTranslator",
@@ -48,7 +48,7 @@
         "tournament": {
             "parameters": {
                 "k": 10,
-                "e": 0.01
+                "e": 0.005
             },
             "order": 4,
             "class_name": "ParentTournamentSelection",
@@ -82,8 +82,8 @@
     "genotype": {
         "default": {
             "parameters": {
-                "mutation_rate": 0.14,
-                "crossover_rate": 0.65
+                "mutation_rate": 0.9,
+                "crossover_rate": 0.89
             },
             "order": 1,
             "class_name": "BitVectorGenotype",

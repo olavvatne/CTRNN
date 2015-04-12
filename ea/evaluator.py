@@ -87,6 +87,5 @@ class TrackerAgentFitnessEvaluator(AbstractFitnessEvaluator):
         p = individual.phenotype_container.get_ANN()
         avoidance, capture, failure_avoidance, failure_capture, bi_dir = self.scenario.score_agent(p, timesteps=600)
         #TODO: Make a scoring for tracker
-
-        return (capture/(capture+failure_capture)) + (0.5* avoidance/(avoidance+failure_avoidance)) + bi_dir
+        return (capture/(capture+failure_capture))#  - 0.3*(failure_avoidance/(avoidance+failure_avoidance))
         #return (capture)/(avoidance+capture+failure)
