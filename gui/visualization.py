@@ -162,7 +162,7 @@ class TrackerAgentDisplay(PixelDisplay):
 
     def draw_model(self, timeslice):
         if timeslice:
-            timestep, capture, avoidance, failure, tracker, object = timeslice
+            timestep, score, tracker, object = timeslice
             self.delete("Piece")
 
             #Draw tracker
@@ -179,10 +179,12 @@ class TrackerAgentDisplay(PixelDisplay):
                 #TODO: remove magic number
                 self.draw_piece("Piece", x+i, y, 2)
 
+            capture, avoidance, failure_capture, failure_avoidance = score
             self.create_text(20, 20, font=("Arial",20), text=str(timestep+1), fill="white", tags="Piece")
             self.create_text(80, 20, font=("Arial",20), text="C: " +str(capture), fill="white", tags="Piece")
             self.create_text(140, 20, font=("Arial",20), text="A:" +str(avoidance), fill="white", tags="Piece")
-            self.create_text(200, 20, font=("Arial",20), text="F:" +str(failure), fill="white", tags="Piece")
+            self.create_text(220, 20, font=("Arial",20), text="CF:" +str(failure_capture), fill="white", tags="Piece")
+            self.create_text(300, 20, font=("Arial",20), text="AF:" +str(failure_avoidance), fill="white", tags="Piece")
 
 
     def draw_piece(self, piece_id, x, y, piece_type):
@@ -220,6 +222,9 @@ class ResultDialog(object):
         restart_button = Button(top, text="Restart", command=self.reset)
         restart_button.grid(row=1, column=4,padx=4, pady=4)
 
+        new_button = Button(top, text="New recording", command=self.restart)
+        new_button.grid(row=1, column=3,padx=4, pady=4)
+
 
         finish_button = Button(top, text="OK", command=self.ok)
         finish_button.grid(row=2, column=4,padx=4, pady=10)
@@ -231,6 +236,10 @@ class ResultDialog(object):
         self.canvas.set_queue(self.recording)
         self.canvas.start()
 
+    def restart(self):
+        self.canvas.stop()
+        self.record_agent()
+        self.reset()
 
     def set_speed(self, *args):
         self.canvas.set_rate(int(self.v.get()))

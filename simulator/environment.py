@@ -35,13 +35,14 @@ class Environment:
 
         for t in range(timesteps):
             #Shadow sensor gathering
-            shadow_sensors = self._get_sensor_data(x, dim, object_x, object_dim)
+            shadow_sensors = self._get_sensor_data(x, dim, object_x, object_y, object_dim)
             #Motor output
             agent.input(shadow_sensors)
             motor_output = agent.output()
 
             if rec:
-                self.recording.append((t, self.capture, self.avoidance,self.failure_avoidance+self.failure_capture, (x,y, Environment.TRACKER, shadow_sensors), (object_x, object_y, object_dim)))
+                score = (self.capture, self.avoidance,self.failure_capture, self.failure_avoidance)
+                self.recording.append((t,score, (x,y, Environment.TRACKER, shadow_sensors), (object_x, object_y, object_dim)))
 
             #Score if at bottom
             #Move agent
@@ -102,20 +103,20 @@ class Environment:
 
     def _move_agent(self, x, y, motor_output):
         #TODO: Is this effient and capitalize motor_output?
-        diff = (motor_output[0] - motor_output[1])
+        diff = motor_output[0] - motor_output[1]
         dir = 1
         #TODO: moving faster should be rewarded maybe
         magnitude = 0
         if diff< 0:
             dir = -1
-        diff = abs(diff)
-        if diff <0.1:
+        value = abs(diff)
+        if value <0.1:
             magnitude = 0
-        elif diff <0.25:
+        elif value <0.25:
             magnitude = dir *1
-        elif diff < 0.5:
+        elif value < 0.5:
             magnitude = dir *2
-        elif diff < 0.65:
+        elif value < 0.65:
             magnitude = dir *3
         else:
             magnitude = dir*4
@@ -127,7 +128,7 @@ class Environment:
     def get_recording(self):
         return self.recording
 
-    def _get_sensor_data(self, x, dim, ox, odim):
+    def _get_sensor_data(self, x, dim, ox,oy, odim):
         '''
         Shadow sensor creation. If the x of tracker and object overlap
         the shadow sensor for the tracker agent is set to 1, indicating
@@ -137,7 +138,7 @@ class Environment:
         for i in range(dim):
             #TODO: handle wrap around. Think spawn assumption handles it
             if(x+i>=ox and x+i<ox+odim):
-                sensor[i] = 1
+                sensor[i] = 1 #/(1(self.board_height - oy))
         return sensor
 
 

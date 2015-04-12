@@ -80,22 +80,32 @@ class RecurrentNeuralNet:
         #Could extend to connections between layers
         return mapper
 
-    def input(self, external_input):
+    def input(self, external_input, debug=False):
         '''
          The input method propagate the activation from input to output. and returns the activation of the
          output layer
         The dot product of the weights at layer i and the activation from i-1 will result in the activations out from
         neurons at layer i.
         '''
-        #TODO: In loop?
         s = external_input #Only external input, no weights and such. Does still have internal y
-        dy = self.derivative(self.y[0], s, self.timeconstants[0])
-        self.y[0] = self.y[0] + dy
-        o = self.sigmoid(self.y[0], self.gain[0])
+        #dy = self.derivative(self.y[0], s, self.timeconstants[0])
+        #self.y[0] = self.y[0] + dy
+        #o = self.sigmoid(self.y[0], self.gain[0])
+        o = s
+        if debug:
+            print("----EXTERNAL----")
+            print(s)
+            #print(dy)
+
         for j, w in enumerate(self.weights):
             #Equation 1
             o = self._add_recurrent_and_bias(o, j+1)
             s = np.dot(w, o)
+            if debug:
+                print("-------LAYER ", j+1, "--------")
+                print("activiations:", o)
+                print("weights", w)
+                print("np.dot", s)
 
             #Equation 2
             dy = self.derivative(self.y[j+1], s, self.timeconstants[j+1])
@@ -104,7 +114,9 @@ class RecurrentNeuralNet:
 
             #Equation 3
             o = self.sigmoid(self.y[j+1], self.gain[j+1])
-
+            if debug:
+                print("stored in prev",o)
+                print("------------")
             self.prev_output[j+1] = o #Prev output kept
         self.a = o
 
