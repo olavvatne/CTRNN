@@ -20,8 +20,8 @@ class RecurrentNeuralNet:
         self.timeconstants = []
         self.gain = []
         self._create_internal(sizes)
-        self.max_y = 0
-        self.mapper = self.create_mapper(sizes)
+        self.indexes = 0
+        #self.mapper = self.create_mapper(sizes)
 
         #Assume same number  of recurrent and bias connection for all hidden and output
         nr_bias = 1
@@ -77,14 +77,15 @@ class RecurrentNeuralNet:
 
         return structured
 
-    def create_mapper(self, sizes):
-        #TODO: Hardcoded mapper, not even used currently
-        mapper = [ [{1: [1,2], 2: [2,1]}], [{1: [1,2], 2: [2,1]}] ]
-        #Node one has connection from itself, and 2 in same layer.
-        #Could extend to connections between layers
-        return mapper
+    #def create_mapper(self, sizes):
+    #    #TODO: Hardcoded mapper, not even used currently
+    #    mapper = [ [{1: [1,2], 2: [2,1]}], [{1: [1,2], 2: [2,1]}] ]
+    #    #Node one has connection from itself, and 2 in same layer.
+    #    #Could extend to connections between layers
+    #   return mapper
 
     def input(self, external_input, debug=False):
+        debug=False
         '''
          The input method propagate the activation from input to output. and returns the activation of the
          output layer
@@ -110,6 +111,7 @@ class RecurrentNeuralNet:
                 print("weights", w)
                 print("np.dot", s)
 
+
             #Equation 2
             dy = self.derivative(self.y[j+1], s, self.timeconstants[j+1])
 
@@ -118,10 +120,13 @@ class RecurrentNeuralNet:
             #Equation 3
             o = self.sigmoid(self.y[j+1], self.gain[j+1])
             self.prev_output[j+1] = o #Prev output kept
-
+            if debug:
+                print("o",o)
         self.a = o
-
-        #sys.exit()
+        self.indexes += 1
+        #print("-")
+        #if self.indexes > 1:
+            #sys.exit()
 
     def output(self):
         return self.a

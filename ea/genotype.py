@@ -28,6 +28,8 @@ class AbstractGenotype(metaclass=ABCMeta):
         self.crossover_rate = crossover_rate
         self.mutation_rate = mutation_rate
         self.genotype = None
+        #TODO: parameterize
+        self.k = 8
 
     @abstractmethod
     def init_random_genotype(self, n):
@@ -67,7 +69,20 @@ class BitVectorGenotype(AbstractGenotype):
         '''
         Initially the genotype can be set to a random bit vector.
         '''
+
+
         self.genotype = np.random.randint(2, size=n)
+
+    def crossover(self, partner):
+        '''
+        Crossover with a twist. Will crossover only in between weights
+        '''
+        cg1 = self.copy()
+        if random.random() < self.crossover_rate:
+            crossover = math.floor(random.uniform(0, self.genotype.size))
+            crossover = crossover - (crossover%self.k)
+            cg1.genotype[:crossover] = partner.genotype[:crossover]
+        return cg1
 
     def copy(self):
         '''
