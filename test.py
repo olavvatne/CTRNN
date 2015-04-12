@@ -38,7 +38,7 @@ def debug_ann(best):
         except:
             print("Not valid!")
 
-genome_length = 352
+genome_length = 440
 pop_size = 30
 gen = 100
 threshold = 1.1
@@ -49,7 +49,7 @@ translator = "parameter"
 fitness = "tracker"
 genotype = "default"
 adult = "full"
-parent = "sigma"
+parent = "tournament"
 
 ea_system.setup(translator,fitness,genotype,adult,parent,genome_length)
 

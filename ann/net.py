@@ -16,7 +16,6 @@ class RecurrentNeuralNet:
         self.gain_range = gain
         self.timeconstant_range = time
 
-        self.num_layers = len(sizes)
         self.sizes = sizes
         self.timeconstants = []
         self.gain = []
