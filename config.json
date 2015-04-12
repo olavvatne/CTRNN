@@ -47,8 +47,8 @@
         },
         "tournament": {
             "parameters": {
-                "k": 5,
-                "e": 0.005
+                "k": 10,
+                "e": 0.01
             },
             "order": 4,
             "class_name": "ParentTournamentSelection",
@@ -82,7 +82,7 @@
     "genotype": {
         "default": {
             "parameters": {
-                "mutation_rate": 0.10,
+                "mutation_rate": 0.15,
                 "crossover_rate": 0.65
             },
             "order": 1,

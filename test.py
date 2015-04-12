@@ -20,27 +20,28 @@ def show_result(best):
 def debug_ann(best):
     ann = best.phenotype_container.get_ANN()
     while(True):
+        ann.reset()
+        print("y", ann.y)
+        print("gain",ann.gain)
+        print("timeconstants",ann.timeconstants)
+        print("weights",ann.weights)
         txt = input('Test ANN:')
         if txt == 'q':
             break
         try:
             numbers = np.array([int(x) for x in txt.split(sep=" ")])
             print(numbers)
-            a = ann.feedforward(numbers)
-            print(a)
-            action = np.argmax(a)
-            if(action == Environment.MOVE_LEFT):
-                print("LEFT")
-            elif(action==Environment.MOVE_FORWARD):
-                print("FORWARD")
-            elif(action==Environment.MOVE_RIGHT):
-                print("RIGHT")
+            ann.input(numbers)
+            m = ann.output()
+            print(m)
+
         except:
             print("Not valid!")
+    pass
 
 genome_length = 440
 pop_size = 30
-gen = 100
+gen = 10
 threshold = 1.1
 ea_system = EA()
 listner = Listner()
@@ -54,7 +55,7 @@ parent = "tournament"
 ea_system.setup(translator,fitness,genotype,adult,parent,genome_length)
 
 best = ea_system.run(pop_size, gen, threshold)
-#debug_ann(best)
+debug_ann(best)
 show_result(best)
 
 
