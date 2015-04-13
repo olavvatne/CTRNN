@@ -79,9 +79,11 @@ class BitVectorGenotype(AbstractGenotype):
         '''
         cg1 = self.copy()
         if random.random() < self.crossover_rate:
-            crossover = math.floor(random.uniform(0, self.genotype.size))
-            crossover = crossover - (crossover%self.k)
-            cg1.genotype[:crossover] = partner.genotype[:crossover]
+            #crossover = crossover - (crossover%self.k)
+            #crossover = math.floor(random.uniform(0, self.genotype.size))
+            for i in range(0, self.genotype.size, 8):
+                if random.random() < .5:
+                    cg1.genotype[i:i+8] = partner.genotype[i:i+8]
         return cg1
 
     def copy(self):
