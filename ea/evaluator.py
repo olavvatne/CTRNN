@@ -2,7 +2,6 @@ from abc import ABCMeta, abstractmethod
 import sys
 
 import numpy as np
-import threading
 from config.configuration import Configuration
 from simulator.agent import Simulator
 
@@ -79,23 +78,13 @@ class TrackerAgentFitnessEvaluator(AbstractFitnessEvaluator):
     '''
 
     def __init__(self,genome_length, test=1):
-        self.simulator = [Simulator() for i in range(1)]
+        self.simulator = [Simulator() for i in range(70)]
 
     def evaluate_all(self, population):
         '''
         Convenience method for evaluating all individuals in the population list.
         '''
-        #work = [population[i:i + 4] for i in range(0, len(population), 4)]
-        #for g in work:
-        #    threads = []
-        #    i = 0
-        #    for ind,s in zip(g, self.simulator):
-        #        i += 1
-        #        t = threading.Thread(target=self.evaluate, args=(ind,s))
-        #        t.setDaemon(True)
-        #        threads.append(t)
-        #    [th.start() for th in threads]
-        #    [th.join() for th in threads]
+
         for individual in population:
             self.evaluate(individual, self.simulator[0])
 

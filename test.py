@@ -73,10 +73,9 @@ parent = "sigma"
 
 ea_system.setup(translator,fitness,genotype,adult,parent,genome_length)
 
-#best = ea_system.run(pop_size, gen, threshold)
+best = ea_system.run(pop_size, gen, threshold)
 #debug_ann(best)
-#show_result(best)
+show_result(best)
 
 
-
-cProfile.run('ea_system.run(pop_size, gen, threshold)', sort='cumtime')
+#cProfile.run('ea_system.run(pop_size, gen, threshold)', sort='cumtime')

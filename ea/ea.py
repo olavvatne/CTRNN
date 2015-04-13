@@ -57,7 +57,6 @@ class EA(object):
 
         children = self.create_population(population_size)  #Inital population
         self.adult_pool = children
-
         for c in range(cycles):
 
             self.geno_to_pheno_development(children)
@@ -84,6 +83,7 @@ class EA(object):
         self.best_individual = max(self.adult_pool, key=lambda a: a.fitness)
         self.send_update(c+1, cycles, self.best_individual)
         return self.best_individual
+
         print("-------------------------")
 
     def stop(self):
