@@ -15,13 +15,11 @@ class RecurrentNeuralNet:
         self.weight_range = weight
         self.gain_range = gain
         self.timeconstant_range = time
-
+        self.scaler = np.vectorize(RecurrentNeuralNet.scale_number)
         self.sizes = sizes
         self.timeconstants = []
         self.gain = []
         self._create_internal(sizes)
-        self.indexes = 0
-        #self.mapper = self.create_mapper(sizes)
 
         #Assume same number  of recurrent and bias connection for all hidden and output
         nr_bias = 1
@@ -46,36 +44,31 @@ class RecurrentNeuralNet:
 
     def restructure_parameters(self, parameters):
 
-        scaler = np.vectorize(RecurrentNeuralNet.scale_number)
-        structured = {}
+
         weights = []
+        gains = [[]]
+        timeconstants = [[]]
         i = 0
         n = 0
-        for shape in self.weight_matrix_sizes:
+        for j, shape in enumerate(self.weight_matrix_sizes):
             n = i + (shape[0] * shape[1])
-            w = scaler(parameters[i:n],*self.weight_range)
+            #TODO: add gains and weights to create neuron component in genome
+            w = self.scaler(parameters[i:n],*self.weight_range)
             w[-1] = RecurrentNeuralNet.scale_number(parameters[n-1], *self.bias_range)
             weights.append(np.reshape(w, shape))
             i = n
-        structured["w"] = weights
 
-        #TODO: Add empty list for now.
-        gains = [[]]
-        for shape in self.sizes[1:]:
-            n = i + shape
-            gains.append(scaler(parameters[i:n], *self.gain_range))
+            #Gains
+            n = i + self.sizes[j+1]
+            gains.append(self.scaler(parameters[i:n], *self.gain_range))
             i= n
-        structured["g"] = gains
 
-        #TODO: Add empty list for now.
-        timeconstants = [[]]
-        for shape in self.sizes[1:]:
-            n = i+shape
-            timeconstants.append(scaler(parameters[i:n], *self.timeconstant_range))
+            #Timeconstants
+            n = i+self.sizes[j+1]
+            timeconstants.append(self.scaler(parameters[i:n], *self.timeconstant_range))
             i = n
-        structured["t"] = timeconstants
 
-        return structured
+        return {"w":weights, "g": gains, "t": timeconstants}
 
     #def create_mapper(self, sizes):
     #    #TODO: Hardcoded mapper, not even used currently
@@ -110,18 +103,11 @@ class RecurrentNeuralNet:
             s = np.dot(w, o)
             if debug:
                 print("-------LAYER ", j+1, "--------")
-                print("activiations:", o)
-                print("weights", w)
-                print("np.dot", s)
 
 
             #Equation 2
             dy = self.derivative(self.y[j+1], s, self.timeconstants[j+1])
 
-            if debug:
-                #Dy and sigmoid calc correct, new y correct, add bias and recurrent seems to be correct!
-                #
-                print("test")
 
             #Equation 3
             self.y[j+1] = self.y[j+1] + dy
@@ -129,11 +115,6 @@ class RecurrentNeuralNet:
             o = self.sigmoid(self.y[j+1], self.gain[j+1])
             self.prev_output[j+1] = o #Prev output kept
         return o
-        #self.indexes += 1
-        #print("-")
-        #if self.indexes > 1:
-        #    sys.exit()
-
 
     def sigmoid(self, y,g):
         return 1.0/(1.0+np.exp(np.multiply(-y,g)))
@@ -146,8 +127,6 @@ class RecurrentNeuralNet:
 
     def _add_recurrent_and_bias(self, a, i):
         return np.concatenate((a,(self.prev_output[i][0], self.prev_output[i][1], RecurrentNeuralNet.BIAS_VALUE)))
-
-
 
     @staticmethod
     def scale_number(n, min, max):
