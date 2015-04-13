@@ -78,25 +78,16 @@ class TrackerAgentFitnessEvaluator(AbstractFitnessEvaluator):
     '''
 
     def __init__(self,genome_length, test=1):
-        self.simulator = [Simulator() for i in range(70)]
-
-    def evaluate_all(self, population):
-        '''
-        Convenience method for evaluating all individuals in the population list.
-        '''
-
-        for individual in population:
-            self.evaluate(individual, self.simulator[0])
+        self.simulator = Simulator()
 
 
-
-    def evaluate(self, individual, simulator):
+    def evaluate(self, individual):
         '''
 
         '''
         #TODO: increase timesteps?
         p = individual.phenotype_container.phenotype
-        avoidance, capture, failure_avoidance, failure_capture, speed = simulator.run(p)
+        avoidance, capture, failure_avoidance, failure_capture, speed = self.simulator.run(p)
         cap = capture/(capture+failure_capture)
         avo =avoidance/(avoidance+failure_avoidance)
-        individual.fitness = 4*cap +  (2*avo) +(1*speed)
+        return 4*cap +  (2*avo) +(1*speed)
