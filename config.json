@@ -47,7 +47,7 @@
         },
         "tournament": {
             "parameters": {
-                "k": 10,
+                "k": 20,
                 "e": 0.005
             },
             "order": 4,
@@ -82,8 +82,8 @@
     "genotype": {
         "default": {
             "parameters": {
-                "mutation_rate": 0.12,
-                "crossover_rate": 0.65
+                "mutation_rate": 0.001,
+                "crossover_rate": 0.75
             },
             "order": 1,
             "class_name": "BitVectorGenotype",

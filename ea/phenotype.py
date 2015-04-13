@@ -25,13 +25,9 @@ class CTRNNParametersPhenotype(AbstractPhenotype):
     weights from the phenotype. Direct mapping, structure of ANN not evolvable, only
     weights are adjusted using this phenotype.
     '''
-    def __init__(self, phenotype, ann):
-        self.ann = ann
+    def __init__(self, phenotype):
         self.phenotype = phenotype
 
-    def get_ANN(self):
-        self.ann.set_weights(self.phenotype)
-        return self.ann
 
     def __repr__(self):
         return str(len(self.phenotype))

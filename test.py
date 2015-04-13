@@ -37,8 +37,7 @@ def debug_ann(best):
             print("Not valid!")
             continue
 
-        ann.input(numbers, debug=True)
-        m = ann.output()
+        m = ann.input(numbers, debug=True)
         print(m)
         diff = m[0] - m[1]
         print(diff)
@@ -59,10 +58,10 @@ def debug_ann(best):
              print(dir,"4")
 
 
-genome_length = 352
-pop_size = 40
-gen = 50
-threshold = 1
+genome_length = 272
+pop_size = 70
+gen = 30
+threshold = 7
 ea_system = EA()
 listner = Listner()
 ea_system.add_listener(listner)
@@ -74,10 +73,10 @@ parent = "sigma"
 
 ea_system.setup(translator,fitness,genotype,adult,parent,genome_length)
 
-best = ea_system.run(pop_size, gen, threshold)
-debug_ann(best)
-show_result(best)
+#best = ea_system.run(pop_size, gen, threshold)
+#debug_ann(best)
+#show_result(best)
 
 
 
-#cProfile.run('ea_system.run(pop_size, gen, threshold)', sort='cumtime')
+cProfile.run('ea_system.run(pop_size, gen, threshold)', sort='cumtime')

@@ -2,7 +2,6 @@ from abc import ABCMeta, abstractmethod
 import sys
 
 import numpy as np
-from ann.net import RecurrentNeuralNet
 
 from ea.phenotype import IntegerPhenotype, CTRNNParametersPhenotype
 from config.configuration import Configuration
@@ -65,8 +64,6 @@ class BinToParameterTranslator(AbstractTranslator):
         #TODO: Different parameters have different ranges. Fix by parameter and the
         self.k = k
         self.nr_of_values = 2**k
-        self.layers = [5,2,2]
-        self.ann = RecurrentNeuralNet(self.layers)
 
 
     def develop(self, individual):
@@ -79,9 +76,8 @@ class BinToParameterTranslator(AbstractTranslator):
         #Use gray encoding so that a bit change will not
         p = individual.genotype_container.genotype
         parameters = [self._g2i(p[i:i + self.k])/self.nr_of_values for i in range(0, len(p), self.k)]
-        phenotype = self.ann.restructure_parameters(np.array(parameters))
 
-        return CTRNNParametersPhenotype(phenotype, self.ann)
+        return CTRNNParametersPhenotype(parameters)
 
 
 

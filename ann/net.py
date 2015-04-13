@@ -60,16 +60,16 @@ class RecurrentNeuralNet:
         structured["w"] = weights
 
         #TODO: Add empty list for now.
-        gains = []
-        for shape in self.sizes:
+        gains = [[]]
+        for shape in self.sizes[1:]:
             n = i + shape
             gains.append(scaler(parameters[i:n], *self.gain_range))
             i= n
         structured["g"] = gains
 
         #TODO: Add empty list for now.
-        timeconstants = []
-        for shape in self.sizes:
+        timeconstants = [[]]
+        for shape in self.sizes[1:]:
             n = i+shape
             timeconstants.append(scaler(parameters[i:n], *self.timeconstant_range))
             i = n
@@ -85,21 +85,24 @@ class RecurrentNeuralNet:
     #   return mapper
 
     def input(self, external_input, debug=False):
-        debug=False
+        #debug = True
+
+
         '''
          The input method propagate the activation from input to output. and returns the activation of the
          output layer
         The dot product of the weights at layer i and the activation from i-1 will result in the activations out from
         neurons at layer i.
         '''
+        #debug=True
 
         #If input layer should be treated as same type of nodes.
-        s = external_input #Only external input, no weights and such. Does still have internal y
-        dy = self.derivative(self.y[0], s, self.timeconstants[0])
-        self.y[0] = self.y[0] + dy
-        o = self.sigmoid(self.y[0], self.gain[0])
+        #s = external_input #Only external input, no weights and such. Does still have internal y
+        #dy = self.derivative(self.y[0], s, self.timeconstants[0])
+        #self.y[0] = self.y[0] + dy
+        #o = self.sigmoid(self.y[0], self.gain[0])
 
-        #o = external_input
+        o = external_input
 
         for j, w in enumerate(self.weights):
             #Equation 1
@@ -115,21 +118,22 @@ class RecurrentNeuralNet:
             #Equation 2
             dy = self.derivative(self.y[j+1], s, self.timeconstants[j+1])
 
-            self.y[j+1] = self.y[j+1] + dy
+            if debug:
+                #Dy and sigmoid calc correct, new y correct, add bias and recurrent seems to be correct!
+                #
+                print("test")
 
             #Equation 3
+            self.y[j+1] = self.y[j+1] + dy
+
             o = self.sigmoid(self.y[j+1], self.gain[j+1])
             self.prev_output[j+1] = o #Prev output kept
-            if debug:
-                print("o",o)
-        self.a = o
-        self.indexes += 1
+        return o
+        #self.indexes += 1
         #print("-")
         #if self.indexes > 1:
-            #sys.exit()
+        #    sys.exit()
 
-    def output(self):
-        return self.a
 
     def sigmoid(self, y,g):
         return 1.0/(1.0+np.exp(np.multiply(-y,g)))
@@ -141,7 +145,8 @@ class RecurrentNeuralNet:
         self._create_internal(self.sizes)
 
     def _add_recurrent_and_bias(self, a, i):
-        return np.append(a, [self.prev_output[i][0], self.prev_output[i][1], RecurrentNeuralNet.BIAS_VALUE]) #Bias
+        return np.concatenate((a,(self.prev_output[i][0], self.prev_output[i][1], RecurrentNeuralNet.BIAS_VALUE)))
+
 
 
     @staticmethod

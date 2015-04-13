@@ -2,6 +2,7 @@ from simulator.environment import Environment
 from tkinter import *
 from math import fabs
 from collections import deque
+from simulator.agent import Simulator
 
 #Subclass of the tkinters Canvas object. Contains methods
 #for setting a graph model and drawing a graph, and changing
@@ -203,13 +204,14 @@ class ResultDialog(object):
     '''
     def __init__(self, parent, individual):
         self.individual = individual
-        w = 30
-        h = 15
-        self.scenario = Environment(w,h)
+        self.scenario = Simulator()
 
         top = self.top = Toplevel(parent)
         top.title("Tracker game - results")
         top.grid()
+
+        w = 30
+        h = 15
         self.canvas = TrackerAgentDisplay(top, w, h)
         self.canvas.set_model(self.scenario)
         self.canvas.grid(row=0, column=0, columnspan=5, sticky=(N,W,S,E) ,padx=4, pady=4)
@@ -245,9 +247,10 @@ class ResultDialog(object):
         self.canvas.set_rate(int(self.v.get()))
 
     def record_agent(self):
-        p = self.individual.phenotype_container.get_ANN()
+        p = self.individual.phenotype_container.phenotype
+        self.scenario.run(p, rec=True)
 
-        self.scenario.score_agent(p, rec=True)
+
         self.recording = self.scenario.get_recording()
         self.canvas.set_queue(self.recording)
         self.canvas.start()

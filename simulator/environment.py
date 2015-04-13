@@ -29,6 +29,7 @@ class Environment:
         self.failure_avoidance = 0
         self.failure_capture = 0
         self.speed = 0
+        self.max_speed = 0
 
         x,y, dim= self._init_agent(agent)
         object_x, object_y, object_dim = self._spawn_object()
@@ -37,8 +38,7 @@ class Environment:
             #Shadow sensor gathering
             shadow_sensors = self._get_sensor_data(x, dim, object_x, object_y, object_dim)
             #Motor output
-            agent.input(shadow_sensors)
-            motor_output = agent.output()
+            motor_output = agent.input(shadow_sensors)
 
             if rec:
                 score = (self.capture, self.avoidance,self.failure_capture, self.failure_avoidance)
@@ -56,7 +56,7 @@ class Environment:
                 #Move object closer to bottom
                 object_y += 1
 
-        return self.avoidance, self.capture, self.failure_avoidance, self.failure_capture, self.speed
+        return self.avoidance, self.capture, self.failure_avoidance, self.failure_capture, self.speed/self.max_speed
 
     def _spawn_object(self):
         #Assume objects cant wrap around. Will make no-wrap scenario easier
@@ -112,8 +112,10 @@ class Environment:
         if diff< 0:
             dir = -1
 
-        if(sum(sensor_data) == 0):
+        if(np.sum(sensor_data) == 0):
+            self.max_speed += 4
             self.speed += magnitude
+
         nx = (x + (magnitude*dir))%self.board_width #Wrap around
         ny = y
         return (nx, ny)

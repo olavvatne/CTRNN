@@ -2,9 +2,9 @@ from abc import ABCMeta, abstractmethod
 import sys
 
 import numpy as np
-
+import threading
 from config.configuration import Configuration
-from simulator.environment import Environment
+from simulator.agent import Simulator
 
 
 class FitnessEvaluatorFactory:
@@ -41,6 +41,8 @@ class AbstractFitnessEvaluator(metaclass=ABCMeta):
         '''
         Convenience method for evaluating all individuals in the population list.
         '''
+
+
         for individual in population:
             individual.fitness = self.evaluate(individual)
 
@@ -77,16 +79,35 @@ class TrackerAgentFitnessEvaluator(AbstractFitnessEvaluator):
     '''
 
     def __init__(self,genome_length, test=1):
-        self.scenario = Environment(30,15)
+        self.simulator = [Simulator() for i in range(1)]
 
-    def evaluate(self, individual):
+    def evaluate_all(self, population):
+        '''
+        Convenience method for evaluating all individuals in the population list.
+        '''
+        #work = [population[i:i + 4] for i in range(0, len(population), 4)]
+        #for g in work:
+        #    threads = []
+        #    i = 0
+        #    for ind,s in zip(g, self.simulator):
+        #        i += 1
+        #        t = threading.Thread(target=self.evaluate, args=(ind,s))
+        #        t.setDaemon(True)
+        #        threads.append(t)
+        #    [th.start() for th in threads]
+        #    [th.join() for th in threads]
+        for individual in population:
+            self.evaluate(individual, self.simulator[0])
+
+
+
+    def evaluate(self, individual, simulator):
         '''
 
         '''
         #TODO: increase timesteps?
-        p = individual.phenotype_container.get_ANN()
-        avoidance, capture, failure_avoidance, failure_capture, speed = self.scenario.score_agent(p, timesteps=600)
-        #TODO: Make a scoring for tracker
-        #individual.c = capture/(capture+failure_capture)
-        #individual.a = avoidance/(avoidance+failure_avoidance)
-        return (1*capture/(capture+failure_capture)) #+speed/(600*4)#+ (0.2*avoidance/(avoidance+failure_avoidance))
+        p = individual.phenotype_container.phenotype
+        avoidance, capture, failure_avoidance, failure_capture, speed = simulator.run(p)
+        cap = capture/(capture+failure_capture)
+        avo =avoidance/(avoidance+failure_avoidance)
+        individual.fitness = 4*cap +  (2*avo) +(1*speed)
