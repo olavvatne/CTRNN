@@ -66,7 +66,7 @@ class DefaultFitnessEvaluator(AbstractFitnessEvaluator):
         Return the fraction of where the phenotype correspond to the target vector.
         Use not xor --> ==
         '''
-        p = individual.phenotype_container.phenotype
+        p = individual.phenotype_container
 
         d = np.sum(np.logical_not(np.logical_xor(p, self.target), dtype=np.bool))
         return (d / p.size)
@@ -86,8 +86,8 @@ class TrackerAgentFitnessEvaluator(AbstractFitnessEvaluator):
 
         '''
         #TODO: increase timesteps?
-        p = individual.phenotype_container.phenotype
+        p = individual.phenotype_container
         avoidance, capture, failure_avoidance, failure_capture, speed = self.simulator.run(p)
         cap = capture/(capture+failure_capture)
         avo =avoidance/(avoidance+failure_avoidance)
-        return 4*cap +  (2*avo) +(1*speed)
+        return 4*cap +  (2*avo) +(0.2*speed)

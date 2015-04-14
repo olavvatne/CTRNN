@@ -9,7 +9,7 @@ class RecurrentNeuralNet:
     WEIGHT_RANGE = [-5.0, 5.0]
 
     SIGMOID = "sigmoid"
-    BIAS_VALUE = 1
+    BIAS_VALUE = [1]
     def __init__(self, sizes, weight=WEIGHT_RANGE, bias=BIAS_RANGE, gain=GAIN_RANGE, time=TIME_RANGE):
         self.bias_range = bias
         self.weight_range = weight
@@ -77,9 +77,7 @@ class RecurrentNeuralNet:
     #    #Could extend to connections between layers
     #   return mapper
 
-    def input(self, external_input, debug=False):
-        #debug = True
-
+    def input(self, external_input):
 
         '''
          The input method propagate the activation from input to output. and returns the activation of the
@@ -99,20 +97,22 @@ class RecurrentNeuralNet:
 
         for j, w in enumerate(self.weights):
             #Equation 1
-            o = self._add_recurrent_and_bias(o, j+1)
+
+            #Add recurrent connections and bias
+            o = np.concatenate((o, self.prev_output[j+1], RecurrentNeuralNet.BIAS_VALUE))
+
             s = np.dot(w, o)
-            if debug:
-                print("-------LAYER ", j+1, "--------")
 
 
             #Equation 2
-            dy = self.derivative(self.y[j+1], s, self.timeconstants[j+1])
-
+            #Derivative
+            dy = np.multiply(1/self.timeconstants[j+1],((-self.y[j+1])+s))
 
             #Equation 3
             self.y[j+1] = self.y[j+1] + dy
 
             o = self.sigmoid(self.y[j+1], self.gain[j+1])
+
             self.prev_output[j+1] = o #Prev output kept
         return o
 
@@ -124,9 +124,6 @@ class RecurrentNeuralNet:
 
     def reset(self):
         self._create_internal(self.sizes)
-
-    def _add_recurrent_and_bias(self, a, i):
-        return np.concatenate((a,(self.prev_output[i][0], self.prev_output[i][1], RecurrentNeuralNet.BIAS_VALUE)))
 
     @staticmethod
     def scale_number(n, min, max):

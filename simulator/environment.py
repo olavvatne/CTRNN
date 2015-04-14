@@ -46,7 +46,7 @@ class Environment:
 
             #Score if at bottom
             #Move agent
-            x, y = self._move_agent(x ,y, motor_output, shadow_sensors)
+            x = self._move_agent(x , motor_output, shadow_sensors)
 
             at_bottom = self._object_at_bottom(object_y)
             if at_bottom:
@@ -56,7 +56,7 @@ class Environment:
                 #Move object closer to bottom
                 object_y += 1
 
-        return self.avoidance, self.capture, self.failure_avoidance, self.failure_capture, self.speed/self.max_speed
+        return self.avoidance, self.capture, self.failure_avoidance, self.failure_capture, 0
 
     def _spawn_object(self):
         #Assume objects cant wrap around. Will make no-wrap scenario easier
@@ -101,24 +101,25 @@ class Environment:
 
 
 
-    def _move_agent(self, x, y, motor_output, sensor_data):
+    def _move_agent(self, x, motor_output, sensor_data):
         #TODO: Is this effient and capitalize motor_output?
         diff = motor_output[0] - motor_output[1]
-        dir = 1
+
         #TODO: moving faster should be rewarded maybe
-        magnitude = 0
+
         value = abs(diff)
+
         magnitude = int(value>=0.1) + int(value>=0.25) + int(value>=0.5)+ int(value>=0.65)
+        dir = 1
         if diff< 0:
             dir = -1
 
-        if(np.sum(sensor_data) == 0):
-            self.max_speed += 4
-            self.speed += magnitude
+        self.max_speed += 4
+        self.speed += magnitude
 
         nx = (x + (magnitude*dir))%self.board_width #Wrap around
-        ny = y
-        return (nx, ny)
+
+        return nx
 
     def get_recording(self):
         return self.recording

@@ -247,7 +247,7 @@ class ResultDialog(object):
         self.canvas.set_rate(int(self.v.get()))
 
     def record_agent(self):
-        p = self.individual.phenotype_container.phenotype
+        p = self.individual.phenotype_container
         self.scenario.run(p, rec=True)
 
 

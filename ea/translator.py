@@ -3,7 +3,6 @@ import sys
 
 import numpy as np
 
-from ea.phenotype import IntegerPhenotype, CTRNNParametersPhenotype
 from config.configuration import Configuration
 
 
@@ -45,7 +44,7 @@ class DefaultTranslator(AbstractTranslator):
         '''
         Genotype simply copied, and a IntegerPhenotype created
         '''
-        return IntegerPhenotype(np.copy(individual.genotype_container.genotype))
+        return np.copy(individual.genotype_container.genotype)
 
 
 class BinToParameterTranslator(AbstractTranslator):
@@ -77,7 +76,7 @@ class BinToParameterTranslator(AbstractTranslator):
         p = individual.genotype_container.genotype
         parameters = [self._g2i(p[i:i + self.k])/self.nr_of_values for i in range(0, len(p), self.k)]
 
-        return CTRNNParametersPhenotype(parameters)
+        return parameters
 
 
 
