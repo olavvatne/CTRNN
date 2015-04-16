@@ -71,10 +71,10 @@ def debug_ann(ann):
              print(dir,"4")
 
 
-genome_length = 272
+genome_length = 304
 pop_size = 70
 gen = 100
-threshold = 8
+threshold = 7
 ea_system = EA()
 listner = Listner()
 ea_system.add_listener(listner)

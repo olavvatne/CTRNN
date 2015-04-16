@@ -8,7 +8,7 @@ class Simulator():
             self.layers = [5,2,2]
         else:
             self.layers = [7,2,2]
-        self.agent = RecurrentNeuralNet(self.layers)
+        self.agent = RecurrentNeuralNet(self.layers, wrap=wrap)
         self.environment = Environment(30,15, pull=pull, wrap=wrap)
 
     def run(self, p, rec=False):

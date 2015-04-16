@@ -6,11 +6,14 @@ class RecurrentNeuralNet:
     GAIN_RANGE = [1.0, 5.0]
     TIME_RANGE = [1.0, 2.0]
     WEIGHT_RANGE = [-5.0, 5.0]
+    SPECIAL_RANGE = [-8.0, 8.0]
 
     SIGMOID = "sigmoid"
     BIAS_VALUE = [1]
-    def __init__(self, sizes, weight=WEIGHT_RANGE, bias=BIAS_RANGE, gain=GAIN_RANGE, time=TIME_RANGE):
+    def __init__(self, sizes, weight=WEIGHT_RANGE, bias=BIAS_RANGE, gain=GAIN_RANGE, time=TIME_RANGE, wrap=True):
         self.bias_range = bias
+        self.wrap = wrap
+        self.special_range = RecurrentNeuralNet.SPECIAL_RANGE
         self.weight_range = weight
         self.gain_range = gain
         self.timeconstant_range = time
@@ -52,9 +55,12 @@ class RecurrentNeuralNet:
         for j, shape in enumerate(self.weight_matrix_sizes):
             n = i + (shape[0] * shape[1])
             #TODO: add gains and weights to create neuron component in genome
-            w = self.scaler(parameters[i:n],*self.weight_range)
-            w[-1] = RecurrentNeuralNet.scale_number(parameters[n-1], *self.bias_range)
-            weights.append(np.reshape(w, shape))
+            w = np.reshape(self.scaler(parameters[i:n],*self.weight_range),shape)
+            w[:,-1] = np.interp( w[:,-1], self.weight_range,self.bias_range)
+            if not self.wrap and j == 0:
+                w[:, -5] = np.interp(w[:, -5],self.weight_range, self.special_range)
+                w[:, -4] = np.interp(w[:, -4],self.weight_range, self.special_range)
+            weights.append(w)
             i = n
 
             #Gains
@@ -67,7 +73,6 @@ class RecurrentNeuralNet:
             #Pre divide 1/t. Takes up time in a method run many times
             timeconstants.append(1 / self.scaler(parameters[i:n], *self.timeconstant_range))
             i = n
-
         return {"w":weights, "g": gains, "t": timeconstants}
 
 

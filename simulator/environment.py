@@ -64,7 +64,7 @@ class Environment:
 
     def _init_agent(self, agent):
         agent.reset()
-        agent_x = random.randint(0, self.board_width-1)
+        agent_x = random.randint(0, self.board_width-Environment.TRACKER)
         agent_y = self.board_height-1
         return [agent_x, agent_y, Environment.TRACKER]
 
@@ -118,8 +118,10 @@ class Environment:
         if diff< 0:
             dir = -1
 
-        tracker[Environment.X_INDEX] = (x + (magnitude*dir))%self.board_width #Wrap around
-
+        if self.wrap:
+            tracker[Environment.X_INDEX] = (x + (magnitude*dir))%self.board_width #Wrap around
+        else:
+            tracker[Environment.X_INDEX] = max(0, min(self.board_width-Environment.TRACKER, x + (magnitude*dir)))
         return tracker
 
     def get_recording(self):
@@ -134,19 +136,19 @@ class Environment:
 
         x, y, dim = tracker
         ox, oy, odim = object
+
         if not self.wrap:
             sensor = np.zeros(dim+ 2)
-            sensor[0] = int(x == 0)
+            sensor[-2] = int(x == 0)
             sensor[-1] = int(x + dim == self.board_width)
-            w = 1
         else:
             sensor = np.zeros(dim)
-            w = 0
+
         for i in range(dim):
             #TODO: handle wrap around. Think spawn assumption handles it
             target_element = (x+i)%self.board_width
             if(target_element>=ox and target_element<ox+odim):
-                sensor[i +w] =1 #/max(self.board_height - oy-5, 1.0)
+                sensor[i] =1 #/max(self.board_height - oy-5, 1.0)
         return sensor
 
 

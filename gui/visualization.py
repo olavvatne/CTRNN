@@ -145,10 +145,11 @@ class PixelDisplay(Canvas):
 
 class TrackerAgentDisplay(PixelDisplay):
 
-    def __init__(self, parent, width, height):
+    def __init__(self, parent, width, height, wrap=True):
         super().__init__(parent)
         self.board_width = width
         self.board_height = height
+        self.wrap = int(not wrap)
         self.bg = "#bbada0"
         self.empty_cell = "#ccc0b3"
         self.set_dimension(self.board_width, self.board_height, 0, 0 )
@@ -206,7 +207,7 @@ class ResultDialog(object):
     def __init__(self, parent, individual):
         self.individual = individual
         config = Configuration.get()
-        self.scenario = Simulator(wrap=config["evaluator"]["tracker"]["parameters"]["wrap"])
+        self.scenario = Simulator(wrap=config["fitness"]["tracker"]["parameters"]["wrap"])
 
         top = self.top = Toplevel(parent)
         top.title("Tracker game - results")

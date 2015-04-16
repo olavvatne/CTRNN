@@ -8,7 +8,7 @@ from config.configuration import Configuration
 from gui.elements import Graph, LabelledEntry, LabelledSelect, ConfigurationDialog
 from gui.visualization import ResultDialog
 from ea.ea import EA
-import time
+from datetime import datetime, timedelta
 import cProfile
 
 class AppUI(Frame):
@@ -59,7 +59,7 @@ class AppUI(Frame):
             {"name": "population_size", "label": "Pop size", "value": 50},
             {"name": "generations","label": "Cycles", "value": 100},
             {"name": "genome_length", "label": "Genome length", "value": 272},
-            {"name": "threshold", "label": "Threshold","value": 8},
+            {"name": "threshold", "label": "Threshold","value": 7},
             {"name": "genotype", "label": "Genotype","value": None},
             {"name": "translator", "label": "Translator","value": None},
             {"name": "fitness", "label": "Fitness","value": None},
@@ -80,7 +80,7 @@ class AppUI(Frame):
             self.elements[e["name"]].grid(row=i+1, column=0, padx=4, pady=4, sticky="WE")
             self.rowconfigure(i+1,weight=1)
 
-        self.clock = Label(self, text="00:00")
+        self.clock = Label(self, text="0:00:00")
         self.clock.grid(row=0, column=0, sticky=E ,padx=2, pady=4)
 
         self.average_fitness = Label(self, text="Avg fitness: ")
@@ -114,7 +114,8 @@ class AppUI(Frame):
         return sorted(d, key=lambda k: d[k]["order"])
 
     def update(self, c, p, cf, bf, std):
-        self.clock.configure(text=str(time.clock() - self.starttime))
+        elapsed = datetime.now() - self.starttime
+        self.clock.configure(text=str(timedelta(seconds=elapsed.seconds)))
         self.progress.step(p)
         self.average_fitness_value.configure(text=str("%.3f" %cf))
         self.best_fitness_value.configure(text=str("%.3f" %bf))
@@ -122,7 +123,7 @@ class AppUI(Frame):
         self.graph.add(c, bf, cf, std)
 
     def set_starttime(self):
-        self.starttime = time.clock()
+        self.starttime = datetime.now()
 def stop_ea(*args):
     ea_system.stop()
 
@@ -140,7 +141,7 @@ def run_ea(*args):
                  app.elements["parent_selection"].get(),
                  app.elements["genome_length"].get())
     app.graph.clear()
-
+    app.set_starttime()
     def callback():
         pop_size = int(app.elements["population_size"].get())
         gen = int(app.elements["generations"].get())

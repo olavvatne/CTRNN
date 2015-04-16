@@ -77,6 +77,7 @@ class TrackerAgentFitnessEvaluator(AbstractFitnessEvaluator):
     '''
 
     def __init__(self,genome_length, pull=False, wrap=True):
+        self.wrap = wrap
         self.simulator = Simulator(pull=pull, wrap=wrap)
 
 

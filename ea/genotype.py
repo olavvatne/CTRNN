@@ -102,7 +102,7 @@ class BitVectorGenotype(AbstractGenotype):
         Single bit mutation. Mutation is considered once. And if mutation is to happen, only one bit is
         flipped.
         '''
-        nr_of_chances = 5
+        nr_of_chances = 1
         for i in range(nr_of_chances):
             if random.random() < self.mutation_rate:
                 mutation_point = math.floor(random.uniform(0, self.genotype.size))
