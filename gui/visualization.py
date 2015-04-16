@@ -174,13 +174,14 @@ class TrackerAgentDisplay(PixelDisplay):
                 #TODO: remove magic number
                 self.draw_piece("Piece", (x+i)%self.board_width, y, 1)
                 if sensor[i]:
-                    self.draw_piece("Piece", (x+i)%self.board_width, y, 3)
+                    self.draw_piece("Piece", (x+i)%self.board_width, y, 2)
 
             #Draw object
             x,y,dim = object
+            color = 3 + int(dim >=5)
             for i in range(dim):
                 #TODO: remove magic number
-                self.draw_piece("Piece", x+i, y, 2)
+                self.draw_piece("Piece", x+i, y, color)
 
             capture, avoidance, failure_capture, failure_avoidance, edge = score
             self.create_text(20, 20, font=("Arial",20), text=str(timestep+1), fill="white", tags="Piece")
@@ -196,7 +197,7 @@ class TrackerAgentDisplay(PixelDisplay):
 
 
     def _get_color(self, type):
-        c = {1:"#3FB8AF", 2:"red", 3:"#83AF9B"}
+        c = {1:"#3FB8AF", 2:"#83AF9B", 3:"green", 4: "red"}
         return c.get(type)
 
 class ResultDialog(object):
