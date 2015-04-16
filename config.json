@@ -82,8 +82,8 @@
     "genotype": {
         "default": {
             "parameters": {
-                "mutation_rate": 0.001,
-                "crossover_rate": 0.75
+                "mutation_rate": 0.1,
+                "crossover_rate": 0.71
             },
             "order": 1,
             "class_name": "BitVectorGenotype",

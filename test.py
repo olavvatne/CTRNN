@@ -3,8 +3,8 @@ from tkinter import *
 from config.configuration import  Configuration
 from gui.visualization import ResultDialog
 import numpy as np
-from simulator.environment import Environment
 import cProfile
+import sys
 
 class Listner:
     def update(self, c, p, cf, bf, std):
@@ -17,9 +17,21 @@ def show_result(best):
     result_dialog = ResultDialog(f, best)
     root.mainloop()
 
-def debug_ann(best):
-    ann = best.phenotype_container.get_ANN()
-    ann.reset()
+def speed_ann(ann):
+    for i in range(70*10*600):
+        numbers = np.empty(5)
+        m = ann.input(numbers)
+
+def time_test():
+    o = np.array([0.55, 0.553, 3.4545, 5.2342, 2.23423])
+    y = np.array([.343,.3423])
+    s = np.array([0.534, 0.234])
+    a = 0
+    for i in range(70*10*600):
+         for t in y:
+             pass
+
+def debug_ann(ann):
     while(True):
         #print("y", ann.y)
         #print("gain",ann.gain)
@@ -61,7 +73,7 @@ def debug_ann(best):
 genome_length = 272
 pop_size = 70
 gen = 10
-threshold = 6.5
+threshold = 6.7
 ea_system = EA()
 listner = Listner()
 ea_system.add_listener(listner)
@@ -74,8 +86,14 @@ parent = "sigma"
 ea_system.setup(translator,fitness,genotype,adult,parent,genome_length)
 
 #best = ea_system.run(pop_size, gen, threshold)
-#debug_ann(best)
+#ann = RecurrentNeuralNet([5,2,2])
+#p = best.phenotype_container
+#p = ann.restructure_parameters(p)
+#ann.set_weights(p)
+#debug_ann(ann)
 #show_result(best)
 
 
+#cProfile.run('speed_ann(ann)', sort='cumtime')
+#cProfile.run('time_test()', sort='cumtime')
 cProfile.run('ea_system.run(pop_size, gen, threshold)', sort='cumtime')

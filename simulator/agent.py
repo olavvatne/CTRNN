@@ -9,7 +9,7 @@ class Simulator():
         self.environment = Environment(30,15)
 
     def run(self, p, rec=False):
-         parameters = self.agent.restructure_parameters(np.array(p))
+         parameters = self.agent.restructure_parameters(p)
          self.agent.set_weights(parameters)
          return self.environment.score_agent(self.agent, timesteps=600, rec= rec)
 

@@ -1,5 +1,4 @@
 import numpy as np
-import sys
 class RecurrentNeuralNet:
     '''
     '''
@@ -33,8 +32,8 @@ class RecurrentNeuralNet:
 
     def _create_internal(self, sizes):
 
-        self.y = [np.zeros(s) for s in sizes]
-        self.prev_output = [np.zeros(s) for s in sizes]
+        self.y = [np.zeros(s) for s in sizes[1:]]
+        self.prev_output = [np.zeros(s) for s in sizes[1:]]
 
 
     def set_weights(self, parameters):
@@ -46,8 +45,8 @@ class RecurrentNeuralNet:
 
 
         weights = []
-        gains = [[]]
-        timeconstants = [[]]
+        gains = []
+        timeconstants = []
         i = 0
         n = 0
         for j, shape in enumerate(self.weight_matrix_sizes):
@@ -65,62 +64,48 @@ class RecurrentNeuralNet:
 
             #Timeconstants
             n = i+self.sizes[j+1]
-            timeconstants.append(self.scaler(parameters[i:n], *self.timeconstant_range))
+            #Pre divide 1/t. Takes up time in a method run many times
+            timeconstants.append(1 / self.scaler(parameters[i:n], *self.timeconstant_range))
             i = n
 
         return {"w":weights, "g": gains, "t": timeconstants}
 
-    #def create_mapper(self, sizes):
-    #    #TODO: Hardcoded mapper, not even used currently
-    #    mapper = [ [{1: [1,2], 2: [2,1]}], [{1: [1,2], 2: [2,1]}] ]
-    #    #Node one has connection from itself, and 2 in same layer.
-    #    #Could extend to connections between layers
-    #   return mapper
 
-    def input(self, external_input):
-
+    def input(self, o):
         '''
          The input method propagate the activation from input to output. and returns the activation of the
          output layer
         The dot product of the weights at layer i and the activation from i-1 will result in the activations out from
         neurons at layer i.
         '''
-        #debug=True
 
-        #If input layer should be treated as same type of nodes.
-        #s = external_input #Only external input, no weights and such. Does still have internal y
-        #dy = self.derivative(self.y[0], s, self.timeconstants[0])
-        #self.y[0] = self.y[0] + dy
-        #o = self.sigmoid(self.y[0], self.gain[0])
+        y = self.y
+        prev_o = self.prev_output
+        t_div = self.timeconstants
+        g = self.gain
 
-        o = external_input
-
-        for j, w in enumerate(self.weights):
+        for i, w in enumerate(self.weights):
             #Equation 1
 
             #Add recurrent connections and bias
-            o = np.concatenate((o, self.prev_output[j+1], RecurrentNeuralNet.BIAS_VALUE))
+            o = np.concatenate((o, prev_o[i], RecurrentNeuralNet.BIAS_VALUE))
 
             s = np.dot(w, o)
 
 
-            #Equation 2
+            #Equation 2 (t_div = 1/t
             #Derivative
-            dy = np.multiply(1/self.timeconstants[j+1],((-self.y[j+1])+s))
+            dy = t_div[i] * (-y[i] + s)
 
             #Equation 3
-            self.y[j+1] = self.y[j+1] + dy
+            y[i] = y[i] + dy
 
-            o = self.sigmoid(self.y[j+1], self.gain[j+1])
+            o = 1.0/(1.0+np.exp(-g[i] * y[i]))
 
-            self.prev_output[j+1] = o #Prev output kept
+            prev_o[i] = o #Prev output kept
+
         return o
 
-    def sigmoid(self, y,g):
-        return 1.0/(1.0+np.exp(np.multiply(-y,g)))
-
-    def derivative(self, y, s, t):
-        return np.multiply(1/t,((-y)+s))
 
     def reset(self):
         self._create_internal(self.sizes)

@@ -10,6 +10,10 @@ class Environment:
     MOVE_LEFT = 0
     MOVE_RIGHT = 1
 
+    DIM_INDEX = 2
+    Y_INDEX = 1
+    X_INDEX = 0
+
     def __init__(self, width, height):
         #Board dimensions. 30x15 for Beer's game
         self.board_width = width
@@ -23,56 +27,52 @@ class Environment:
 
     def score_agent(self, agent, timesteps=600, rec=False):
         if rec:
-            self.recording = []
-        self.avoidance= 0
-        self.capture = 0
-        self.failure_avoidance = 0
-        self.failure_capture = 0
-        self.speed = 0
-        self.max_speed = 0
+            recording = []
+        score = [0,0,0,0]
 
-        x,y, dim= self._init_agent(agent)
-        object_x, object_y, object_dim = self._spawn_object()
+        tracker= self._init_agent(agent)
+        object = self._spawn_object()
 
         for t in range(timesteps):
             #Shadow sensor gathering
-            shadow_sensors = self._get_sensor_data(x, dim, object_x, object_y, object_dim)
+            shadow_sensors = self._get_sensor_data(tracker, object)
             #Motor output
             motor_output = agent.input(shadow_sensors)
 
             if rec:
-                score = (self.capture, self.avoidance,self.failure_capture, self.failure_avoidance)
-                self.recording.append((t,score, (x,y, Environment.TRACKER, shadow_sensors), (object_x, object_y, object_dim)))
+                recording.append((t,score, (tracker, shadow_sensors), (object)))
 
             #Score if at bottom
             #Move agent
-            x = self._move_agent(x , motor_output, shadow_sensors)
+            x = self._move_agent(tracker[Environment.X_INDEX] , motor_output)
 
-            at_bottom = self._object_at_bottom(object_y)
-            if at_bottom:
-                self._score_target(x, dim, object_x, object_dim)
-                object_x, object_y, object_dim = self._spawn_object()
+            if self._object_at_bottom(object):
+                s = self._score_target(tracker, object)
+                score[s] += 1
+                object = self._spawn_object()
             else:
                 #Move object closer to bottom
-                object_y += 1
+                object[Environment.Y_INDEX] += 1
 
-        return self.avoidance, self.capture, self.failure_avoidance, self.failure_capture, 0
+        if rec:
+            self.recording = recording
+        return score
 
     def _spawn_object(self):
         #Assume objects cant wrap around. Will make no-wrap scenario easier
         dim = random.randint(Environment.OBJECT_MIN_DIM, Environment.OBJECT_MAX_DIM)
-        return (random.randint(0, self.board_width-1-dim), 0, dim)
+        return [random.randint(0, self.board_width-1-dim), 0, dim]
 
     def _init_agent(self, agent):
         agent.reset()
         agent_x = random.randint(0, self.board_width-1)
         agent_y = self.board_height-1
-        return agent_x, agent_y, Environment.TRACKER
+        return [agent_x, agent_y, Environment.TRACKER]
 
-    def _object_at_bottom(self, oy):
-        return oy == self.board_height-1
+    def _object_at_bottom(self, object):
+        return object[Environment.Y_INDEX] == self.board_height-1
 
-    def _score_target(self, x, dim, ox, odim):
+    def _score_target(self, tracker, object):
         '''
         Full overlap  1,2,3,4 --> capture
         Full overlap 5 --> failure
@@ -80,42 +80,44 @@ class Environment:
         No overlap of 1,2,3,4 --> failure
         Partial overlap of 1,2,3,4,5,6 --> failure
         '''
+        x, y, dim = tracker
+        ox, oy, odim = object
         #TODO: decrement avoidance instead of failure?
         target = set([i%self.board_width for i in range(x, x+dim)])
         object = set([i for i in range(ox, ox+odim)])
         if object.issubset(target):
             if odim < 5:
-                self.capture += 1
+                return 0
+                #self.capture += 1
             else:
-                self.failure_avoidance += 1
+                return 3
+                #self.failure_avoidance += 1
         elif not object & target:
             if odim > 4:
-                self.avoidance += 1
+                return 1
+                #self.avoidance += 1
             else:
-                self.failure_capture += 1
+                return 2
+                #self.failure_capture += 1
         else:
             if odim> 4:
-                self.failure_avoidance += 1
+                return 3
+                #self.failure_avoidance += 1
             else:
-                self.failure_capture += 1
+                return 2
+                #self.failure_capture += 1
 
 
 
-    def _move_agent(self, x, motor_output, sensor_data):
-        #TODO: Is this effient and capitalize motor_output?
+    def _move_agent(self, x, motor_output):
         diff = motor_output[0] - motor_output[1]
-
-        #TODO: moving faster should be rewarded maybe
 
         value = abs(diff)
 
-        magnitude = int(value>=0.1) + int(value>=0.25) + int(value>=0.5)+ int(value>=0.65)
+        magnitude = int(value>=0.1111) + int(value>=0.3333) + int(value>=0.555)+ int(value>=0.7777)
         dir = 1
         if diff< 0:
             dir = -1
-
-        self.max_speed += 4
-        self.speed += magnitude
 
         nx = (x + (magnitude*dir))%self.board_width #Wrap around
 
@@ -124,12 +126,14 @@ class Environment:
     def get_recording(self):
         return self.recording
 
-    def _get_sensor_data(self, x, dim, ox,oy, odim):
+    def _get_sensor_data(self, tracker, object):
         '''
         Shadow sensor creation. If the x of tracker and object overlap
         the shadow sensor for the tracker agent is set to 1, indicating
         that an object is above the platform at that position
         '''
+        x, y, dim = tracker
+        ox, oy, odim = object
         sensor = np.zeros(dim)
         for i in range(dim):
             #TODO: handle wrap around. Think spawn assumption handles it

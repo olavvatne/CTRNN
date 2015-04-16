@@ -41,7 +41,6 @@ class AbstractFitnessEvaluator(metaclass=ABCMeta):
         Convenience method for evaluating all individuals in the population list.
         '''
 
-
         for individual in population:
             individual.fitness = self.evaluate(individual)
 
@@ -87,7 +86,7 @@ class TrackerAgentFitnessEvaluator(AbstractFitnessEvaluator):
         '''
         #TODO: increase timesteps?
         p = individual.phenotype_container
-        avoidance, capture, failure_avoidance, failure_capture, speed = self.simulator.run(p)
-        cap = capture/(capture+failure_capture)
-        avo =avoidance/(avoidance+failure_avoidance)
-        return 4*cap +  (2*avo) +(0.2*speed)
+        capture, avoidance, failure_capture, failure_avoidance = self.simulator.run(p)
+        capture_rate = capture/(capture+failure_capture)
+        avoidance_rate =avoidance/(avoidance+failure_avoidance)
+        return 4*capture_rate +  (2.5*avoidance_rate)# +(0.2*speed)

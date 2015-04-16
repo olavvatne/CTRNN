@@ -41,7 +41,7 @@ class FullReplacementAdultSelection(AbstractAdultSelection):
     '''
 
     def select(self, adults, children, m):
-        self.set_best(adults)
+        #self.set_best(adults)
         return children[:m]
 
 
@@ -52,7 +52,7 @@ class OverProductionAdultSelection(AbstractAdultSelection):
     '''
 
     def select(self, adults, children, m):
-        self.set_best(adults)
+        #self.set_best(adults)
         adult_pool = sorted(children, key=lambda child:child.fitness, reverse=True)
         return adult_pool[:m]
 
@@ -64,7 +64,7 @@ class MixingAdultSelection(AbstractAdultSelection):
     '''
 
     def select(self, adults, children, m):
-        self.set_best(adults)
+        #self.set_best(adults)
         mix = adults + children
         adult_pool = sorted(mix, key=lambda individual:individual.fitness, reverse=True)
         return adult_pool[:m]
