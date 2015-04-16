@@ -3,6 +3,7 @@ from tkinter import *
 from math import fabs
 from collections import deque
 from simulator.agent import Simulator
+from config.configuration import Configuration
 
 #Subclass of the tkinters Canvas object. Contains methods
 #for setting a graph model and drawing a graph, and changing
@@ -204,7 +205,8 @@ class ResultDialog(object):
     '''
     def __init__(self, parent, individual):
         self.individual = individual
-        self.scenario = Simulator()
+        config = Configuration.get()
+        self.scenario = Simulator(wrap=config["evaluator"]["tracker"]["parameters"]["wrap"])
 
         top = self.top = Toplevel(parent)
         top.title("Tracker game - results")
@@ -212,6 +214,7 @@ class ResultDialog(object):
 
         w = 30
         h = 15
+
         self.canvas = TrackerAgentDisplay(top, w, h)
         self.canvas.set_model(self.scenario)
         self.canvas.grid(row=0, column=0, columnspan=5, sticky=(N,W,S,E) ,padx=4, pady=4)

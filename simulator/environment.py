@@ -14,11 +14,11 @@ class Environment:
     Y_INDEX = 1
     X_INDEX = 0
 
-    def __init__(self, width, height):
+    def __init__(self, width, height, pull=False, wrap=False):
         #Board dimensions. 30x15 for Beer's game
         self.board_width = width
         self.board_height = height
-
+        self.wrap = wrap
         #Position of agent
 
         self.recording = []
@@ -131,14 +131,22 @@ class Environment:
         the shadow sensor for the tracker agent is set to 1, indicating
         that an object is above the platform at that position
         '''
+
         x, y, dim = tracker
         ox, oy, odim = object
-        sensor = np.zeros(dim)
+        if not self.wrap:
+            sensor = np.zeros(dim+ 2)
+            sensor[0] = int(x == 0)
+            sensor[-1] = int(x + dim == self.board_width)
+            w = 1
+        else:
+            sensor = np.zeros(dim)
+            w = 0
         for i in range(dim):
             #TODO: handle wrap around. Think spawn assumption handles it
             target_element = (x+i)%self.board_width
             if(target_element>=ox and target_element<ox+odim):
-                sensor[i] =1 #/max(self.board_height - oy-5, 1.0)
+                sensor[i +w] =1 #/max(self.board_height - oy-5, 1.0)
         return sensor
 
 

@@ -1,94 +1,94 @@
 {
     "translator": {
         "parameter": {
-            "parameters": {
-                "k": 8
-            },
             "order": 1,
             "class_name": "BinToParameterTranslator",
-            "name": "Bit to paramter"
+            "name": "Bit to paramter",
+            "parameters": {
+                "k": 8
+            }
         },
         "default": {
-            "parameters": {},
             "order": 2,
             "class_name": "DefaultTranslator",
-            "name": "Bit to bit"
+            "name": "Bit to bit",
+            "parameters": {}
+        }
+    },
+    "parent_selection": {
+        "tournament": {
+            "order": 4,
+            "class_name": "ParentTournamentSelection",
+            "name": "Local tournament",
+            "parameters": {
+                "k": 25,
+                "e": 0.001
+            }
+        },
+        "boltzmann": {
+            "order": 3,
+            "class_name": "ParentBoltzmannSelection",
+            "name": "Boltzmann scaling",
+            "parameters": {}
+        },
+        "sigma": {
+            "order": 2,
+            "class_name": "ParentSigmaScalingSelection",
+            "name": "Sigma scaling",
+            "parameters": {}
+        },
+        "proportionate": {
+            "order": 1,
+            "class_name": "ParentFitnessProportionateSelection",
+            "name": "Proportionate scaling",
+            "parameters": {}
+        }
+    },
+    "fitness": {
+        "tracker": {
+            "order": 1,
+            "class_name": "TrackerAgentFitnessEvaluator",
+            "name": "Tracker agent evaluator",
+            "parameters": {
+                "pull": false,
+                "wrap": true
+            }
+        },
+        "default": {
+            "order": 2,
+            "class_name": "DefaultFitnessEvaluator",
+            "name": "Fraction",
+            "parameters": {
+                "random_target": false
+            }
         }
     },
     "adult_selection": {
         "over": {
-            "order": 2,
             "class_name": "OverProductionAdultSelection",
-            "name": "Over production"
+            "name": "Over production",
+            "order": 2
         },
         "mixing": {
-            "order": 3,
             "class_name": "MixingAdultSelection",
-            "name": "Generational mixing"
+            "name": "Generational mixing",
+            "order": 3
         },
         "full": {
-            "order": 1,
             "class_name": "FullReplacementAdultSelection",
-            "name": "Full replacement"
-        }
-    },
-    "parent_selection": {
-        "boltzmann": {
-            "parameters": {},
-            "order": 3,
-            "class_name": "ParentBoltzmannSelection",
-            "name": "Boltzmann scaling"
-        },
-        "proportionate": {
-            "parameters": {},
-            "order": 1,
-            "class_name": "ParentFitnessProportionateSelection",
-            "name": "Proportionate scaling"
-        },
-        "tournament": {
-            "parameters": {
-                "k": 20,
-                "e": 0.005
-            },
-            "order": 4,
-            "class_name": "ParentTournamentSelection",
-            "name": "Local tournament"
-        },
-        "sigma": {
-            "parameters": {},
-            "order": 2,
-            "class_name": "ParentSigmaScalingSelection",
-            "name": "Sigma scaling"
-        }
-    },
-    "fitness": {
-        "default": {
-            "parameters": {
-                "random_target": false
-            },
-            "order": 2,
-            "class_name": "DefaultFitnessEvaluator",
-            "name": "Fraction"
-        },
-        "tracker": {
-            "parameters": {
-                "pull": false,
-                "wrap": true
-            },
-            "order": 1,
-            "class_name": "TrackerAgentFitnessEvaluator",
-            "name": "Tracker agent evaluator"
+            "name": "Full replacement",
+            "order": 1
         }
     },
     "genotype": {
         "default": {
-            "parameters": {
-                "mutation_rate": 0.01,
-                "crossover_rate": 0.65
-            },
             "order": 1,
             "class_name": "BitVectorGenotype",
-            "name": "Bit Vector"
+            "name": "Bit Vector",
+            "parameters": {
+                "mutation_rate": 0.9,
+                "crossover_rate": 0.65
+            }
         }
     }
 }

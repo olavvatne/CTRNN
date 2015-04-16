@@ -72,8 +72,8 @@ def debug_ann(ann):
 
 
 genome_length = 272
-pop_size = 50
-gen = 150
+pop_size = 70
+gen = 100
 threshold = 8
 ea_system = EA()
 listner = Listner()
@@ -81,8 +81,8 @@ ea_system.add_listener(listner)
 translator = "parameter"
 fitness = "tracker"
 genotype = "default"
-adult = "mixing"
-parent = "sigma"
+adult = "full"
+parent = "tournament"
 
 ea_system.setup(translator,fitness,genotype,adult,parent,genome_length)
 

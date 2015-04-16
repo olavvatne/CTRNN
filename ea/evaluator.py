@@ -89,4 +89,4 @@ class TrackerAgentFitnessEvaluator(AbstractFitnessEvaluator):
         capture, avoidance, failure_capture, failure_avoidance = self.simulator.run(p)
         capture_rate = capture/(capture+failure_capture)
         avoidance_rate =avoidance/(avoidance+failure_avoidance)
-        return 4*capture_rate +  (2*avoidance_rate) + (2*avoidance_rate*capture_rate)
+        return 4*capture_rate +  (2*avoidance_rate) + (1*avoidance_rate*capture_rate)

@@ -8,6 +8,7 @@ from config.configuration import Configuration
 from gui.elements import Graph, LabelledEntry, LabelledSelect, ConfigurationDialog
 from gui.visualization import ResultDialog
 from ea.ea import EA
+import time
 import cProfile
 
 class AppUI(Frame):
@@ -55,10 +56,10 @@ class AppUI(Frame):
             self.master.tk.call(master, "config", "-menu", self.menubar)
 
         gui_control_elements = [
-            {"name": "population_size", "label": "Pop size", "value": 20},
+            {"name": "population_size", "label": "Pop size", "value": 50},
             {"name": "generations","label": "Cycles", "value": 100},
-            {"name": "genome_length", "label": "Genome length", "value": 20},
-            {"name": "threshold", "label": "Threshold","value": 1},
+            {"name": "genome_length", "label": "Genome length", "value": 272},
+            {"name": "threshold", "label": "Threshold","value": 8},
             {"name": "genotype", "label": "Genotype","value": None},
             {"name": "translator", "label": "Translator","value": None},
             {"name": "fitness", "label": "Fitness","value": None},
@@ -78,6 +79,9 @@ class AppUI(Frame):
             self.elements[e["name"]] = LabelledSelect(self, self.option_list(options[e["name"]]), e["label"])
             self.elements[e["name"]].grid(row=i+1, column=0, padx=4, pady=4, sticky="WE")
             self.rowconfigure(i+1,weight=1)
+
+        self.clock = Label(self, text="00:00")
+        self.clock.grid(row=0, column=0, sticky=E ,padx=2, pady=4)
 
         self.average_fitness = Label(self, text="Avg fitness: ")
         self.average_fitness.grid(row=0, column=1, sticky=W ,padx=2, pady=4)
@@ -110,13 +114,15 @@ class AppUI(Frame):
         return sorted(d, key=lambda k: d[k]["order"])
 
     def update(self, c, p, cf, bf, std):
+        self.clock.configure(text=str(time.clock() - self.starttime))
         self.progress.step(p)
         self.average_fitness_value.configure(text=str("%.3f" %cf))
         self.best_fitness_value.configure(text=str("%.3f" %bf))
         self.cycles_value.configure(text=str(c))
         self.graph.add(c, bf, cf, std)
 
-
+    def set_starttime(self):
+        self.starttime = time.clock()
 def stop_ea(*args):
     ea_system.stop()
 
@@ -152,9 +158,9 @@ def run_ea(*args):
     t.start()
 
 
-def show_result(individual, scenarios):
+def show_result(individual):
     config = Configuration.get()
-    result_dialog = ResultDialog(app, individual, scenarios, config)
+    result_dialog = ResultDialog(app, individual)
 
 def on_exit(*args):
     '''
