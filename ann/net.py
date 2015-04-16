@@ -6,7 +6,7 @@ class RecurrentNeuralNet:
     GAIN_RANGE = [1.0, 5.0]
     TIME_RANGE = [1.0, 2.0]
     WEIGHT_RANGE = [-5.0, 5.0]
-    SPECIAL_RANGE = [-8.0, 8.0]
+    SPECIAL_RANGE = [-15.0, 15.0]
 
     SIGMOID = "sigmoid"
     BIAS_VALUE = [1]

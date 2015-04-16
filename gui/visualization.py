@@ -182,7 +182,7 @@ class TrackerAgentDisplay(PixelDisplay):
                 #TODO: remove magic number
                 self.draw_piece("Piece", x+i, y, 2)
 
-            capture, avoidance, failure_capture, failure_avoidance = score
+            capture, avoidance, failure_capture, failure_avoidance, edge = score
             self.create_text(20, 20, font=("Arial",20), text=str(timestep+1), fill="white", tags="Piece")
             self.create_text(80, 20, font=("Arial",20), text="C: " +str(capture), fill="white", tags="Piece")
             self.create_text(140, 20, font=("Arial",20), text="A:" +str(avoidance), fill="white", tags="Piece")

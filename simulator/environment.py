@@ -28,10 +28,11 @@ class Environment:
     def score_agent(self, agent, timesteps=600, rec=False):
         if rec:
             self.recording = []
-        score = [0,0,0,0]
+        score = [0,0,0,0, 0]
 
         tracker= self._init_agent(agent)
         object = self._spawn_object()
+        self.at_edge= 0
 
         for t in range(timesteps):
             #Shadow sensor gathering
@@ -54,7 +55,8 @@ class Environment:
                 object[Environment.Y_INDEX] += 1
 
             tracker= self._move_agent(tracker , motor_output)
-
+        if not self.wrap:
+            score[-1] = self.at_edge/(600-40)
         return score
 
     def _spawn_object(self):
@@ -121,7 +123,10 @@ class Environment:
         if self.wrap:
             tracker[Environment.X_INDEX] = (x + (magnitude*dir))%self.board_width #Wrap around
         else:
+
             tracker[Environment.X_INDEX] = max(0, min(self.board_width-Environment.TRACKER, x + (magnitude*dir)))
+            if tracker[Environment.X_INDEX] == 0 or tracker[Environment.X_INDEX] == self.board_width-Environment.TRACKER:
+                self.at_edge += 1
         return tracker
 
     def get_recording(self):

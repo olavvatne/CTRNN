@@ -76,8 +76,9 @@ class TrackerAgentFitnessEvaluator(AbstractFitnessEvaluator):
 
     '''
 
-    def __init__(self,genome_length, pull=False, wrap=True):
+    def __init__(self,genome_length, pull=False, wrap=True, avoidance=True):
         self.wrap = wrap
+        self.is_avoidance = avoidance
         self.simulator = Simulator(pull=pull, wrap=wrap)
 
 
@@ -87,7 +88,12 @@ class TrackerAgentFitnessEvaluator(AbstractFitnessEvaluator):
         '''
         #TODO: increase timesteps?
         p = individual.phenotype_container
-        capture, avoidance, failure_capture, failure_avoidance = self.simulator.run(p)
+        capture, avoidance, failure_capture, failure_avoidance, edge_rate = self.simulator.run(p)
         capture_rate = capture/(capture+failure_capture)
         avoidance_rate =avoidance/(avoidance+failure_avoidance)
-        return 4*capture_rate +  (2*avoidance_rate) + (1*avoidance_rate*capture_rate)
+        score = 4*capture_rate
+        if self.is_avoidance:
+            score += 2*avoidance_rate + (1*avoidance_rate*capture_rate)
+        if not self.wrap:
+            score -= (edge_rate)
+        return score
