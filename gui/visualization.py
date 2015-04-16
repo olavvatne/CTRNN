@@ -163,11 +163,11 @@ class TrackerAgentDisplay(PixelDisplay):
 
     def draw_model(self, timeslice):
         if timeslice:
-            timestep, score, tracker, object = timeslice
+            timestep, score, tracker, sensor, object = timeslice
             self.delete("Piece")
 
             #Draw tracker
-            x, y, dim, sensor = tracker
+            x, y, dim = tracker
             for i in range(dim):
                 #TODO: remove magic number
                 self.draw_piece("Piece", (x+i)%self.board_width, y, 1)

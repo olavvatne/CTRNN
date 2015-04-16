@@ -2,6 +2,7 @@ from ea.ea import EA
 from tkinter import *
 from config.configuration import  Configuration
 from gui.visualization import ResultDialog
+from ann.net import RecurrentNeuralNet
 import numpy as np
 import cProfile
 import sys
@@ -71,9 +72,9 @@ def debug_ann(ann):
 
 
 genome_length = 272
-pop_size = 70
-gen = 10
-threshold = 6.7
+pop_size = 50
+gen = 150
+threshold = 8
 ea_system = EA()
 listner = Listner()
 ea_system.add_listener(listner)
@@ -85,15 +86,15 @@ parent = "sigma"
 
 ea_system.setup(translator,fitness,genotype,adult,parent,genome_length)
 
-#best = ea_system.run(pop_size, gen, threshold)
-#ann = RecurrentNeuralNet([5,2,2])
-#p = best.phenotype_container
-#p = ann.restructure_parameters(p)
-#ann.set_weights(p)
+best = ea_system.run(pop_size, gen, threshold)
+ann = RecurrentNeuralNet([5,2,2])
+p = best.phenotype_container
+p = ann.restructure_parameters(p)
+ann.set_weights(p)
 #debug_ann(ann)
-#show_result(best)
+show_result(best)
 
 
 #cProfile.run('speed_ann(ann)', sort='cumtime')
 #cProfile.run('time_test()', sort='cumtime')
-cProfile.run('ea_system.run(pop_size, gen, threshold)', sort='cumtime')
+#cProfile.run('ea_system.run(pop_size, gen, threshold)', sort='cumtime')

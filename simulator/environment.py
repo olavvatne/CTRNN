@@ -27,7 +27,7 @@ class Environment:
 
     def score_agent(self, agent, timesteps=600, rec=False):
         if rec:
-            recording = []
+            self.recording = []
         score = [0,0,0,0]
 
         tracker= self._init_agent(agent)
@@ -40,11 +40,10 @@ class Environment:
             motor_output = agent.input(shadow_sensors)
 
             if rec:
-                recording.append((t,score, (tracker, shadow_sensors), (object)))
+                self.recording.append((t,list(score), list(tracker), shadow_sensors, list(object)))
 
             #Score if at bottom
             #Move agent
-            x = self._move_agent(tracker[Environment.X_INDEX] , motor_output)
 
             if self._object_at_bottom(object):
                 s = self._score_target(tracker, object)
@@ -54,8 +53,8 @@ class Environment:
                 #Move object closer to bottom
                 object[Environment.Y_INDEX] += 1
 
-        if rec:
-            self.recording = recording
+            tracker= self._move_agent(tracker , motor_output)
+
         return score
 
     def _spawn_object(self):
@@ -83,16 +82,16 @@ class Environment:
         x, y, dim = tracker
         ox, oy, odim = object
         #TODO: decrement avoidance instead of failure?
-        target = set([i%self.board_width for i in range(x, x+dim)])
-        object = set([i for i in range(ox, ox+odim)])
-        if object.issubset(target):
+        target_set = set([i%self.board_width for i in range(x, x+dim)])
+        object_set = set([i for i in range(ox, ox+odim)])
+        if object_set.issubset(target_set):
             if odim < 5:
                 return 0
                 #self.capture += 1
             else:
                 return 3
                 #self.failure_avoidance += 1
-        elif not object & target:
+        elif not object_set & target_set:
             if odim > 4:
                 return 1
                 #self.avoidance += 1
@@ -109,9 +108,9 @@ class Environment:
 
 
 
-    def _move_agent(self, x, motor_output):
+    def _move_agent(self, tracker, motor_output):
         diff = motor_output[0] - motor_output[1]
-
+        x = tracker[Environment.X_INDEX]
         value = abs(diff)
 
         magnitude = int(value>=0.1111) + int(value>=0.3333) + int(value>=0.555)+ int(value>=0.7777)
@@ -119,9 +118,9 @@ class Environment:
         if diff< 0:
             dir = -1
 
-        nx = (x + (magnitude*dir))%self.board_width #Wrap around
+        tracker[Environment.X_INDEX] = (x + (magnitude*dir))%self.board_width #Wrap around
 
-        return nx
+        return tracker
 
     def get_recording(self):
         return self.recording

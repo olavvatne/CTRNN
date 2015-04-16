@@ -3,7 +3,7 @@ from simulator.environment import Environment
 import numpy as np
 class Simulator():
 
-    def __init__(self):
+    def __init__(self, pull=False, wrap=True):
         self.layers = [5,2,2]
         self.agent = RecurrentNeuralNet(self.layers)
         self.environment = Environment(30,15)

@@ -72,7 +72,8 @@
         },
         "tracker": {
             "parameters": {
-                "test": 0
+                "pull": false,
+                "wrap": true
             },
             "order": 1,
             "class_name": "TrackerAgentFitnessEvaluator",
@@ -82,8 +83,8 @@
     "genotype": {
         "default": {
             "parameters": {
-                "mutation_rate": 0.1,
-                "crossover_rate": 0.71
+                "mutation_rate": 0.01,
+                "crossover_rate": 0.65
             },
             "order": 1,
             "class_name": "BitVectorGenotype",

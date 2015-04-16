@@ -62,7 +62,7 @@ class BinToParameterTranslator(AbstractTranslator):
         '''
         #TODO: Different parameters have different ranges. Fix by parameter and the
         self.k = k
-        self.nr_of_values = 2**k
+        self.nr_of_values = 2**k-1
 
 
     def develop(self, individual):
@@ -75,7 +75,6 @@ class BinToParameterTranslator(AbstractTranslator):
         #Use gray encoding so that a bit change will not
         p = individual.genotype_container.genotype
         parameters = [self._g2i(p[i:i + self.k])/self.nr_of_values for i in range(0, len(p), self.k)]
-
         return parameters
 
 

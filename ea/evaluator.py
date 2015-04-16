@@ -76,8 +76,8 @@ class TrackerAgentFitnessEvaluator(AbstractFitnessEvaluator):
 
     '''
 
-    def __init__(self,genome_length, test=1):
-        self.simulator = Simulator()
+    def __init__(self,genome_length, pull=False, wrap=True):
+        self.simulator = Simulator(pull=pull, wrap=wrap)
 
 
     def evaluate(self, individual):
@@ -89,4 +89,4 @@ class TrackerAgentFitnessEvaluator(AbstractFitnessEvaluator):
         capture, avoidance, failure_capture, failure_avoidance = self.simulator.run(p)
         capture_rate = capture/(capture+failure_capture)
         avoidance_rate =avoidance/(avoidance+failure_avoidance)
-        return 4*capture_rate +  (2.5*avoidance_rate)# +(0.2*speed)
+        return 4*capture_rate +  (2*avoidance_rate) + (2*avoidance_rate*capture_rate)

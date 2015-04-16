@@ -144,7 +144,7 @@ def run_ea(*args):
         app.graph.dump()
         #TODO: Make general. EA, get method that ask each component for important shit
         #TODO: that subclasses are in charge of
-        show_result(best, ea_system.fitness_evaluator.scenarios)
+        show_result(best)
 
 
     t = threading.Thread(target=callback)

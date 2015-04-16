@@ -25,6 +25,7 @@ class AbstractGenotype(metaclass=ABCMeta):
     '''
 
     def __init__(self, crossover_rate=1.0, mutation_rate=0.01):
+        #print("cross_over: ", crossover_rate, " , mutation_rate :", mutation_rate)
         self.crossover_rate = crossover_rate
         self.mutation_rate = mutation_rate
         self.genotype = None
@@ -77,6 +78,7 @@ class BitVectorGenotype(AbstractGenotype):
         '''
         Crossover with a twist. Will crossover only in between weights
         '''
+
         cg1 = self.copy()
         if random.random() < self.crossover_rate:
             #crossover = crossover - (crossover%self.k)
