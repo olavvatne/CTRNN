@@ -11,10 +11,12 @@ class Simulator():
         self.agent = RecurrentNeuralNet(self.layers)
         self.environment = Environment(30,15, pull=pull, wrap=wrap)
 
-    def run(self, p, rec=False):
-         parameters = self.agent.restructure_parameters(p)
-         self.agent.set_weights(parameters)
-         return self.environment.score_agent(self.agent, timesteps=600, rec= rec)
+    def run(self, p, rec=False, timesteps=600):
+         return self.environment.score_agent(self.agent, timesteps=timesteps, rec= rec)
+
+    def set(self, p):
+        parameters = self.agent.restructure_parameters(p)
+        self.agent.set_weights(parameters)
 
     def get_recording(self):
         return self.environment.get_recording()

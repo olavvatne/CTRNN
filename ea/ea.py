@@ -60,9 +60,9 @@ class EA(object):
         for c in range(cycles):
 
             self.geno_to_pheno_development(children)
-            self.fitness_evaluator.evaluate_all(children)
+            self.fitness_evaluator.evaluate_all(children, c)
             if self.re_evaluate:
-                self.fitness_evaluator.evaluate_all(self.adult_pool)
+                self.fitness_evaluator.evaluate_all(self.adult_pool, c)
             self.adult_pool = self.adult_selector.select(self.adult_pool, children, population_size)
             mating_adults = self.parent_selector.select_mating_pool(self.adult_pool, population_size, t=1-(c/cycles))
             children = self.reproduce(mating_adults)
@@ -72,6 +72,7 @@ class EA(object):
 
             #Check stopping condition, and gui update below
             self.best_individual = max(self.adult_pool, key=lambda a: a.fitness)
+            self.fitness_evaluator.evaluate(self.best_individual, c, debug=True)
             if self.is_stopping or fitness_threshold <=  self.best_individual.fitness:
                 break
 

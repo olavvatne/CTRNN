@@ -105,6 +105,5 @@ class BitVectorGenotype(AbstractGenotype):
         nr_of_chances = 1
         for i in range(nr_of_chances):
             if random.random() < self.mutation_rate:
-                print("MUTATION")
                 mutation_point = math.floor(random.uniform(0, self.genotype.size))
                 self.genotype[mutation_point] = not self.genotype[mutation_point]

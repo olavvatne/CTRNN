@@ -1,5 +1,6 @@
 import numpy as np
 import random
+import math
 
 class Environment:
     TRACKER = 5
@@ -20,19 +21,27 @@ class Environment:
         self.board_height = height
         self.wrap = wrap
         #Position of agent
-
         self.recording = []
 
+
+    def make_object_pool(self, timesteps):
+        n = 6
+        o = [i for i in range(1, n+1) for j in range(math.ceil(timesteps/(15*6)))]
+        random.shuffle(o)
+        return o
 
 
     def score_agent(self, agent, timesteps=600, rec=False):
         if rec:
             self.recording = []
-        score = [0,0,0,0, 0]
+        score = [0,0,0,0, 0, 0]
 
         tracker= self._init_agent(agent)
-        object = self._spawn_object()
+        objects = self.make_object_pool(timesteps)
+        object = self._spawn_object(objects)
         self.at_edge= 0
+        self.speed = 0
+        self.max_speed = 1
 
         for t in range(timesteps):
             #Shadow sensor gathering
@@ -49,19 +58,20 @@ class Environment:
             if self._object_at_bottom(object):
                 s = self._score_target(tracker, object)
                 score[s] += 1
-                object = self._spawn_object()
+                object = self._spawn_object(objects)
             else:
                 #Move object closer to bottom
                 object[Environment.Y_INDEX] += 1
 
-            tracker= self._move_agent(tracker , motor_output)
+            tracker= self._move_agent(tracker ,object, motor_output, shadow_sensors)
+        score[-2] = self.speed/self.max_speed
         if not self.wrap:
-            score[-1] = self.at_edge/(600-40)
+            score[-1] = self.at_edge/timesteps
         return score
 
-    def _spawn_object(self):
+    def _spawn_object(self, objects):
         #Assume objects cant wrap around. Will make no-wrap scenario easier
-        dim = random.randint(Environment.OBJECT_MIN_DIM, Environment.OBJECT_MAX_DIM)
+        dim = objects.pop()
         return [random.randint(0, self.board_width-1-dim), 0, dim]
 
     def _init_agent(self, agent):
@@ -110,7 +120,7 @@ class Environment:
 
 
 
-    def _move_agent(self, tracker, motor_output):
+    def _move_agent(self, tracker, object, motor_output, sensor):
         diff = motor_output[0] - motor_output[1]
         x = tracker[Environment.X_INDEX]
         value = abs(diff)
@@ -120,7 +130,18 @@ class Environment:
         if diff< 0:
             dir = -1
 
+
         if self.wrap:
+            if np.any(sensor):
+                if object[2] > 4:
+                    self.speed += magnitude
+                    self.max_speed += 4
+                else:
+                    self.speed -= magnitude
+            else:
+                self.speed += magnitude
+                self.max_speed += 4
+
             tracker[Environment.X_INDEX] = (x + (magnitude*dir))%self.board_width #Wrap around
         else:
 

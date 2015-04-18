@@ -36,13 +36,13 @@ class AbstractFitnessEvaluator(metaclass=ABCMeta):
         '''
         pass
 
-    def evaluate_all(self, population):
+    def evaluate_all(self, population, cycle):
         '''
         Convenience method for evaluating all individuals in the population list.
         '''
 
         for individual in population:
-            individual.fitness = self.evaluate(individual)
+            individual.fitness = self.evaluate(individual, cycle)
 
 
 class DefaultFitnessEvaluator(AbstractFitnessEvaluator):
@@ -60,7 +60,7 @@ class DefaultFitnessEvaluator(AbstractFitnessEvaluator):
         else:
             self.target = np.ones(genome_length, dtype=np.int)
 
-    def evaluate(self, individual):
+    def evaluate(self, individual, cycle):
         '''
         Return the fraction of where the phenotype correspond to the target vector.
         Use not xor --> ==
@@ -82,17 +82,32 @@ class TrackerAgentFitnessEvaluator(AbstractFitnessEvaluator):
         self.simulator = Simulator(pull=pull, wrap=wrap)
 
 
-    def evaluate(self, individual):
+    def evaluate(self, individual, cycle, debug=False):
         '''
 
         '''
         p = individual.phenotype_container
-        capture, avoidance, failure_capture, failure_avoidance, edge_rate = self.simulator.run(p)
+        self.simulator.set(p)
+        capture, avoidance, failure_capture, failure_avoidance, speed_rate, edge_rate = self.simulator.run(p)
         capture_rate = capture/(capture+failure_capture)
         avoidance_rate =avoidance/(avoidance+failure_avoidance)
-        score = 4*capture_rate
+        turnon = ( min(50, cycle)/50)
+        if(debug):
+            print("----------")
+            print("Cap: ",capture_rate, "Avo: ",avoidance_rate, "Spe: ", speed_rate, "adjuster", - abs( capture_rate-avoidance_rate))
+        score = (4*capture_rate)
         if self.is_avoidance:
-            score += 2*avoidance_rate + (1*avoidance_rate*capture_rate)
+            score += (turnon*2*avoidance_rate)
         if not self.wrap:
-            score -= (edge_rate)
+            score += -(2*edge_rate)+(1*speed_rate)
+        '''turnon = ( min(50, cycle)/50)
+        if(debug):
+            print("----------")
+            print("Cap: ",capture_rate, "Avo: ",avoidance_rate, "Spe: ", speed_rate, "adjuster", - abs( capture_rate-avoidance_rate))
+            print((4*capture_rate) + (0.5*speed_rate) + (turnon*2*avoidance_rate))
+        score = (4*capture_rate) + (1*speed_rate)
+        if self.is_avoidance:
+            score += (turnon*2*avoidance_rate) - (6* abs(capture_rate-avoidance_rate))
+        if not self.wrap:
+            score -= (edge_rate)'''
         return score

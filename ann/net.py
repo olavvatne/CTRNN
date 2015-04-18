@@ -106,9 +106,7 @@ class RecurrentNeuralNet:
             y[i] = y[i] + dy
 
             o = 1.0/(1.0+np.exp(-g[i] * y[i]))
-
             prev_o[i] = o #Prev output kept
-
         return o
 
 
