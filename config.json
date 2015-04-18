@@ -1,95 +1,95 @@
 {
     "parent_selection": {
-        "tournament": {
-            "order": 4,
-            "name": "Local tournament",
-            "class_name": "ParentTournamentSelection",
-            "parameters": {
-                "k": 25,
-                "e": 0.001
-            }
+        "boltzmann": {
+            "class_name": "ParentBoltzmannSelection",
+            "parameters": {},
+            "name": "Boltzmann scaling",
+            "order": 3
         },
         "sigma": {
-            "order": 2,
-            "name": "Sigma scaling",
             "class_name": "ParentSigmaScalingSelection",
-            "parameters": {}
+            "parameters": {},
+            "name": "Sigma scaling",
+            "order": 2
+        },
+        "tournament": {
+            "class_name": "ParentTournamentSelection",
+            "parameters": {
+                "e": 0.001,
+                "k": 25
+            },
+            "name": "Local tournament",
+            "order": 4
         },
         "proportionate": {
-            "order": 1,
-            "name": "Proportionate scaling",
             "class_name": "ParentFitnessProportionateSelection",
-            "parameters": {}
-        },
-        "boltzmann": {
-            "order": 3,
-            "name": "Boltzmann scaling",
-            "class_name": "ParentBoltzmannSelection",
-            "parameters": {}
-        }
-    },
-    "translator": {
-        "parameter": {
-            "order": 1,
-            "name": "Bit to paramter",
-            "class_name": "BinToParameterTranslator",
-            "parameters": {
-                "k": 8
-            }
-        },
-        "default": {
-            "order": 2,
-            "name": "Bit to bit",
-            "class_name": "DefaultTranslator",
-            "parameters": {}
-        }
-    },
-    "genotype": {
-        "default": {
-            "order": 1,
-            "name": "Bit Vector",
-            "class_name": "BitVectorGenotype",
-            "parameters": {
-                "crossover_rate": 1,
-                "mutation_rate": 1
-            }
-        }
-    },
-    "adult_selection": {
-        "over": {
-            "order": 2,
-            "name": "Over production",
-            "class_name": "OverProductionAdultSelection"
-        },
-        "mixing": {
-            "order": 3,
-            "name": "Generational mixing",
-            "class_name": "MixingAdultSelection"
-        },
-        "full": {
-            "order": 1,
-            "name": "Full replacement",
-            "class_name": "FullReplacementAdultSelection"
+            "parameters": {},
+            "name": "Proportionate scaling",
+            "order": 1
         }
     },
     "fitness": {
         "default": {
-            "order": 2,
-            "name": "Fraction",
             "class_name": "DefaultFitnessEvaluator",
             "parameters": {
                 "random_target": false
-            }
+            },
+            "name": "Fraction",
+            "order": 2
         },
         "tracker": {
-            "order": 1,
-            "name": "Tracker agent evaluator",
             "class_name": "TrackerAgentFitnessEvaluator",
             "parameters": {
-                "avoidance": false,
-                "pull": false,
-                "wrap": true
-            }
+                "avoidance": true,
+                "wrap": true,
+                "pull": false
+            },
+            "name": "Tracker agent evaluator",
+            "order": 1
+        }
+    },
+    "adult_selection": {
+        "full": {
+            "class_name": "FullReplacementAdultSelection",
+            "name": "Full replacement",
+            "order": 1
+        },
+        "mixing": {
+            "class_name": "MixingAdultSelection",
+            "name": "Generational mixing",
+            "order": 3
+        },
+        "over": {
+            "class_name": "OverProductionAdultSelection",
+            "name": "Over production",
+            "order": 2
+        }
+    },
+    "translator": {
+        "default": {
+            "class_name": "DefaultTranslator",
+            "parameters": {},
+            "name": "Bit to bit",
+            "order": 2
+        },
+        "parameter": {
+            "class_name": "BinToParameterTranslator",
+            "parameters": {
+                "k": 8
+            },
+            "name": "Bit to paramter",
+            "order": 1
+        }
+    },
+    "genotype": {
+        "default": {
+            "class_name": "BitVectorGenotype",
+            "parameters": {
+                "mutation_rate": 0.7,
+                "crossover_rate": 0.65
+            },
+            "name": "Bit Vector",
+            "order": 1
         }
     }
 }

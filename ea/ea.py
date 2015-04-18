@@ -61,6 +61,8 @@ class EA(object):
 
             self.geno_to_pheno_development(children)
             self.fitness_evaluator.evaluate_all(children)
+            if self.re_evaluate:
+                self.fitness_evaluator.evaluate_all(self.adult_pool)
             self.adult_pool = self.adult_selector.select(self.adult_pool, children, population_size)
             mating_adults = self.parent_selector.select_mating_pool(self.adult_pool, population_size, t=1-(c/cycles))
             children = self.reproduce(mating_adults)
@@ -150,6 +152,10 @@ class EA(object):
         self.genotype = geno
         self.genome_length = genome_length
         self.adult_selector = AdultSelectionFactory.make_adult_selector(adult)
+        if adult != "full":
+            self.re_evaluate = True
+        else:
+            self.re_evaluate = False
         self.parent_selector = ParentSelectionFactory.make_parent_selector(parent)
 
     def is_legal(self):

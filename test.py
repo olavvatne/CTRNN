@@ -82,7 +82,7 @@ translator = "parameter"
 fitness = "tracker"
 genotype = "default"
 adult = "full"
-parent = "tournament"
+parent = "sigma"
 
 ea_system.setup(translator,fitness,genotype,adult,parent,genome_length)
 

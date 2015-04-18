@@ -1,3 +1,4 @@
+import numpy as np
 class Individual(object):
     '''
     An individual contains a genotype, phenotype, a translator (genotype to phenotype mapper), and fitness value
@@ -26,6 +27,7 @@ class Individual(object):
         and vice versa. The new genotype's are then mutated and two new individual object initalized
         and returned.
         '''
+        #print(self, partner)
         g1 = self.genotype_container.crossover(partner.genotype_container)
         g2 = partner.genotype_container.crossover(self.genotype_container)
         g1.mutation()

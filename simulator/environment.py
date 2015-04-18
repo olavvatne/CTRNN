@@ -66,7 +66,7 @@ class Environment:
 
     def _init_agent(self, agent):
         agent.reset()
-        agent_x = random.randint(0, self.board_width-Environment.TRACKER)
+        agent_x = 10 #random.randint(0, self.board_width-Environment.TRACKER)
         agent_y = self.board_height-1
         return [agent_x, agent_y, Environment.TRACKER]
 
@@ -115,7 +115,7 @@ class Environment:
         x = tracker[Environment.X_INDEX]
         value = abs(diff)
 
-        magnitude = int(value>=0.1111) + int(value>=0.3333) + int(value>=0.555)+ int(value>=0.7777)
+        magnitude = int(value>=0.2) + int(value>=0.4) + int(value>=0.6)+ int(value>=0.8)
         dir = 1
         if diff< 0:
             dir = -1

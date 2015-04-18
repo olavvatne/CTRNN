@@ -78,14 +78,14 @@ class BitVectorGenotype(AbstractGenotype):
         '''
         Crossover with a twist. Will crossover only in between weights
         '''
-
         cg1 = self.copy()
         if random.random() < self.crossover_rate:
             #crossover = crossover - (crossover%self.k)
             #crossover = math.floor(random.uniform(0, self.genotype.size))
             for i in range(0, self.genotype.size, 8):
-                if random.random() < .5:
+                if i%16:
                     cg1.genotype[i:i+8] = partner.genotype[i:i+8]
+
         return cg1
 
     def copy(self):
@@ -93,7 +93,7 @@ class BitVectorGenotype(AbstractGenotype):
         Copy operation for the genotype. Used when children are created with the parents genotype's.
         '''
         g = BitVectorGenotype(crossover_rate=self.crossover_rate, mutation_rate=self.mutation_rate)
-        g.genotype = np.empty_like (self.genotype)
+        g.genotype = np.copy(self.genotype)
         np.copyto(g.genotype, self.genotype)
         return g
 
@@ -105,5 +105,6 @@ class BitVectorGenotype(AbstractGenotype):
         nr_of_chances = 1
         for i in range(nr_of_chances):
             if random.random() < self.mutation_rate:
+                print("MUTATION")
                 mutation_point = math.floor(random.uniform(0, self.genotype.size))
                 self.genotype[mutation_point] = not self.genotype[mutation_point]

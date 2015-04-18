@@ -86,7 +86,6 @@ class TrackerAgentFitnessEvaluator(AbstractFitnessEvaluator):
         '''
 
         '''
-        #TODO: increase timesteps?
         p = individual.phenotype_container
         capture, avoidance, failure_capture, failure_avoidance, edge_rate = self.simulator.run(p)
         capture_rate = capture/(capture+failure_capture)
