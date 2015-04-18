@@ -71,8 +71,8 @@ def debug_ann(ann):
              print(dir,"4")
 
 
-genome_length = 304
-pop_size = 70
+genome_length = 500
+pop_size = 10
 gen = 100
 threshold = 7
 ea_system = EA()

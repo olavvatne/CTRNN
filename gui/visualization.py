@@ -165,9 +165,8 @@ class TrackerAgentDisplay(PixelDisplay):
 
     def draw_model(self, timeslice):
         if timeslice:
-            timestep, score, tracker, sensor, object = timeslice
+            timestep, score, tracker, sensor, pull, object = timeslice
             self.delete("Piece")
-
             #Draw tracker
             x, y, dim = tracker
             for i in range(dim):
@@ -175,6 +174,8 @@ class TrackerAgentDisplay(PixelDisplay):
                 self.draw_piece("Piece", (x+i)%self.board_width, y, 1)
                 if sensor[i]:
                     self.draw_piece("Piece", (x+i)%self.board_width, y, 2)
+                if pull:
+                    self.draw_piece("Piece", (x+i)%self.board_width, y, 5)
 
             #Draw object
             x,y,dim = object
@@ -182,8 +183,12 @@ class TrackerAgentDisplay(PixelDisplay):
             for i in range(dim):
                 #TODO: remove magic number
                 self.draw_piece("Piece", x+i, y, color)
+            if pull:
+                x, y, dim = tracker
+                for i in range(dim):
+                    self.draw_piece("Piece", (x+i)%self.board_width, y, 5)
 
-            capture, avoidance, failure_capture, failure_avoidance,speed, edge = score
+            capture, avoidance, failure_capture, failure_avoidance,speed, edge, pull = score
             self.create_text(20, 20, font=("Arial",20), text=str(timestep+1), fill="white", tags="Piece")
             self.create_text(80, 20, font=("Arial",20), text="C: " +str(capture), fill="white", tags="Piece")
             self.create_text(140, 20, font=("Arial",20), text="A:" +str(avoidance), fill="white", tags="Piece")
@@ -197,7 +202,7 @@ class TrackerAgentDisplay(PixelDisplay):
 
 
     def _get_color(self, type):
-        c = {1:"#3FB8AF", 2:"#83AF9B", 3:"green", 4: "red"}
+        c = {1:"#3FB8AF", 2:"#83AF9B", 3:"green", 4: "red", 5:"yellow"}
         return c.get(type)
 
 class ResultDialog(object):
@@ -208,7 +213,9 @@ class ResultDialog(object):
     def __init__(self, parent, individual):
         self.individual = individual
         config = Configuration.get()
-        self.scenario = Simulator(wrap=config["fitness"]["tracker"]["parameters"]["wrap"])
+        wrap=config["fitness"]["tracker"]["parameters"]["wrap"]
+        pull=config["fitness"]["tracker"]["parameters"]["pull"]
+        self.scenario = Simulator(wrap = wrap, pull = pull)
 
         top = self.top = Toplevel(parent)
         top.title("Tracker game - results")

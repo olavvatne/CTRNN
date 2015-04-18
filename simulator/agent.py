@@ -4,10 +4,13 @@ import numpy as np
 class Simulator():
 
     def __init__(self, pull=False, wrap=True):
-        if wrap:
-            self.layers = [5,2,2]
-        else:
-            self.layers = [7,2,2]
+        self.layers = [5,2,2]
+        if not wrap:
+            self.layers[0] = 7
+            self.layers[1] = 3
+        if pull:
+            self.layers[2] = 3
+
         self.agent = RecurrentNeuralNet(self.layers)
         self.environment = Environment(30,15, pull=pull, wrap=wrap)
 

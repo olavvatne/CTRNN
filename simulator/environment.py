@@ -20,6 +20,7 @@ class Environment:
         self.board_width = width
         self.board_height = height
         self.wrap = wrap
+        self.pull = pull
         #Position of agent
         self.recording = []
 
@@ -34,12 +35,13 @@ class Environment:
     def score_agent(self, agent, timesteps=600, rec=False):
         if rec:
             self.recording = []
-        score = [0,0,0,0, 0, 0]
+        score = [0,0,0,0, 0, 0, 0]
 
         tracker= self._init_agent(agent)
-        objects = self.make_object_pool(timesteps)
-        object = self._spawn_object(objects)
+        object = self._spawn_object()
         self.at_edge= 0
+        self.succ_pull = 0
+        self.total_pull = 0
         self.speed = 0
         self.max_speed = 1
 
@@ -49,29 +51,39 @@ class Environment:
             #Motor output
             motor_output = agent.input(shadow_sensors)
 
-            if rec:
-                self.recording.append((t,list(score), list(tracker), shadow_sensors, list(object)))
 
             #Score if at bottom
             #Move agent
+            pulled = False
+            if self.pull and motor_output[2]>0.5:
+                object[Environment.Y_INDEX] = self.board_height-1
+                pulled = True
+
+            if rec:
+                self.recording.append((t,list(score), list(tracker), shadow_sensors, pulled, list(object)))
 
             if self._object_at_bottom(object):
-                s = self._score_target(tracker, object)
+                s = self._score_target(tracker, object, pulled)
                 score[s] += 1
-                object = self._spawn_object(objects)
+                object = self._spawn_object()
             else:
                 #Move object closer to bottom
                 object[Environment.Y_INDEX] += 1
 
-            tracker= self._move_agent(tracker ,object, motor_output, shadow_sensors)
-        score[-2] = self.speed/self.max_speed
+            if not pulled:
+                tracker= self._move_agent(tracker ,object, motor_output, shadow_sensors)
+
+        score[-3] = self.speed/self.max_speed
         if not self.wrap:
-            score[-1] = self.at_edge/timesteps
+            score[-2] = self.at_edge/timesteps
+        if self.pull:
+            if self.total_pull > 0:
+                score[-1] = self.succ_pull/(self.total_pull)
         return score
 
-    def _spawn_object(self, objects):
+    def _spawn_object(self):
         #Assume objects cant wrap around. Will make no-wrap scenario easier
-        dim = objects.pop()
+        dim = random.randint(Environment.OBJECT_MIN_DIM, Environment.OBJECT_MAX_DIM)
         return [random.randint(0, self.board_width-1-dim), 0, dim]
 
     def _init_agent(self, agent):
@@ -83,7 +95,7 @@ class Environment:
     def _object_at_bottom(self, object):
         return object[Environment.Y_INDEX] == self.board_height-1
 
-    def _score_target(self, tracker, object):
+    def _score_target(self, tracker, object, pulled):
         '''
         Full overlap  1,2,3,4 --> capture
         Full overlap 5 --> failure
@@ -98,12 +110,17 @@ class Environment:
         object_set = set([i for i in range(ox, ox+odim)])
         if object_set.issubset(target_set):
             if odim < 5:
+                self.total_pull +=1
+                if pulled:
+                    self.succ_pull += 2
                 return 0
                 #self.capture += 1
             else:
                 return 3
                 #self.failure_avoidance += 1
         elif not object_set & target_set:
+            if pulled:
+                    self.succ_pull -= 1
             if odim > 4:
                 return 1
                 #self.avoidance += 1
@@ -111,6 +128,8 @@ class Environment:
                 return 2
                 #self.failure_capture += 1
         else:
+            if pulled:
+                    self.succ_pull -= 1
             if odim> 4:
                 return 3
                 #self.failure_avoidance += 1

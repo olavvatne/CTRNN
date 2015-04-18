@@ -6,7 +6,7 @@ class RecurrentNeuralNet:
     GAIN_RANGE = [1.0, 5.0]
     TIME_RANGE = [1.0, 2.0]
     WEIGHT_RANGE = [-5.0, 5.0]
-    SPECIAL_RANGE = [-15.0, 15.0]
+    SPECIAL_RANGE = [-10.0, 10.0]
 
     SIGMOID = "sigmoid"
     BIAS_VALUE = [1]
@@ -27,7 +27,9 @@ class RecurrentNeuralNet:
         nr_bias = 1
         nr_recurrent = 2
         sizes = np.array(sizes)
-        incoming_connections = sizes[:-1] + nr_recurrent + nr_bias
+        #TODO: recurrent for 3 output neurons
+        incoming_connections = sizes[:-1] + sizes[1:] + nr_bias
+        #incoming_connections = sizes[:-1] + nr_recurrent + nr_bias
         neurons = sizes[1:]
         #For each neuron or array, the last nr_bias+nr_recurrent cells are recurrent and bias
         self.weight_matrix_sizes = list(zip(neurons, incoming_connections))
@@ -94,7 +96,6 @@ class RecurrentNeuralNet:
 
             #Add recurrent connections and bias
             o = np.concatenate((o, prev_o[i], RecurrentNeuralNet.BIAS_VALUE))
-
             s = np.dot(w, o)
 
 
@@ -112,6 +113,7 @@ class RecurrentNeuralNet:
 
     def reset(self):
         self._create_internal(self.sizes)
+
 
     @staticmethod
     def scale_number(n, min, max):

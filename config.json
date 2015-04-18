@@ -1,78 +1,13 @@
 {
-    "translator": {
-        "default": {
-            "name": "Bit to bit",
-            "parameters": {},
-            "order": 2,
-            "class_name": "DefaultTranslator"
-        },
-        "parameter": {
-            "name": "Bit to paramter",
-            "parameters": {
-                "k": 8
-            },
-            "order": 1,
-            "class_name": "BinToParameterTranslator"
-        }
-    },
     "genotype": {
         "default": {
             "name": "Bit Vector",
-            "parameters": {
-                "mutation_rate": 0.5,
-                "crossover_rate": 0.3
-            },
             "order": 1,
-            "class_name": "BitVectorGenotype"
-        }
-    },
-    "parent_selection": {
-        "sigma": {
-            "name": "Sigma scaling",
-            "parameters": {},
-            "order": 2,
-            "class_name": "ParentSigmaScalingSelection"
-        },
-        "proportionate": {
-            "name": "Proportionate scaling",
-            "parameters": {},
-            "order": 1,
-            "class_name": "ParentFitnessProportionateSelection"
-        },
-        "boltzmann": {
-            "name": "Boltzmann scaling",
-            "parameters": {},
-            "order": 3,
-            "class_name": "ParentBoltzmannSelection"
-        },
-        "tournament": {
-            "name": "Local tournament",
+            "class_name": "BitVectorGenotype",
             "parameters": {
-                "e": 0.001,
-                "k": 25
-            },
-            "order": 4,
-            "class_name": "ParentTournamentSelection"
-        }
-    },
-    "fitness": {
-        "tracker": {
-            "name": "Tracker agent evaluator",
-            "parameters": {
-                "avoidance": false,
-                "wrap": false,
-                "pull": false
-            },
-            "order": 1,
-            "class_name": "TrackerAgentFitnessEvaluator"
-        },
-        "default": {
-            "name": "Fraction",
-            "parameters": {
-                "random_target": false
-            },
-            "order": 2,
-            "class_name": "DefaultFitnessEvaluator"
+                "crossover_rate": 0.2,
+                "mutation_rate": 0.8
+            }
         }
     },
     "adult_selection": {
@@ -90,6 +25,71 @@
             "name": "Over production",
             "order": 2,
             "class_name": "OverProductionAdultSelection"
+        }
+    },
+    "translator": {
+        "parameter": {
+            "name": "Bit to paramter",
+            "order": 1,
+            "class_name": "BinToParameterTranslator",
+            "parameters": {
+                "k": 8
+            }
+        },
+        "default": {
+            "name": "Bit to bit",
+            "order": 2,
+            "class_name": "DefaultTranslator",
+            "parameters": {}
+        }
+    },
+    "parent_selection": {
+        "sigma": {
+            "name": "Sigma scaling",
+            "order": 2,
+            "class_name": "ParentSigmaScalingSelection",
+            "parameters": {}
+        },
+        "proportionate": {
+            "name": "Proportionate scaling",
+            "order": 1,
+            "class_name": "ParentFitnessProportionateSelection",
+            "parameters": {}
+        },
+        "tournament": {
+            "name": "Local tournament",
+            "order": 4,
+            "class_name": "ParentTournamentSelection",
+            "parameters": {
+                "k": 25,
+                "e": 0.001
+            }
+        },
+        "boltzmann": {
+            "name": "Boltzmann scaling",
+            "order": 3,
+            "class_name": "ParentBoltzmannSelection",
+            "parameters": {}
+        }
+    },
+    "fitness": {
+        "default": {
+            "name": "Fraction",
+            "order": 2,
+            "class_name": "DefaultFitnessEvaluator",
+            "parameters": {
+                "random_target": false
+            }
+        },
+        "tracker": {
+            "name": "Tracker agent evaluator",
+            "order": 1,
+            "class_name": "TrackerAgentFitnessEvaluator",
+            "parameters": {
+                "pull": false,
+                "avoidance": false,
+                "wrap": false
+            }
         }
     }
 }

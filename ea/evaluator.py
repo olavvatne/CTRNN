@@ -78,6 +78,7 @@ class TrackerAgentFitnessEvaluator(AbstractFitnessEvaluator):
 
     def __init__(self,genome_length, pull=False, wrap=True, avoidance=True):
         self.wrap = wrap
+        self.pull = pull
         self.is_avoidance = avoidance
         self.simulator = Simulator(pull=pull, wrap=wrap)
 
@@ -88,18 +89,20 @@ class TrackerAgentFitnessEvaluator(AbstractFitnessEvaluator):
         '''
         p = individual.phenotype_container
         self.simulator.set(p)
-        capture, avoidance, failure_capture, failure_avoidance, speed_rate, edge_rate = self.simulator.run(p)
+        capture, avoidance, failure_capture, failure_avoidance, speed_rate, edge_rate, pull_rate = self.simulator.run(p)
         capture_rate = capture/(capture+failure_capture)
         avoidance_rate =avoidance/(avoidance+failure_avoidance)
         turnon = ( min(50, cycle)/50)
         if(debug):
             print("----------")
-            print("Cap: ",capture_rate, "Avo: ",avoidance_rate, "Spe: ", speed_rate, "adjuster", - abs( capture_rate-avoidance_rate))
+            print("Cap: ",capture_rate, "Avo: ",avoidance_rate, "Spe: ", speed_rate, "pulls", pull_rate)
         score = (4*capture_rate)
         if self.is_avoidance:
             score += (turnon*2*avoidance_rate)
         if not self.wrap:
-            score += -(2*edge_rate)+(1*speed_rate)
+            score += -(1*edge_rate)+(5*speed_rate)
+        if self.pull:
+            score += 2*pull_rate
         '''turnon = ( min(50, cycle)/50)
         if(debug):
             print("----------")
