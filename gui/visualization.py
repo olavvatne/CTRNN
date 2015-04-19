@@ -172,7 +172,7 @@ class TrackerAgentDisplay(PixelDisplay):
             for i in range(dim):
                 #TODO: remove magic number
                 self.draw_piece("Piece", (x+i)%self.board_width, y, 1)
-                if sensor[i]:
+                if sensor[i+self.wrap]:
                     self.draw_piece("Piece", (x+i)%self.board_width, y, 2)
                 if pull:
                     self.draw_piece("Piece", (x+i)%self.board_width, y, 5)
@@ -224,7 +224,7 @@ class ResultDialog(object):
         w = 30
         h = 15
 
-        self.canvas = TrackerAgentDisplay(top, w, h)
+        self.canvas = TrackerAgentDisplay(top, w, h, wrap=wrap)
         self.canvas.set_model(self.scenario)
         self.canvas.grid(row=0, column=0, columnspan=5, sticky=(N,W,S,E) ,padx=4, pady=4)
 

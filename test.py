@@ -72,9 +72,9 @@ def debug_ann(ann):
 
 
 genome_length = 500
-pop_size = 10
-gen = 100
-threshold = 7
+pop_size = 60
+gen = 30
+threshold = 30
 ea_system = EA()
 listner = Listner()
 ea_system.add_listener(listner)

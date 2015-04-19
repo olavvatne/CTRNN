@@ -7,11 +7,11 @@ class Simulator():
         self.layers = [5,2,2]
         if not wrap:
             self.layers[0] = 7
-            self.layers[1] = 3
+           # self.layers[1] = 3
         if pull:
             self.layers[2] = 3
 
-        self.agent = RecurrentNeuralNet(self.layers)
+        self.agent = RecurrentNeuralNet(self.layers, wrap=wrap)
         self.environment = Environment(30,15, pull=pull, wrap=wrap)
 
     def run(self, p, rec=False, timesteps=600):

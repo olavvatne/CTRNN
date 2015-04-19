@@ -6,7 +6,7 @@ class RecurrentNeuralNet:
     GAIN_RANGE = [1.0, 5.0]
     TIME_RANGE = [1.0, 2.0]
     WEIGHT_RANGE = [-5.0, 5.0]
-    SPECIAL_RANGE = [-10.0, 10.0]
+    SPECIAL_RANGE = [-10, 10]
 
     SIGMOID = "sigmoid"
     BIAS_VALUE = [1]
@@ -48,7 +48,7 @@ class RecurrentNeuralNet:
 
     def restructure_parameters(self, parameters):
 
-
+        #parameters = np.ones(40)
         weights = []
         gains = []
         timeconstants = []
@@ -59,9 +59,11 @@ class RecurrentNeuralNet:
             #TODO: add gains and weights to create neuron component in genome
             w = np.reshape(self.scaler(parameters[i:n],*self.weight_range),shape)
             w[:,-1] = np.interp( w[:,-1], self.weight_range,self.bias_range)
+
             if not self.wrap and j == 0:
-                w[:, -5] = np.interp(w[:, -5],self.weight_range, self.special_range)
+                w[:, 0] = np.interp(w[:, 0],self.weight_range, self.special_range)
                 w[:, -4] = np.interp(w[:, -4],self.weight_range, self.special_range)
+
             weights.append(w)
             i = n
 
@@ -75,6 +77,9 @@ class RecurrentNeuralNet:
             #Pre divide 1/t. Takes up time in a method run many times
             timeconstants.append(1 / self.scaler(parameters[i:n], *self.timeconstant_range))
             i = n
+        #print("w",weights)
+        #print("g",gains)
+        #print("t",timeconstants)
         return {"w":weights, "g": gains, "t": timeconstants}
 
 
@@ -90,7 +95,6 @@ class RecurrentNeuralNet:
         prev_o = self.prev_output
         t_div = self.timeconstants
         g = self.gain
-
         for i, w in enumerate(self.weights):
             #Equation 1
 

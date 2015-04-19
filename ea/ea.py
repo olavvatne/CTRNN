@@ -67,7 +67,7 @@ class EA(object):
             mating_adults = self.parent_selector.select_mating_pool(self.adult_pool, population_size, t=1-(c/cycles))
             children = self.reproduce(mating_adults)
             #TODO: CORRECT ELITISM IMPLEMENTATION. FITNESS REEVALUATED?
-            #children.append(self.adult_selector.best)
+            children.append(self.adult_selector.best)
             #self.adult_pool.append(self.adult_selector.best)
 
             #Check stopping condition, and gui update below

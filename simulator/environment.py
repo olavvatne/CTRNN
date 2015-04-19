@@ -88,7 +88,7 @@ class Environment:
 
     def _init_agent(self, agent):
         agent.reset()
-        agent_x = 10 #random.randint(0, self.board_width-Environment.TRACKER)
+        agent_x = 12 #random.randint(0, self.board_width-Environment.TRACKER)
         agent_y = self.board_height-1
         return [agent_x, agent_y, Environment.TRACKER]
 
@@ -108,28 +108,20 @@ class Environment:
         #TODO: decrement avoidance instead of failure?
         target_set = set([i%self.board_width for i in range(x, x+dim)])
         object_set = set([i for i in range(ox, ox+odim)])
-        if object_set.issubset(target_set):
-            if odim < 5:
-                self.total_pull +=1
-                if pulled:
-                    self.succ_pull += 2
-                return 0
-                #self.capture += 1
-            else:
-                return 3
-                #self.failure_avoidance += 1
-        elif not object_set & target_set:
+        if object_set.issubset(target_set) and odim < 5:
+            self.total_pull +=1
             if pulled:
-                    self.succ_pull -= 1
-            if odim > 4:
-                return 1
-                #self.avoidance += 1
-            else:
-                return 2
-                #self.failure_capture += 1
+                self.succ_pull += 2
+            return 0
+            #self.capture += 1
+
+        elif (not object_set & target_set) and odim > 4:
+            if pulled:
+                self.succ_pull -= 1
+            return 1
         else:
             if pulled:
-                    self.succ_pull -= 1
+                self.succ_pull -= 1
             if odim> 4:
                 return 3
                 #self.failure_avoidance += 1
@@ -145,26 +137,31 @@ class Environment:
         value = abs(diff)
 
         magnitude = int(value>=0.2) + int(value>=0.4) + int(value>=0.6)+ int(value>=0.8)
+
         dir = 1
         if diff< 0:
             dir = -1
 
+        #if np.any(sensor):
+        #    if object[2] > 4:
+        #        self.speed += magnitude
+        #        self.max_speed += 4
+        #    else:
+        #        self.speed -= 0
+        #else:
+        #    self.speed += magnitude
+        #    self.max_speed += 4
+
 
         if self.wrap:
-            if np.any(sensor):
-                if object[2] > 4:
-                    self.speed += magnitude
-                    self.max_speed += 4
-                else:
-                    self.speed -= magnitude
-            else:
-                self.speed += magnitude
-                self.max_speed += 4
-
+            self.speed += magnitude
+            self.max_speed += 4
             tracker[Environment.X_INDEX] = (x + (magnitude*dir))%self.board_width #Wrap around
         else:
-
+            self.max_speed += 4
+            temp = tracker[Environment.X_INDEX]
             tracker[Environment.X_INDEX] = max(0, min(self.board_width-Environment.TRACKER, x + (magnitude*dir)))
+            self.speed += abs(tracker[Environment.X_INDEX] - temp)
             if tracker[Environment.X_INDEX] == 0 or tracker[Environment.X_INDEX] == self.board_width-Environment.TRACKER:
                 self.at_edge += 1
         return tracker
@@ -183,17 +180,19 @@ class Environment:
         ox, oy, odim = object
 
         if not self.wrap:
+            w = 1
             sensor = np.zeros(dim+ 2)
-            sensor[-2] = int(x == 0)
+            sensor[0] = int(x == 0)
             sensor[-1] = int(x + dim == self.board_width)
         else:
+            w = 0
             sensor = np.zeros(dim)
 
         for i in range(dim):
             #TODO: handle wrap around. Think spawn assumption handles it
             target_element = (x+i)%self.board_width
             if(target_element>=ox and target_element<ox+odim):
-                sensor[i] =1 #/max(self.board_height - oy-5, 1.0)
+                sensor[i + w] =1 #/max(self.board_height - oy-5, 1.0)
         return sensor
 
 
