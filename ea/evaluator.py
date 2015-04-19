@@ -92,20 +92,24 @@ class TrackerAgentFitnessEvaluator(AbstractFitnessEvaluator):
         capture, avoidance, failure_capture, failure_avoidance, speed_rate, edge_rate, pull_rate = self.simulator.run(p)
         capture_rate = capture/(capture+failure_capture)
         avoidance_rate =avoidance/(avoidance+failure_avoidance)
-        turnon = 1-( min(20, cycle)/20)
-        if(debug):
-            #print(self.simulator.agent.weights)
-            print(turnon)
-            print("----------")
-            print("Cap: ","{0:.2f}".format(capture_rate), "Avo: ","{0:.2f}".format(avoidance_rate), "Spe: ", "{0:.5f}".format(speed_rate), "pulls", "{0:.2f}".format(pull_rate))
-        score = (4*capture_rate) * (turnon*speed_rate)
+        turnon = min(20, cycle)/20
+
+        score = (4*capture_rate)
         if self.is_avoidance:
             score += (turnon*2*avoidance_rate)
         if not self.wrap:
             if speed_rate> 0:
-                score = (score  + (turnon*4*speed_rate))
+                score = (score  + ((1-turnon)*2*speed_rate))
             else:
                 score = 0
         if self.pull:
-            score += (4*pull_rate) + (speed_rate)
+            score += (4*pull_rate)# + (speed_rate)
+
+        if(debug):
+            #print(self.simulator.agent.weights)
+            #print(self.simulator.agent.gain)
+            #print(self.simulator.agent.timeconstants)
+            #print(turnon)
+            print("----------")
+            print("Cap: ","{0:.2f}".format(capture_rate), "Avo: ","{0:.2f}".format(avoidance_rate), "Spe: ", "{0:.5f}".format(speed_rate), "pulls", "{0:.2f}".format(pull_rate))
         return score

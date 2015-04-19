@@ -6,7 +6,7 @@
             "class_name": "BitVectorGenotype",
             "parameters": {
                 "crossover_rate": 0.5,
-                "mutation_rate": 0.01
+                "mutation_rate": 0.9
             }
         }
     },
@@ -88,7 +88,7 @@
             "parameters": {
                 "pull": false,
                 "avoidance": false,
-                "wrap": true
+                "wrap": false
             }
         }
     }

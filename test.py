@@ -71,9 +71,12 @@ def debug_ann(ann):
              print(dir,"4")
 
 
-genome_length = 500
-pop_size = 60
-gen = 30
+genome_length = 304
+#272 (no pull and wrap)
+#352 (pull and wrap)
+#296 (no pull and no wrap)
+pop_size = 50
+gen = 50
 threshold = 30
 ea_system = EA()
 listner = Listner()
@@ -81,7 +84,7 @@ ea_system.add_listener(listner)
 translator = "parameter"
 fitness = "tracker"
 genotype = "default"
-adult = "full"
+adult = "mixing"
 parent = "sigma"
 
 ea_system.setup(translator,fitness,genotype,adult,parent,genome_length)

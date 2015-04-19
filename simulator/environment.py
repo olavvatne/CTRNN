@@ -38,7 +38,8 @@ class Environment:
         score = [0,0,0,0, 0, 0, 0]
 
         tracker= self._init_agent(agent)
-        object = self._spawn_object()
+        objects = self.make_object_pool(timesteps)
+        object = self._spawn_object(objects)
         self.at_edge= 0
         self.succ_pull = 0
         self.total_pull = 0
@@ -65,7 +66,7 @@ class Environment:
             if self._object_at_bottom(object):
                 s = self._score_target(tracker, object, pulled)
                 score[s] += 1
-                object = self._spawn_object()
+                object = self._spawn_object(objects)
             else:
                 #Move object closer to bottom
                 object[Environment.Y_INDEX] += 1
@@ -81,9 +82,12 @@ class Environment:
                 score[-1] = self.succ_pull/(self.total_pull)
         return score
 
-    def _spawn_object(self):
+    def _spawn_object(self, objects):
         #Assume objects cant wrap around. Will make no-wrap scenario easier
-        dim = random.randint(Environment.OBJECT_MIN_DIM, Environment.OBJECT_MAX_DIM)
+        if len(objects)>0:
+            dim = objects.pop()
+        else:
+            dim = random.randint(Environment.OBJECT_MIN_DIM, Environment.OBJECT_MAX_DIM)
         return [random.randint(0, self.board_width-1-dim), 0, dim]
 
     def _init_agent(self, agent):
@@ -111,17 +115,17 @@ class Environment:
         if object_set.issubset(target_set) and odim < 5:
             self.total_pull +=1
             if pulled:
-                self.succ_pull += 2
+                self.succ_pull += 1
             return 0
             #self.capture += 1
 
         elif (not object_set & target_set) and odim > 4:
             if pulled:
-                self.succ_pull -= 1
+                self.succ_pull -= 0.4
             return 1
         else:
             if pulled:
-                self.succ_pull -= 1
+                self.succ_pull -= 0.4
             if odim> 4:
                 return 3
                 #self.failure_avoidance += 1
@@ -141,16 +145,6 @@ class Environment:
         dir = 1
         if diff< 0:
             dir = -1
-
-        #if np.any(sensor):
-        #    if object[2] > 4:
-        #        self.speed += magnitude
-        #        self.max_speed += 4
-        #    else:
-        #        self.speed -= 0
-        #else:
-        #    self.speed += magnitude
-        #    self.max_speed += 4
 
 
         if self.wrap:
