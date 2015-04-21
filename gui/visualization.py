@@ -219,7 +219,7 @@ class ResultDialog(object):
         self.scenario = Simulator(wrap = wrap, pull = pull)
 
         top = self.top = Toplevel(parent)
-        top.title("Tracker game - results")
+        top.title("Tracker game - results wrap=" + str(wrap) + " pull=" + str(pull))
         top.grid()
 
         w = 30

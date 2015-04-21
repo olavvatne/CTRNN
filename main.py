@@ -17,6 +17,7 @@ class AppUI(Frame):
     '''
     def __init__(self, config, master=None):
         self.config = config
+        self.dirty_config = False
         master.columnconfigure(0, weight=1)
         master.rowconfigure(0, weight=1)
         master.title("EA problem solver system")
@@ -49,6 +50,8 @@ class AppUI(Frame):
             d = ConfigurationDialog(master, options)
             master.wait_window(d.top)
             if d.result:
+                print("CLOSE")
+                self.dirty_config = True
                 self.config = d.result
 
         try:
@@ -166,14 +169,15 @@ def on_exit(*args):
     '''
     Exits application
     '''
-    print(config)
-    Configuration.store(config)
+    if app.dirty_config:
+        Configuration.store(config)
     root.quit()
 
 
 config = Configuration.get()
 root = Tk()
 root.wm_protocol ("WM_DELETE_WINDOW", on_exit)
+root.geometry("500x300")
 app = AppUI(config,master=root)
 root.bind('<Return>', run_ea)
 ea_system = EA(config)

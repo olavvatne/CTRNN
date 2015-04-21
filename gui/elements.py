@@ -5,6 +5,7 @@ matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
 from matplotlib import style
+import copy
 import csv
 style.use('ggplot')
 
@@ -87,7 +88,7 @@ class ConfigurationDialog(object):
         param = "parameters"
         self.result = None
         self.config = config
-        self.elements = config.copy()
+        self.elements = copy.deepcopy(config)
         #Creates tabs and labelled entry boxes for all parameters.
         for module_name, module in config.items():
             sub = Frame(panes)
@@ -105,9 +106,11 @@ class ConfigurationDialog(object):
         b = Button(top, text="OK", command=self.ok)
         b.pack(pady=5)
 
+    
     def ok(self):
         self.update()
         self.result = self.config
+        self.config = None
         self.top.destroy()
 
     def update(self):
