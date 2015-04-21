@@ -10,12 +10,15 @@ class FitnessEvaluatorFactory:
     DEFAULT = "default"
 
     @staticmethod
-    def make_fitness_evaluator(genome_length, evaluator=DEFAULT):
+    def make_fitness_evaluator(genome_length, evaluator=DEFAULT, config=None):
         '''
         Factory method create object by the supplied string argument, evaluator.
         Configurations are also retrieved and supplied as a kwarg argument for the object.
         '''
-        selected = Configuration.get()["fitness"][evaluator]
+        if not config:
+            selected = Configuration.get()["fitness"][evaluator]
+        else:
+            selected = config["fitness"][evaluator]
         config = selected["parameters"]
         return getattr(sys.modules[__name__], selected["class_name"])(genome_length, **config)
 
@@ -85,31 +88,26 @@ class TrackerAgentFitnessEvaluator(AbstractFitnessEvaluator):
 
     def evaluate(self, individual, cycle, debug=False):
         '''
-
+        Depending on config settings, the score for an individual is
+        calculated differently.
         '''
         p = individual.phenotype_container
         self.simulator.set(p)
-        capture, avoidance, failure_capture, failure_avoidance, speed_rate, edge_rate, pull_rate = self.simulator.run(p)
+        capture, avoidance, failure_capture, failure_avoidance, speed_rate, explore_rate, pull_rate = self.simulator.run(p)
         capture_rate = capture/(capture+failure_capture)
         avoidance_rate =avoidance/(avoidance+failure_avoidance)
         turnon = min(20, cycle)/20
 
-        score = (4*capture_rate)
+        score = (4.0*capture_rate) - 4*(abs(speed_rate - 0.28))
         if self.is_avoidance:
-            score += (turnon*2*avoidance_rate)
+            score += 2.0*avoidance_rate
         if not self.wrap:
-            if speed_rate> 0:
-                score = (score  + ((1-turnon)*2*speed_rate))
-            else:
-                score = 0
+            score += ((1.0-turnon)*speed_rate) + (4.0*explore_rate**2) + (4.0*capture_rate)
         if self.pull:
-            score += (4*pull_rate)# + (speed_rate)
+            score += (3*pull_rate)# + (speed_rate)
 
         if(debug):
-            #print(self.simulator.agent.weights)
-            #print(self.simulator.agent.gain)
-            #print(self.simulator.agent.timeconstants)
-            #print(turnon)
             print("----------")
-            print("Cap: ","{0:.2f}".format(capture_rate), "Avo: ","{0:.2f}".format(avoidance_rate), "Spe: ", "{0:.5f}".format(speed_rate), "pulls", "{0:.2f}".format(pull_rate))
+            print(turnon)
+            print("Cap: ","{0:.2f}".format(capture_rate), "Avo: ","{0:.2f}".format(avoidance_rate), "Spe: ", "{0:.5f}".format(speed_rate), "pulls", "{0:.5f}".format(pull_rate), "explore", explore_rate)
         return score

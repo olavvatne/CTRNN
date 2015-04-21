@@ -7,7 +7,7 @@ class Simulator():
         self.layers = [5,2,2]
         if not wrap:
             self.layers[0] = 7
-           # self.layers[1] = 3
+            self.layers[1] = 3
         if pull:
             self.layers[2] = 3
 

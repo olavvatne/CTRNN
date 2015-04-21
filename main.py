@@ -15,7 +15,8 @@ class AppUI(Frame):
     '''
     Main user interface of EA. Uses elements found in gui.elements. Layout of application.
     '''
-    def __init__(self, master=None):
+    def __init__(self, config, master=None):
+        self.config = config
         master.columnconfigure(0, weight=1)
         master.rowconfigure(0, weight=1)
         master.title("EA problem solver system")
@@ -36,7 +37,7 @@ class AppUI(Frame):
         menu.add_command(label="Stop", command=lambda: stop_pressed(), accelerator="Ctrl+S")
         master.bind("<Control-s>", lambda event: stop_pressed())
 
-        options = Configuration.get()
+        options = config
         def run_pressed():
             run_ea()
 
@@ -44,11 +45,11 @@ class AppUI(Frame):
             stop_ea()
 
         def open_configuration():
-            options = Configuration.get()
+            options = self.config
             d = ConfigurationDialog(master, options)
             master.wait_window(d.top)
             if d.result:
-                Configuration.store(d.result)
+                self.config = d.result
 
         try:
             self.master.config(menu=self.menubar)
@@ -133,7 +134,6 @@ def run_ea(*args):
     Method configure and runs EA in it's own thread so the user interface is
     responsive while running.
     '''
-    Configuration.reload()
     ea_system.setup(app.elements["translator"].get(),
                  app.elements["fitness"].get(),
                  app.elements["genotype"].get(),
@@ -160,20 +160,23 @@ def run_ea(*args):
 
 
 def show_result(individual):
-    config = Configuration.get()
     result_dialog = ResultDialog(app, individual)
 
 def on_exit(*args):
     '''
     Exits application
     '''
+    print(config)
+    Configuration.store(config)
     root.quit()
 
 
+config = Configuration.get()
 root = Tk()
-app = AppUI(master=root)
+root.wm_protocol ("WM_DELETE_WINDOW", on_exit)
+app = AppUI(config,master=root)
 root.bind('<Return>', run_ea)
-ea_system = EA()
+ea_system = EA(config)
 ani = animation.FuncAnimation(app.graph.f, app.graph.animate, interval=3000)
 ea_system.add_listener(app)
 root.mainloop()

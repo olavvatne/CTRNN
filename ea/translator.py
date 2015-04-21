@@ -10,12 +10,15 @@ class TranslatorFactory:
     DEFAULT = "default"
 
     @staticmethod
-    def make_fitness_translator(translator=DEFAULT):
+    def make_translator(translator=DEFAULT, config=None):
         '''
         Factory method create object by the supplied string argument, translator.
         Configurations are also retrieved and supplied as a kwarg argument for the object.
         '''
-        selected = Configuration.get()["translator"][translator]
+        if not config:
+            selected = Configuration.get()["translator"][translator]
+        else:
+            selected = config["translator"][translator]
         config = selected["parameters"]
         print(config)
         return getattr(sys.modules[__name__], selected["class_name"])(**config)

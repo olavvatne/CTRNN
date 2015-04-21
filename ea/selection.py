@@ -7,12 +7,15 @@ class AdultSelectionFactory:
     FULL = "full"
 
     @staticmethod
-    def make_adult_selector(selector=FULL):
+    def make_adult_selector(selector=FULL, config=None):
         '''
         Factory method create object by the supplied string argument, selector.
         Configurations are also retrieved and supplied as a kwarg argument for the object.
         '''
-        selections = Configuration.get()["adult_selection"]
+        if not config:
+            selections = Configuration.get()["adult_selection"]
+        else:
+            selections = config["adult_selection"]
         return  getattr(sys.modules[__name__], selections[selector]["class_name"])()
 
 

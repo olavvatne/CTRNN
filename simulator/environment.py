@@ -40,11 +40,14 @@ class Environment:
         tracker= self._init_agent(agent)
         objects = self.make_object_pool(timesteps)
         object = self._spawn_object(objects)
-        self.at_edge= 0
+
         self.succ_pull = 0
         self.total_pull = 0
         self.speed = 0
         self.max_speed = 1
+        #Tracker at egde does not work it seems . Remove later
+        self.min_x = 30
+        self.max_x = 0
 
         for t in range(timesteps):
             #Shadow sensor gathering
@@ -76,7 +79,7 @@ class Environment:
 
         score[-3] = self.speed/self.max_speed
         if not self.wrap:
-            score[-2] = self.at_edge/timesteps
+            score[-2] = (self.max_x - self.min_x)/(self.board_width-Environment.TRACKER)
         if self.pull:
             if self.total_pull > 0:
                 score[-1] = self.succ_pull/(self.total_pull)
@@ -142,9 +145,9 @@ class Environment:
 
         magnitude = int(value>=0.2) + int(value>=0.4) + int(value>=0.6)+ int(value>=0.8)
 
-        dir = 1
+        dir = -1
         if diff< 0:
-            dir = -1
+            dir = 1
 
 
         if self.wrap:
@@ -156,8 +159,12 @@ class Environment:
             temp = tracker[Environment.X_INDEX]
             tracker[Environment.X_INDEX] = max(0, min(self.board_width-Environment.TRACKER, x + (magnitude*dir)))
             self.speed += abs(tracker[Environment.X_INDEX] - temp)
-            if tracker[Environment.X_INDEX] == 0 or tracker[Environment.X_INDEX] == self.board_width-Environment.TRACKER:
-                self.at_edge += 1
+
+            if tracker[Environment.X_INDEX] < self.min_x:
+                self.min_x = tracker[Environment.X_INDEX]
+            elif tracker[Environment.X_INDEX] > self.max_x:
+                self.max_x = tracker[Environment.X_INDEX]
+
         return tracker
 
     def get_recording(self):

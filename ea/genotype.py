@@ -2,17 +2,21 @@ from abc import ABCMeta, abstractmethod
 import numpy as np
 import sys, random, math
 from config.configuration import Configuration
+from ea.translator import BinToParameterTranslator
 
 class GenotypeFactory:
     DEFAULT = "default"
 
     @staticmethod
-    def make_fitness_genotype(genotype=DEFAULT):
+    def make_genotype(genotype=DEFAULT, config=None):
         '''
         Factory method create object by the supplied string argument, genotype.
         Configurations are also retrieved and supplied as a kwarg argument for the object.
         '''
-        selected = Configuration.get()["genotype"][genotype]
+        if not config:
+            selected = Configuration.get()["genotype"][genotype]
+        else:
+            selected = config["genotype"][genotype]
         config = selected["parameters"]
         return getattr(sys.modules[__name__], selected["class_name"])(**config)
 
@@ -30,7 +34,7 @@ class AbstractGenotype(metaclass=ABCMeta):
         self.mutation_rate = mutation_rate
         self.genotype = None
         #TODO: parameterize
-        self.k = 8
+        self.k = Configuration.get()["translator"]["parameter"]["parameters"]["k"]
 
     @abstractmethod
     def init_random_genotype(self, n):
@@ -70,9 +74,33 @@ class BitVectorGenotype(AbstractGenotype):
         '''
         Initially the genotype can be set to a random bit vector.
         '''
-
-
+        # t = n/self.k
+        #mu = (2**self.k)/2
+        #sigma = math.sqrt(mu)*8
+        #print(sigma)
+        #numbers = np.random.normal(mu, sigma, t)
+        #genotype = []
+        #print("lol")
+        #for i in numbers:
+        #    print(i)
+        #    binary = self._int2bin(int(max(min(i, 2**self.k), 0)))
+        #    padding = [0 for v in range(self.k - len(binary))]
+        #    genotype.extend(self._bin2gray(padding + binary))
+        #self.genotype = np.array(genotype)
         self.genotype = np.random.randint(2, size=n)
+
+    def _bin2gray(self, bits):
+	    return bits[:1] + [i ^ ishift for i, ishift in zip(bits[:-1], bits[1:])]
+
+    def _int2bin(n):
+        'From positive integer to list of binary bits, msb at index 0'
+        if n:
+            bits = []
+            while n:
+                n,remainder = divmod(n, 2)
+                bits.insert(0, remainder)
+            return bits
+        else: return [0]
 
     def crossover(self, partner):
         '''
@@ -82,9 +110,9 @@ class BitVectorGenotype(AbstractGenotype):
         if random.random() < self.crossover_rate:
             #crossover = crossover - (crossover%self.k)
             #crossover = math.floor(random.uniform(0, self.genotype.size))
-            for i in range(0, self.genotype.size, 8):
-                if i%16:
-                    cg1.genotype[i:i+8] = partner.genotype[i:i+8]
+            for i in range(0, self.genotype.size, self.k):
+                if i%(self.k*2):
+                    cg1.genotype[i:i+self.k] = partner.genotype[i:i+self.k]
 
         return cg1
 

@@ -1,95 +1,95 @@
 {
-    "genotype": {
-        "default": {
-            "name": "Bit Vector",
-            "order": 1,
-            "class_name": "BitVectorGenotype",
-            "parameters": {
-                "crossover_rate": 0.5,
-                "mutation_rate": 0.9
-            }
-        }
-    },
     "adult_selection": {
         "mixing": {
-            "name": "Generational mixing",
             "order": 3,
-            "class_name": "MixingAdultSelection"
+            "class_name": "MixingAdultSelection",
+            "name": "Generational mixing"
         },
         "full": {
-            "name": "Full replacement",
             "order": 1,
-            "class_name": "FullReplacementAdultSelection"
+            "class_name": "FullReplacementAdultSelection",
+            "name": "Full replacement"
         },
         "over": {
-            "name": "Over production",
             "order": 2,
-            "class_name": "OverProductionAdultSelection"
+            "class_name": "OverProductionAdultSelection",
+            "name": "Over production"
         }
     },
     "translator": {
         "parameter": {
-            "name": "Bit to paramter",
             "order": 1,
-            "class_name": "BinToParameterTranslator",
             "parameters": {
-                "k": 8
-            }
+                "k": 9
+            },
+            "class_name": "BinToParameterTranslator",
+            "name": "Bit to paramter"
         },
         "default": {
-            "name": "Bit to bit",
             "order": 2,
+            "parameters": {},
             "class_name": "DefaultTranslator",
-            "parameters": {}
+            "name": "Bit to bit"
         }
     },
-    "parent_selection": {
-        "sigma": {
-            "name": "Sigma scaling",
-            "order": 2,
-            "class_name": "ParentSigmaScalingSelection",
-            "parameters": {}
-        },
-        "proportionate": {
-            "name": "Proportionate scaling",
+    "genotype": {
+        "default": {
             "order": 1,
-            "class_name": "ParentFitnessProportionateSelection",
-            "parameters": {}
-        },
-        "tournament": {
-            "name": "Local tournament",
-            "order": 4,
-            "class_name": "ParentTournamentSelection",
             "parameters": {
-                "k": 25,
-                "e": 0.001
-            }
-        },
-        "boltzmann": {
-            "name": "Boltzmann scaling",
-            "order": 3,
-            "class_name": "ParentBoltzmannSelection",
-            "parameters": {}
+                "crossover_rate": 0.5,
+                "mutation_rate": 0.9
+            },
+            "class_name": "BitVectorGenotype",
+            "name": "Bit Vector"
         }
     },
     "fitness": {
         "default": {
-            "name": "Fraction",
             "order": 2,
-            "class_name": "DefaultFitnessEvaluator",
             "parameters": {
                 "random_target": false
-            }
+            },
+            "class_name": "DefaultFitnessEvaluator",
+            "name": "Fraction"
         },
         "tracker": {
-            "name": "Tracker agent evaluator",
             "order": 1,
-            "class_name": "TrackerAgentFitnessEvaluator",
             "parameters": {
-                "pull": false,
-                "avoidance": false,
-                "wrap": false
-            }
+                "wrap": true,
+                "avoidance": true,
+                "pull": false
+            },
+            "class_name": "TrackerAgentFitnessEvaluator",
+            "name": "Tracker agent evaluator"
+        }
+    },
+    "parent_selection": {
+        "boltzmann": {
+            "order": 3,
+            "parameters": {},
+            "class_name": "ParentBoltzmannSelection",
+            "name": "Boltzmann scaling"
+        },
+        "sigma": {
+            "order": 2,
+            "parameters": {},
+            "class_name": "ParentSigmaScalingSelection",
+            "name": "Sigma scaling"
+        },
+        "proportionate": {
+            "order": 1,
+            "parameters": {},
+            "class_name": "ParentFitnessProportionateSelection",
+            "name": "Proportionate scaling"
+        },
+        "tournament": {
+            "order": 4,
+            "parameters": {
+                "e": 0.001,
+                "k": 25
+            },
+            "class_name": "ParentTournamentSelection",
+            "name": "Local tournament"
         }
     }
 }

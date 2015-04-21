@@ -7,12 +7,15 @@ class ParentSelectionFactory:
     PROPORTIONATE = "proportionate"
 
     @staticmethod
-    def make_parent_selector(selector=PROPORTIONATE):
+    def make_parent_selector(selector=PROPORTIONATE, config=None):
         '''
         Factory method create object by the supplied string argument, selector.
         Configurations are also retrieved and supplied as a kwarg argument for the object.
         '''
-        selected = Configuration.get()["parent_selection"][selector]
+        if not config:
+            selected = Configuration.get()["parent_selection"][selector]
+        else:
+            selected = config["parent_selection"][selector]
         config = selected['parameters']
         return getattr(sys.modules[__name__], selected["class_name"])(**config)
 

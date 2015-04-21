@@ -210,8 +210,9 @@ class ResultDialog(object):
     The tracker agent can be visualized by the resultDialog. The dialog consists of a pixel display, speed adjuster,
     restart button, scenario list box and a new scenario button.
     '''
-    def __init__(self, parent, individual):
+    def __init__(self, parent, individual, ann=None):
         self.individual = individual
+        self.ann = ann
         config = Configuration.get()
         wrap=config["fitness"]["tracker"]["parameters"]["wrap"]
         pull=config["fitness"]["tracker"]["parameters"]["pull"]
@@ -261,6 +262,8 @@ class ResultDialog(object):
     def record_agent(self):
         p = self.individual.phenotype_container
         self.scenario.set(p)
+        if self.ann:
+            self.scenario.agent = self.ann
         self.scenario.run(p, rec=True)
 
 

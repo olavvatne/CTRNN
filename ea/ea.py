@@ -16,7 +16,8 @@ class EA(object):
 
     EVENT_RATE = 1
 
-    def __init__(self):
+    def __init__(self, config):
+        self.config = config
         self.is_stopping = False
         self.translator = None
         self.fitness_evaluator = None
@@ -117,7 +118,7 @@ class EA(object):
         '''
         population = []
         for i in range(n):
-            genotype = GenotypeFactory.make_fitness_genotype(self.genotype)
+            genotype = GenotypeFactory.make_genotype(genotype=self.genotype, config=self.config)
             genotype.init_random_genotype(self.genome_length)
             individual = Individual(genotype, self.translator)
             population.append(individual)
@@ -148,16 +149,16 @@ class EA(object):
         type of translator, evaluator, genotype, adult selection and parent selection. Different factories are
         then used to initialize object's corresponding to the user's choice's.
         '''
-        self.translator = TranslatorFactory.make_fitness_translator(geno_to_pheno)
-        self.fitness_evaluator = FitnessEvaluatorFactory.make_fitness_evaluator(genome_length, evaluator)
+        self.translator = TranslatorFactory.make_translator(translator=geno_to_pheno, config=self.config)
+        self.fitness_evaluator = FitnessEvaluatorFactory.make_fitness_evaluator(genome_length, evaluator=evaluator, config=self.config)
         self.genotype = geno
         self.genome_length = genome_length
-        self.adult_selector = AdultSelectionFactory.make_adult_selector(adult)
+        self.adult_selector = AdultSelectionFactory.make_adult_selector(selector=adult, config=self.config)
         if adult != "full":
             self.re_evaluate = True
         else:
             self.re_evaluate = False
-        self.parent_selector = ParentSelectionFactory.make_parent_selector(parent)
+        self.parent_selector = ParentSelectionFactory.make_parent_selector(selector=parent, config=self.config)
 
     def is_legal(self):
         '''

@@ -25,18 +25,21 @@ class RecurrentNeuralNet:
 
         #Assume same number  of recurrent and bias connection for all hidden and output
         nr_bias = 1
-        nr_recurrent = 2
         sizes = np.array(sizes)
         #TODO: recurrent for 3 output neurons
+        #Number of incoming connections for each layer
         incoming_connections = sizes[:-1] + sizes[1:] + nr_bias
-        #incoming_connections = sizes[:-1] + nr_recurrent + nr_bias
         neurons = sizes[1:]
         #For each neuron or array, the last nr_bias+nr_recurrent cells are recurrent and bias
         self.weight_matrix_sizes = list(zip(neurons, incoming_connections))
 
 
     def _create_internal(self, sizes):
-
+        '''
+        Sets internal properties of neurons to zero. For example
+        the previous output that are feed back as activations, or
+        the internal state of neurons.
+        '''
         self.y = [np.zeros(s) for s in sizes[1:]]
         self.prev_output = [np.zeros(s) for s in sizes[1:]]
 
@@ -47,8 +50,13 @@ class RecurrentNeuralNet:
         self.timeconstants = parameters["t"]
 
     def restructure_parameters(self, parameters):
-
-        #parameters = np.ones(40)
+        '''
+        A vector evolved from an EA must be restructured to fit
+        the CTRNN. Some of the paramaters will be gains, others
+        timeconstants and most of them weights. The variable
+        weight_matrix_sized and sizes are used to reshape
+        the vector into a weight, gain and timeconstant list of vectors or matrices
+        '''
         weights = []
         gains = []
         timeconstants = []
@@ -56,11 +64,13 @@ class RecurrentNeuralNet:
         n = 0
         for j, shape in enumerate(self.weight_matrix_sizes):
             n = i + (shape[0] * shape[1])
+            #Weights. Last in list a bias weight and have other range
             #TODO: add gains and weights to create neuron component in genome
             w = np.reshape(self.scaler(parameters[i:n],*self.weight_range),shape)
             w[:,-1] = np.interp( w[:,-1], self.weight_range,self.bias_range)
 
             if not self.wrap and j == 0:
+                #For agents with edge detectors. Weight have bigger range than normal weights.
                 w[:, 0] = np.interp(w[:, 0],self.weight_range, self.special_range)
                 w[:, -4] = np.interp(w[:, -4],self.weight_range, self.special_range)
 
@@ -87,8 +97,17 @@ class RecurrentNeuralNet:
         '''
          The input method propagate the activation from input to output. and returns the activation of the
          output layer
-        The dot product of the weights at layer i and the activation from i-1 will result in the activations out from
-        neurons at layer i.
+        The input method implement the 3 equations neccessary for the
+        neurons in CTRNN. Each neuron have a gain and a timeconstant and an
+        internal state y.
+        In addition to integrating the input*weights from previous layer,
+        additional interlayer activations are counted. A weight for bias * 1
+        also included. the s variable is the integrated value, used in combination
+        with the internal state to calculate a new dy. y is updated using dy, and
+        sigmoid of y and gain result in the output of the node.
+
+        Since numpy is used, a whole layer is processed for each iteration using
+        operations on vector and matrices, like np.dot, and np.exp
         '''
 
         y = self.y
@@ -116,11 +135,19 @@ class RecurrentNeuralNet:
 
 
     def reset(self):
+        '''
+        Resets internal state of each neuron. Should be called
+        before a new environment simulation.
+        '''
         self._create_internal(self.sizes)
 
 
     @staticmethod
     def scale_number(n, min, max):
+        '''
+        Scale a number n within range 0, 1 to a new range
+        defined by min and max arguments.
+        '''
         return np.interp(n,[0,1],[min,max])
 
 
