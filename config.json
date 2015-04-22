@@ -1,95 +1,95 @@
 {
-    "fitness": {
-        "tracker": {
-            "class_name": "TrackerAgentFitnessEvaluator",
-            "order": 1,
-            "parameters": {
-                "avoidance": true,
-                "pull": false,
-                "wrap": true
-            },
-            "name": "Tracker agent evaluator"
-        },
-        "default": {
-            "class_name": "DefaultFitnessEvaluator",
-            "order": 2,
-            "parameters": {
-                "random_target": false
-            },
-            "name": "Fraction"
-        }
-    },
     "parent_selection": {
-        "boltzmann": {
-            "class_name": "ParentBoltzmannSelection",
-            "order": 3,
-            "parameters": {},
-            "name": "Boltzmann scaling"
-        },
         "tournament": {
             "class_name": "ParentTournamentSelection",
-            "order": 4,
+            "name": "Local tournament",
             "parameters": {
-                "k": 25,
-                "e": 0.001
+                "e": 0.001,
+                "k": 25
             },
-            "name": "Local tournament"
+            "order": 4
         },
         "sigma": {
             "class_name": "ParentSigmaScalingSelection",
-            "order": 2,
+            "name": "Sigma scaling",
             "parameters": {},
-            "name": "Sigma scaling"
+            "order": 1
         },
         "proportionate": {
             "class_name": "ParentFitnessProportionateSelection",
-            "order": 1,
+            "name": "Proportionate scaling",
             "parameters": {},
-            "name": "Proportionate scaling"
-        }
-    },
-    "adult_selection": {
-        "mixing": {
-            "class_name": "MixingAdultSelection",
-            "order": 3,
-            "name": "Generational mixing"
+            "order": 2
         },
-        "full": {
-            "class_name": "FullReplacementAdultSelection",
-            "order": 1,
-            "name": "Full replacement"
-        },
-        "over": {
-            "class_name": "OverProductionAdultSelection",
-            "order": 2,
-            "name": "Over production"
+        "boltzmann": {
+            "class_name": "ParentBoltzmannSelection",
+            "name": "Boltzmann scaling",
+            "parameters": {},
+            "order": 3
         }
     },
     "genotype": {
         "default": {
             "class_name": "BitVectorGenotype",
-            "order": 1,
+            "name": "Bit Vector",
             "parameters": {
                 "crossover_rate": 0.5,
                 "mutation_rate": 0.9
             },
-            "name": "Bit Vector"
+            "order": 1
+        }
+    },
+    "fitness": {
+        "tracker": {
+            "class_name": "TrackerAgentFitnessEvaluator",
+            "name": "Tracker agent evaluator",
+            "parameters": {
+                "wrap": true,
+                "avoidance": true,
+                "pull": false
+            },
+            "order": 1
+        },
+        "default": {
+            "class_name": "DefaultFitnessEvaluator",
+            "name": "Fraction",
+            "parameters": {
+                "random_target": false
+            },
+            "order": 2
         }
     },
     "translator": {
-        "default": {
-            "class_name": "DefaultTranslator",
-            "order": 2,
-            "parameters": {},
-            "name": "Bit to bit"
-        },
         "parameter": {
             "class_name": "BinToParameterTranslator",
-            "order": 1,
+            "name": "Bit to paramter",
             "parameters": {
                 "k": 9
             },
-            "name": "Bit to paramter"
+            "order": 1
+        },
+        "default": {
+            "class_name": "DefaultTranslator",
+            "name": "Bit to bit",
+            "parameters": {},
+            "order": 2
+        }
+    },
+    "adult_selection": {
+        "mixing": {
+            "order": 1,
+            "name": "Generational mixing",
+            "class_name": "MixingAdultSelection"
+        },
+        "full": {
+            "order": 3,
+            "name": "Full replacement",
+            "class_name": "FullReplacementAdultSelection"
+        },
+        "over": {
+            "order": 2,
+            "name": "Over production",
+            "class_name": "OverProductionAdultSelection"
         }
     }
 }

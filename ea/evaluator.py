@@ -82,6 +82,8 @@ class TrackerAgentFitnessEvaluator(AbstractFitnessEvaluator):
     def __init__(self,genome_length, pull=False, wrap=True, avoidance=True):
         self.wrap = wrap
         self.pull = pull
+        print("w",self.wrap)
+        print("p",self.pull)
         self.is_avoidance = avoidance
         self.simulator = Simulator(pull=pull, wrap=wrap)
 
@@ -98,11 +100,11 @@ class TrackerAgentFitnessEvaluator(AbstractFitnessEvaluator):
         avoidance_rate =avoidance/(avoidance+failure_avoidance)
         turnon = min(20, cycle)/20
 
-        score = (4.0*capture_rate) - 4*(abs(speed_rate - 0.28))
+        score = (4.0*capture_rate)
         if self.is_avoidance:
-            score += 2.0*avoidance_rate
+            score += 2.0*avoidance_rate#  - 4*(abs(speed_rate - 0.28))
         if not self.wrap:
-            score += ((1.0-turnon)*speed_rate) + (4.0*explore_rate**2) + (4.0*capture_rate)
+            score += ((1.0-turnon)*0.25*speed_rate) + (explore_rate**2)
         if self.pull:
             score += (3*pull_rate)# + (speed_rate)
 

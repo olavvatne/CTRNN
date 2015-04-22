@@ -81,14 +81,16 @@ genome_length = 306
 #272 (no pull and wrap)
 #352 (pull and wrap)
 #296 (no pull and no wrap)
+
 #306 (no pull and wrap) 9 bit
 #396 (pull and wrap) 9 bit
-#333 (no pull and no wrap) 9 bit
-#486 (no wrap no pull)
+#342 (no pull and no wrap) 9 bit
+#486 (no wrap no pull) 3 hidden
 pop_size = 50
-gen = 100
+gen = 10
 threshold = 30
-ea_system = EA()
+config = Configuration.get()
+ea_system = EA(config)
 listner = Listner()
 ea_system.add_listener(listner)
 translator = "parameter"
@@ -96,7 +98,6 @@ fitness = "tracker"
 genotype = "default"
 adult = "mixing"
 parent = "sigma"
-
 ea_system.setup(translator,fitness,genotype,adult,parent,genome_length)
 
 best = ea_system.run(pop_size, gen, threshold)
@@ -117,4 +118,4 @@ show_result(best, ann)
 
 #cProfile.run('speed_ann(ann)', sort='cumtime')
 #cProfile.run('time_test()', sort='cumtime')
-#cProfile.run('ea_system.run(pop_size, gen, threshold)', sort='cumtime')
+cProfile.run('ea_system.run(pop_size, gen, threshold)', sort='cumtime')

@@ -62,8 +62,8 @@ class AppUI(Frame):
         gui_control_elements = [
             {"name": "population_size", "label": "Pop size", "value": 50},
             {"name": "generations","label": "Cycles", "value": 100},
-            {"name": "genome_length", "label": "Genome length", "value": 272},
-            {"name": "threshold", "label": "Threshold","value": 7},
+            {"name": "genome_length", "label": "Genome length", "value": 306},
+            {"name": "threshold", "label": "Threshold","value": 12},
             {"name": "genotype", "label": "Genotype","value": None},
             {"name": "translator", "label": "Translator","value": None},
             {"name": "fitness", "label": "Fitness","value": None},

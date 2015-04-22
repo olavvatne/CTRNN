@@ -106,7 +106,7 @@ class ConfigurationDialog(object):
         b = Button(top, text="OK", command=self.ok)
         b.pack(pady=5)
 
-    
+
     def ok(self):
         self.update()
         self.result = self.config

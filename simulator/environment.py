@@ -118,17 +118,17 @@ class Environment:
         if object_set.issubset(target_set) and odim < 5:
             self.total_pull +=1
             if pulled:
-                self.succ_pull += 1
+                self.succ_pull += 1.1
             return 0
             #self.capture += 1
 
         elif (not object_set & target_set) and odim > 4:
             if pulled:
-                self.succ_pull -= 0.4
+                self.succ_pull -= 0.25
             return 1
         else:
             if pulled:
-                self.succ_pull -= 0.4
+                self.succ_pull -= 0.5
             if odim> 4:
                 return 3
                 #self.failure_avoidance += 1
